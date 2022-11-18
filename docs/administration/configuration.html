@@ -720,146 +720,158 @@ You can define the URLs as well as most of the secrets yourself.</p>
 <div class="listingblock">
 <div class="content">
 <pre class="rouge highlight"><code data-lang="yaml"><span class="na">global</span><span class="pi">:</span>
-  <span class="na">enablePrometheus</span><span class="pi">:</span> <span class="no">true</span> <i class="conum" data-value="1"></i><b>(1)</b>
-  <span class="na">enableGrafana</span><span class="pi">:</span> <span class="no">true</span> <i class="conum" data-value="1"></i><b>(1)</b>
-<span class="na">irs-helm</span><span class="pi">:</span>
-  <span class="c1">#####################</span>
-  <span class="c1"># IRS Configuration #</span>
-  <span class="c1">#####################</span>
-  <span class="na">irsUrl</span><span class="pi">:</span> <span class="s2">"</span><span class="s">https://&lt;irs-url&gt;"</span>
+  <span class="na">enablePrometheus</span><span class="pi">:</span> <span class="no">false</span> <i class="conum" data-value="1"></i><b>(1)</b>
+  <span class="na">enableGrafana</span><span class="pi">:</span> <span class="no">false</span> <i class="conum" data-value="1"></i><b>(1)</b>
+<span class="c1">#####################</span>
+<span class="c1"># IRS Configuration #</span>
+<span class="c1">#####################</span>
+<span class="na">irsUrl</span><span class="pi">:</span> <span class="s2">"</span><span class="s">https://&lt;irs-url&gt;"</span>
+<span class="na">ingress</span><span class="pi">:</span>
+  <span class="na">enabled</span><span class="pi">:</span> <span class="no">true</span>
+  <span class="na">className</span><span class="pi">:</span> <span class="s2">"</span><span class="s">nginx"</span>
+  <span class="na">annotations</span><span class="pi">:</span>
+    <span class="na">nginx.ingress.kubernetes.io/ssl-passthrough</span><span class="pi">:</span> <span class="s2">"</span><span class="s">false"</span>
+    <span class="na">nginx.ingress.kubernetes.io/backend-protocol</span><span class="pi">:</span> <span class="s2">"</span><span class="s">HTTP"</span>
+    <span class="na">nginx.ingress.kubernetes.io/force-ssl-redirect</span><span class="pi">:</span> <span class="s2">"</span><span class="s">true"</span>
+  <span class="na">hosts</span><span class="pi">:</span>
+    <span class="pi">-</span> <span class="na">host</span><span class="pi">:</span> <span class="s2">"</span><span class="s">&lt;irs-url&gt;"</span>
+      <span class="na">paths</span><span class="pi">:</span>
+        <span class="pi">-</span> <span class="na">path</span><span class="pi">:</span> <span class="s">/</span>
+          <span class="na">pathType</span><span class="pi">:</span> <span class="s">ImplementationSpecific</span>
+  <span class="na">tls</span><span class="pi">:</span>
+    <span class="pi">-</span> <span class="na">hosts</span><span class="pi">:</span>
+        <span class="pi">-</span> <span class="s2">"</span><span class="s">&lt;irs-url&gt;"</span>
+      <span class="na">secretName</span><span class="pi">:</span> <span class="s">tls-secret</span>
+<span class="na">digitalTwinRegistry</span><span class="pi">:</span>
+  <span class="na">url</span><span class="pi">:</span> <span class="s">https://&lt;digital-twin-registry-url&gt;</span>
+<span class="na">semanticsHub</span><span class="pi">:</span>
+  <span class="na">url</span><span class="pi">:</span> <span class="s">https://&lt;semantics-hub-url&gt;</span>
+  <span class="na">defaultUrns</span><span class="pi">:</span> <span class="pi">&gt;</span>
+    <span class="s">urn:bamm:io.catenax.serial_part_typization:1.0.0#SerialPartTypization</span>
+<span class="c1">#    ,urn:bamm:com.catenax.assembly_part_relationship:1.0.0#AssemblyPartRelationship</span>
+<span class="na">bpdm</span><span class="pi">:</span>
+  <span class="na">url</span><span class="pi">:</span> <span class="s">https://&lt;bpdm-url&gt;</span>
+<span class="na">minioUser</span><span class="pi">:</span> <span class="s">&lt;minio-username&gt;</span>
+<span class="na">minioPassword</span><span class="pi">:</span> <span class="s">&lt;minio-password&gt;</span>
+<span class="na">keycloak</span><span class="pi">:</span>
+  <span class="na">oauth2</span><span class="pi">:</span>
+    <span class="na">clientId</span><span class="pi">:</span> <span class="s">&lt;keycloak-client-id&gt;</span>
+    <span class="na">clientSecret</span><span class="pi">:</span> <span class="s">&lt;keycloak-client-secret&gt;</span>
+    <span class="na">clientTokenUri</span><span class="pi">:</span> <span class="s">&lt;keycloak-token-uri&gt;</span>
+    <span class="na">jwkSetUri</span><span class="pi">:</span> <span class="s">&lt;keycloak-jwkset-uri&gt;</span>
+<span class="na">aasWrapper</span><span class="pi">:</span>
+  <span class="na">username</span><span class="pi">:</span> <span class="s">&lt;aas-wrapper-username&gt;</span>
+  <span class="na">password</span><span class="pi">:</span> <span class="s">&lt;aas-wrapper-password&gt;</span>
+
+<span class="c1">#######################</span>
+<span class="c1"># Minio Configuration #</span>
+<span class="c1">#######################</span>
+<span class="na">irs-minio</span><span class="pi">:</span>
+  <span class="na">minioUser</span><span class="pi">:</span> <span class="s">&lt;minio-username&gt;</span>
+  <span class="na">minioPassword</span><span class="pi">:</span> <span class="s">&lt;minio-password&gt;</span>
+
+<span class="c1">############################</span>
+<span class="c1"># AASWrapper Configuration #</span>
+<span class="c1">############################</span>
+<span class="na">irs-aaswrapper</span><span class="pi">:</span>
+  <span class="na">edc</span><span class="pi">:</span>
+    <span class="na">api</span><span class="pi">:</span>
+      <span class="na">auth</span><span class="pi">:</span>
+        <span class="na">key</span><span class="pi">:</span> <span class="s2">"</span><span class="s">&lt;edc-api-key&gt;"</span>
+
+<span class="c1">#########################</span>
+<span class="c1"># Grafana Configuration #</span>
+<span class="c1">#########################</span>
+<span class="na">irs-grafana</span><span class="pi">:</span>  <i class="conum" data-value="2"></i><b>(2)</b>
   <span class="na">ingress</span><span class="pi">:</span>
     <span class="na">hosts</span><span class="pi">:</span>
-      <span class="pi">-</span> <span class="na">host</span><span class="pi">:</span> <span class="s2">"</span><span class="s">&lt;irs-url&gt;"</span>
+      <span class="pi">-</span> <span class="na">host</span><span class="pi">:</span> <span class="s2">"</span><span class="s">&lt;grafana-url&gt;"</span>
         <span class="na">paths</span><span class="pi">:</span>
           <span class="pi">-</span> <span class="na">path</span><span class="pi">:</span> <span class="s">/</span>
             <span class="na">pathType</span><span class="pi">:</span> <span class="s">ImplementationSpecific</span>
     <span class="na">tls</span><span class="pi">:</span>
       <span class="pi">-</span> <span class="na">hosts</span><span class="pi">:</span>
-          <span class="pi">-</span> <span class="s2">"</span><span class="s">&lt;irs-url&gt;"</span>
+          <span class="pi">-</span> <span class="s2">"</span><span class="s">&lt;grafana-url&gt;"</span>
         <span class="na">secretName</span><span class="pi">:</span> <span class="s">tls-secret</span>
-  <span class="na">digitalTwinRegistry</span><span class="pi">:</span>
-    <span class="na">url</span><span class="pi">:</span> <span class="s">https://&lt;digital-twin-registry-url&gt;</span>
-  <span class="na">semanticsHub</span><span class="pi">:</span>
-    <span class="na">url</span><span class="pi">:</span> <span class="s">https://&lt;semantics-hub-url&gt;</span>
-  <span class="na">bpdm</span><span class="pi">:</span>
-    <span class="na">url</span><span class="pi">:</span> <span class="s">https://&lt;bpdm-url&gt;</span>
-  <span class="na">minioUser</span><span class="pi">:</span> <span class="s">&lt;minio-username&gt;</span>
-  <span class="na">minioPassword</span><span class="pi">:</span> <span class="s">&lt;minio-password&gt;</span>
-  <span class="na">keycloak</span><span class="pi">:</span>
-    <span class="na">oauth2</span><span class="pi">:</span>
-      <span class="na">clientId</span><span class="pi">:</span> <span class="s">&lt;keycloak-client-id&gt;</span>
-      <span class="na">clientSecret</span><span class="pi">:</span> <span class="s">&lt;keycloak-client-secret&gt;</span>
-      <span class="na">clientTokenUri</span><span class="pi">:</span> <span class="s">&lt;keycloak-token-uri&gt;</span>
-      <span class="na">jwkSetUri</span><span class="pi">:</span> <span class="s">&lt;keycloak-jwkset-uri&gt;</span>
-  <span class="na">aasWrapper</span><span class="pi">:</span>
-    <span class="na">username</span><span class="pi">:</span> <span class="s">&lt;aas-wrapper-username&gt;</span>
-    <span class="na">password</span><span class="pi">:</span> <span class="s">&lt;aas-wrapper-password&gt;</span>
-
-  <span class="c1">#######################</span>
-  <span class="c1"># Minio Configuration #</span>
-  <span class="c1">#######################</span>
-  <span class="na">irs-minio</span><span class="pi">:</span>
-    <span class="na">minioUser</span><span class="pi">:</span> <span class="s">&lt;minio-username&gt;</span>
-    <span class="na">minioPassword</span><span class="pi">:</span> <span class="s">&lt;minio-password&gt;</span>
-
-  <span class="c1">############################</span>
-  <span class="c1"># AASWrapper Configuration #</span>
-  <span class="c1">############################</span>
-  <span class="na">irs-aaswrapper</span><span class="pi">:</span>
-    <span class="na">edc</span><span class="pi">:</span>
-      <span class="na">api</span><span class="pi">:</span>
-        <span class="na">auth</span><span class="pi">:</span>
-          <span class="na">key</span><span class="pi">:</span> <span class="s2">"</span><span class="s">&lt;edc-api-key&gt;"</span>
-
-  <span class="c1">#########################</span>
-  <span class="c1"># Grafana Configuration #</span>
-  <span class="c1">#########################</span>
-  <span class="na">irs-grafana</span><span class="pi">:</span> <i class="conum" data-value="2"></i><b>(2)</b>
-    <span class="na">ingress</span><span class="pi">:</span>
-      <span class="na">hosts</span><span class="pi">:</span>
-        <span class="pi">-</span> <span class="na">host</span><span class="pi">:</span> <span class="s2">"</span><span class="s">&lt;grafana-url&gt;"</span>
-          <span class="na">paths</span><span class="pi">:</span>
-            <span class="pi">-</span> <span class="na">path</span><span class="pi">:</span> <span class="s">/</span>
-              <span class="na">pathType</span><span class="pi">:</span> <span class="s">ImplementationSpecific</span>
-      <span class="na">tls</span><span class="pi">:</span>
-        <span class="pi">-</span> <span class="na">hosts</span><span class="pi">:</span>
-            <span class="pi">-</span> <span class="s2">"</span><span class="s">&lt;grafana-url&gt;"</span>
-          <span class="na">secretName</span><span class="pi">:</span> <span class="s">tls-secret</span>
 
     <span class="na">username</span><span class="pi">:</span> <span class="s">&lt;grafana-username&gt;</span>
     <span class="na">password</span><span class="pi">:</span> <span class="s">&lt;grafana-password&gt;</span>
 
-  <span class="c1">##############################</span>
-  <span class="c1"># EDC Postgres Configuration #</span>
-  <span class="c1">##############################</span>
-  <span class="na">postgresql</span><span class="pi">:</span>
-    <span class="na">auth</span><span class="pi">:</span>
-      <span class="na">postgresPassword</span><span class="pi">:</span> <span class="s">&lt;postgres-admin-password&gt;</span>
+<span class="c1">##############################</span>
+<span class="c1"># EDC Postgres Configuration #</span>
+<span class="c1">##############################</span>
+<span class="na">postgresql</span><span class="pi">:</span>
+  <span class="na">auth</span><span class="pi">:</span>
+    <span class="na">username</span><span class="pi">:</span> <span class="s">&lt;postgres-username&gt;</span>
+    <span class="na">database</span><span class="pi">:</span> <span class="s">&lt;postgres-database&gt;</span>
+    <span class="na">postgresPassword</span><span class="pi">:</span> <span class="s">&lt;postgres-admin-password&gt;</span>
+    <span class="na">password</span><span class="pi">:</span> <span class="s">&lt;postgres-password&gt;</span>
+
+<span class="c1">##################################</span>
+<span class="c1"># EDC Controlplane Configuration #</span>
+<span class="c1">##################################</span>
+<span class="na">edc-controlplane</span><span class="pi">:</span>
+  <span class="na">ingresses</span><span class="pi">:</span>
+    <span class="pi">-</span> <span class="na">enabled</span><span class="pi">:</span> <span class="no">true</span>
+      <span class="na">hostname</span><span class="pi">:</span> <span class="s2">"</span><span class="s">&lt;controlplane-url&gt;"</span>
+      <span class="na">annotations</span><span class="pi">:</span>
+        <span class="na">nginx.ingress.kubernetes.io/ssl-passthrough</span><span class="pi">:</span> <span class="s2">"</span><span class="s">false"</span>
+        <span class="na">nginx.ingress.kubernetes.io/backend-protocol</span><span class="pi">:</span> <span class="s2">"</span><span class="s">HTTP"</span>
+        <span class="na">nginx.ingress.kubernetes.io/force-ssl-redirect</span><span class="pi">:</span> <span class="s2">"</span><span class="s">true"</span>
+      <span class="na">endpoints</span><span class="pi">:</span>
+        <span class="pi">-</span> <span class="s">ids</span>
+        <span class="pi">-</span> <span class="s">data</span>
+      <span class="na">className</span><span class="pi">:</span> <span class="s2">"</span><span class="s">"</span>
+      <span class="na">tls</span><span class="pi">:</span>
+        <span class="pi">-</span> <span class="na">hosts</span><span class="pi">:</span>
+            <span class="pi">-</span> <span class="s2">"</span><span class="s">&lt;controlplane-url&gt;"</span>
+          <span class="na">secretName</span><span class="pi">:</span> <span class="s">tls-secret</span>
+      <span class="na">certManager</span><span class="pi">:</span>
+        <span class="na">issuer</span><span class="pi">:</span> <span class="s2">"</span><span class="s">"</span>
+        <span class="na">clusterIssuer</span><span class="pi">:</span> <span class="s2">"</span><span class="s">"</span>
+
+  <span class="na">edc</span><span class="pi">:</span>
+    <span class="na">postgresql</span><span class="pi">:</span>
+      <span class="na">user</span><span class="pi">:</span> <span class="s">&lt;postgres-username&gt;</span>
       <span class="na">password</span><span class="pi">:</span> <span class="s">&lt;postgres-password&gt;</span>
+    <span class="na">transfer</span><span class="pi">:</span>
+      <span class="na">proxy</span><span class="pi">:</span>
+        <span class="na">token</span><span class="pi">:</span>
+          <span class="na">verifier</span><span class="pi">:</span>
+            <span class="na">publickey</span><span class="pi">:</span>
+              <span class="na">alias</span><span class="pi">:</span> <span class="s">&lt;daps-certificate-name&gt;</span>
+          <span class="na">signer</span><span class="pi">:</span>
+            <span class="na">privatekey</span><span class="pi">:</span>
+              <span class="na">alias</span><span class="pi">:</span> <span class="s">&lt;daps-privatekey-name&gt;</span>
+    <span class="na">api</span><span class="pi">:</span>
+      <span class="na">auth</span><span class="pi">:</span>
+        <span class="na">key</span><span class="pi">:</span> <span class="s2">"</span><span class="s">&lt;edc-api-key&gt;"</span>
+    <span class="na">controlplane</span><span class="pi">:</span>
+      <span class="na">url</span><span class="pi">:</span> <span class="s2">"</span><span class="s">https://&lt;controlplane-url&gt;"</span>
+    <span class="na">dataplane</span><span class="pi">:</span>
+      <span class="na">url</span><span class="pi">:</span> <span class="s2">"</span><span class="s">https://&lt;dataplane-url&gt;"</span>
+  <span class="na">configuration</span><span class="pi">:</span>
+    <span class="na">properties</span><span class="pi">:</span> <span class="pi">|-</span>
+      <span class="s">edc.oauth.client.id=&lt;daps-client-id&gt;</span>
+      <span class="s">edc.oauth.private.key.alias=&lt;daps-privatekey-name&gt;</span>
+      <span class="s">edc.oauth.provider.jwks.url=&lt;daps-jwks-url&gt;</span>
+      <span class="s">edc.oauth.public.key.alias=&lt;daps-certificate-name&gt;</span>
+      <span class="s">edc.oauth.token.url=&lt;daps-token-url&gt;</span>
+      <span class="s">edc.vault.hashicorp.url=&lt;vault-url&gt;</span>
+      <span class="s">edc.vault.hashicorp.token=&lt;vault-token&gt;</span>
+      <span class="s">edc.vault.hashicorp.api.secret.path=&lt;vault-secret-store-path&gt;</span>
+      <span class="s">edc.data.encryption.keys.alias=&lt;daps-privatekey-name&gt;</span>
+      <span class="s">edc.data.encryption.algorithm=NONE</span>
 
-  <span class="c1">##################################</span>
-  <span class="c1"># EDC Controlplane Configuration #</span>
-  <span class="c1">##################################</span>
-  <span class="na">edc-controlplane</span><span class="pi">:</span>
-    <span class="na">ingresses</span><span class="pi">:</span>
-      <span class="pi">-</span> <span class="na">enabled</span><span class="pi">:</span> <span class="no">true</span>
-        <span class="na">hostname</span><span class="pi">:</span> <span class="s2">"</span><span class="s">&lt;controlplane-url&gt;"</span>
-        <span class="na">annotations</span><span class="pi">:</span>
-          <span class="na">nginx.ingress.kubernetes.io/ssl-passthrough</span><span class="pi">:</span> <span class="s2">"</span><span class="s">false"</span>
-          <span class="na">nginx.ingress.kubernetes.io/backend-protocol</span><span class="pi">:</span> <span class="s2">"</span><span class="s">HTTP"</span>
-          <span class="na">nginx.ingress.kubernetes.io/force-ssl-redirect</span><span class="pi">:</span> <span class="s2">"</span><span class="s">true"</span>
-        <span class="na">endpoints</span><span class="pi">:</span>
-          <span class="pi">-</span> <span class="s">ids</span>
-          <span class="pi">-</span> <span class="s">data</span>
-        <span class="na">className</span><span class="pi">:</span> <span class="s2">"</span><span class="s">"</span>
-        <span class="na">tls</span><span class="pi">:</span>
-          <span class="pi">-</span> <span class="na">hosts</span><span class="pi">:</span>
-              <span class="pi">-</span> <span class="s2">"</span><span class="s">&lt;controlplane-url&gt;"</span>
-            <span class="na">secretName</span><span class="pi">:</span> <span class="s">tls-secret</span>
-        <span class="na">certManager</span><span class="pi">:</span>
-          <span class="na">issuer</span><span class="pi">:</span> <span class="s2">"</span><span class="s">"</span>
-          <span class="na">clusterIssuer</span><span class="pi">:</span> <span class="s2">"</span><span class="s">"</span>
-
-    <span class="na">edc</span><span class="pi">:</span>
-      <span class="na">postgresql</span><span class="pi">:</span>
-        <span class="na">password</span><span class="pi">:</span> <span class="s">&lt;postgres-password&gt;</span>
-      <span class="na">transfer</span><span class="pi">:</span>
-        <span class="na">proxy</span><span class="pi">:</span>
-          <span class="na">token</span><span class="pi">:</span>
-            <span class="na">verifier</span><span class="pi">:</span>
-              <span class="na">publickey</span><span class="pi">:</span>
-                <span class="na">alias</span><span class="pi">:</span> <span class="s">&lt;daps-certificate-name&gt;</span>
-            <span class="na">signer</span><span class="pi">:</span>
-              <span class="na">privatekey</span><span class="pi">:</span>
-                <span class="na">alias</span><span class="pi">:</span> <span class="s">&lt;daps-privatekey-name&gt;</span>
-      <span class="na">api</span><span class="pi">:</span>
-        <span class="na">auth</span><span class="pi">:</span>
-          <span class="na">key</span><span class="pi">:</span> <span class="s2">"</span><span class="s">&lt;edc-api-key&gt;"</span>
-      <span class="na">controlplane</span><span class="pi">:</span>
-        <span class="na">url</span><span class="pi">:</span> <span class="s2">"</span><span class="s">https://&lt;controlplane-url&gt;"</span>
-      <span class="na">dataplane</span><span class="pi">:</span>
-        <span class="na">url</span><span class="pi">:</span> <span class="s2">"</span><span class="s">https://&lt;dataplane-url&gt;"</span>
-    <span class="na">configuration</span><span class="pi">:</span>
-      <span class="na">properties</span><span class="pi">:</span> <span class="pi">|-</span>
-        <span class="s">edc.oauth.client.id=&lt;daps-client-id&gt;</span>
-        <span class="s">edc.oauth.private.key.alias=&lt;daps-privatekey-name&gt;</span>
-        <span class="s">edc.oauth.provider.jwks.url=&lt;daps-jwks-url&gt;</span>
-        <span class="s">edc.oauth.public.key.alias=&lt;daps-certificate-name&gt;</span>
-        <span class="s">edc.oauth.token.url=&lt;daps-token-url&gt;</span>
-        <span class="s">edc.vault.hashicorp.url=&lt;vault-url&gt;</span>
-        <span class="s">edc.vault.hashicorp.token=&lt;vault-token&gt;</span>
-        <span class="s">edc.vault.hashicorp.api.secret.path=&lt;vault-secret-store-path&gt;</span>
-        <span class="s">edc.data.encryption.keys.alias=&lt;daps-privatekey-name&gt;</span>
-        <span class="s">edc.data.encryption.algorithm=NONE</span>
-
-  <span class="c1">###############################</span>
-  <span class="c1"># EDC Dataplane Configuration #</span>
-  <span class="c1">###############################</span>
-  <span class="na">edc-dataplane</span><span class="pi">:</span>
-    <span class="na">edc</span><span class="pi">:</span>
-      <span class="na">api</span><span class="pi">:</span>
-        <span class="na">auth</span><span class="pi">:</span>
-          <span class="na">key</span><span class="pi">:</span> <span class="s2">"</span><span class="s">&lt;edc-api-key&gt;"</span>
+<span class="c1">###############################</span>
+<span class="c1"># EDC Dataplane Configuration #</span>
+<span class="c1">###############################</span>
+<span class="na">edc-dataplane</span><span class="pi">:</span>
+  <span class="na">edc</span><span class="pi">:</span>
+    <span class="na">api</span><span class="pi">:</span>
+      <span class="na">auth</span><span class="pi">:</span>
+        <span class="na">key</span><span class="pi">:</span> <span class="s2">"</span><span class="s">&lt;edc-api-key&gt;"</span>
+  <span class="c1">## Ingress declaration to expose the network service.</span>
     <span class="na">ingresses</span><span class="pi">:</span>
       <span class="pi">-</span> <span class="na">enabled</span><span class="pi">:</span> <span class="no">true</span>
         <span class="na">hostname</span><span class="pi">:</span> <span class="s2">"</span><span class="s">&lt;dataplane-url&gt;"</span>
@@ -876,10 +888,10 @@ You can define the URLs as well as most of the secrets yourself.</p>
             <span class="na">secretName</span><span class="pi">:</span> <span class="s">tls-secret</span>
         <span class="na">certManager</span><span class="pi">:</span>
           <span class="na">issuer</span><span class="pi">:</span> <span class="s2">"</span><span class="s">"</span>
-          <span class="na">clusterIssuer</span><span class="pi">:</span> <span class="s2">"</span><span class="s">"</span>
+          <span class="na">clusterIssuer</span><span class="pi">:</span> <span class="s2">"</span>
 
-    <span class="na">configuration</span><span class="pi">:</span>
-      <span class="na">properties</span><span class="pi">:</span> <span class="pi">|-</span>
+    <span class="s">configuration:</span>
+      <span class="s">properties:</span><span class="nv"> </span><span class="s">|-</span>
         <span class="s">edc.oauth.client.id=&lt;daps-client-id&gt;</span>
         <span class="s">edc.oauth.private.key.alias=&lt;daps-privatekey-name&gt;</span>
         <span class="s">edc.oauth.provider.audience=idsc:IDS_CONNECTORS_ALL</span>
@@ -1125,7 +1137,7 @@ Keep the values for these settings safe and do not publish them!
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2022-11-14 11:41:42 UTC
+Last updated 2022-11-18 08:04:17 UTC
 </div>
 </div>
 </body>
