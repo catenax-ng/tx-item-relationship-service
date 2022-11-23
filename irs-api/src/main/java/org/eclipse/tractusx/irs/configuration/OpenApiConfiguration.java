@@ -57,7 +57,7 @@ public class OpenApiConfiguration {
     @Bean
     public OpenAPI customOpenAPI() {
         return new OpenAPI().addServersItem(new Server().url(irsConfiguration.getApiUrl().toString()))
-                            .addSecurityItem(new SecurityRequirement().addList("oAuth2", "profile email"))
+                            .addSecurityItem(new SecurityRequirement().addList("oAuth2", "view_irs"))
                             .info(new Info().title("IRS API")
                                             .version(IrsApplication.API_VERSION)
                                             .description(
@@ -79,7 +79,7 @@ public class OpenApiConfiguration {
                                                                         .flows(new OAuthFlows().clientCredentials(
                                                                                 new OAuthFlow().scopes(
                                                                                                        new Scopes().addString(
-                                                                                                               "profile email", ""))
+                                                                                                               "view_irs", ""))
                                                                                                .tokenUrl(tokenUri))));
             openApi.getComponents().getSchemas().values().forEach(s -> s.setAdditionalProperties(false));
             new OpenApiExamples().createExamples(components);

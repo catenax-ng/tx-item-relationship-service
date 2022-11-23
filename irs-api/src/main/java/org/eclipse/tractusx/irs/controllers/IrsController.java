@@ -80,7 +80,7 @@ public class IrsController {
 
     @Operation(operationId = "registerJobForGlobalAssetId",
                summary = "Register an IRS job to retrieve an item graph for given {globalAssetId}.",
-               security = @SecurityRequirement(name = "oAuth2", scopes = "profile email"),
+               security = @SecurityRequirement(name = "oAuth2", scopes = "view_irs"),
                tags = { "Item Relationship Service" },
                description = "Register an IRS job to retrieve an item graph for given {globalAssetId}.")
     @ApiResponses(value = { @ApiResponse(responseCode = "201", description = "Returns jobId of registered job.",
@@ -119,7 +119,7 @@ public class IrsController {
     @Operation(description = "Return job with optional item graph result for requested jobId.",
                operationId = "getJobForJobId",
                summary = "Return job with optional item graph result for requested jobId.",
-               security = @SecurityRequirement(name = "oAuth2", scopes = "profile email"),
+               security = @SecurityRequirement(name = "oAuth2", scopes = "view_irs"),
                tags = { "Item Relationship Service" })
     @ApiResponses(value = { @ApiResponse(responseCode = "200",
                                          description = "Return job with item graph for the requested jobId.",
@@ -175,7 +175,7 @@ public class IrsController {
 
     @Operation(description = "Cancel job for requested jobId.", operationId = "cancelJobByJobId",
                summary = "Cancel job for requested jobId.",
-               security = @SecurityRequirement(name = "oAuth2", scopes = "profile email"),
+               security = @SecurityRequirement(name = "oAuth2", scopes = "view_irs"),
                tags = { "Item Relationship Service" })
     @ApiResponses(value = { @ApiResponse(responseCode = "200", description = "Job with requested jobId canceled."),
                             @ApiResponse(responseCode = "400", description = "Cancel job failed.",
@@ -215,7 +215,7 @@ public class IrsController {
 
     @Operation(description = "Returns jobIds for requested job states.", operationId = "getJobIdsByJobStates",
                summary = "Returns jobIds for requested job states.",
-               security = @SecurityRequirement(name = "oAuth2", scopes = "profile email"),
+               security = @SecurityRequirement(name = "oAuth2", scopes = "view_irs"),
                tags = { "Item Relationship Service" })
     @ApiResponses(value = { @ApiResponse(responseCode = "200",
                                          description = "List of job ids and status for requested job states.",

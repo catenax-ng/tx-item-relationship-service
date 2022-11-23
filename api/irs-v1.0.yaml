@@ -8,7 +8,7 @@ servers:
   - url: http://localhost:8080
 security:
   - oAuth2:
-    - profile email
+      - view_irs
 paths:
   /irs/jobs:
     get:
@@ -84,7 +84,7 @@ paths:
           description: Job with the requested state not found.
       security:
       - oAuth2:
-        - profile email
+          - view_irs
       summary: Returns jobIds for requested job states.
       tags:
         - Item Relationship Service
@@ -136,7 +136,7 @@ paths:
           description: Authorized failed.
       security:
       - oAuth2:
-        - profile email
+        - view_irs
       summary: "Register an IRS job to retrieve an item graph for given {globalAssetId}."
       tags:
         - Item Relationship Service
@@ -221,7 +221,7 @@ paths:
           description: Job with the requested jobId not found.
       security:
       - oAuth2:
-        - profile email
+        - view_irs
       summary: Return job with optional item graph result for requested jobId.
       tags:
         - Item Relationship Service
@@ -284,7 +284,7 @@ paths:
           description: Job for requested jobId not found.
       security:
       - oAuth2:
-        - profile email
+        - view_irs
       summary: Cancel job for requested jobId.
       tags:
         - Item Relationship Service
@@ -1259,6 +1259,6 @@ components:
       flows:
         clientCredentials:
           scopes:
-            profile email: ""
+            view_irs: ""
           tokenUrl: http://localhost
       type: oauth2
