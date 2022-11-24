@@ -22,9 +22,14 @@ irs-helm:
       clientSecret:
       clientTokenUri:
       jwkSetUri:
-  aasWrapper:
-    username: test
-    password: test
+  edc:
+    controlplane:
+      endpoint:
+        data: http://localhost:10197/data
+      catalog:
+        limit: "1000"
+      apikey:
+        secret: "123456"
 
   #######################
   # Minio Configuration #
@@ -32,15 +37,6 @@ irs-helm:
   irs-minio:
     minioUser: testtest
     minioPassword: testtest
-
-  ############################
-  # AASWrapper Configuration #
-  ############################
-  irs-aaswrapper:
-    edc:
-      api:
-        auth:
-          key: "123456"
 
   ##############################
   # EDC Postgres Configuration #
@@ -210,11 +206,15 @@ edc-provider:
       postgresPassword: test
       password: test
 
+
+##############################
+# AAS Registry Configuration #
+##############################
 registry:
   registrypostgres:
     primary:
       persistence:
         enabled: false
   registry:
-    idpIssuerUri:
+    idpIssuerUri: https://centralidp.int.demo.catena-x.net/auth/realms/CX-Central
     dockerSecret:

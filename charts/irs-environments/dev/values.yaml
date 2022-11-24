@@ -30,9 +30,14 @@ irs-helm:
       clientSecret: <path:traceability-irs/data/dev/keycloak/oauth2#clientSecret>
       clientTokenUri: <path:traceability-irs/data/dev/keycloak/oauth2#tokenUri>
       jwkSetUri: <path:traceability-irs/data/dev/keycloak/oauth2#jwkSetUri>
-  aasWrapper:
-    username: <path:traceability-irs/data/dev/aasProxy/submodel#username>
-    password: <path:traceability-irs/data/dev/aasProxy/submodel#password>
+  edc:
+    controlplane:
+      endpoint:
+        data: https://irs-consumer-controlplane.dev.demo.catena-x.net/data
+      catalog:
+        limit: "1000"
+      apikey:
+        secret: <path:traceability-irs/data/dev/controlplane#apiKey>
 
   #######################
   # Minio Configuration #
@@ -40,15 +45,6 @@ irs-helm:
   irs-minio:
     minioUser: <path:traceability-irs/data/dev/minio#minioUser>
     minioPassword: <path:traceability-irs/data/dev/minio#minioPassword>
-
-  ############################
-  # AASWrapper Configuration #
-  ############################
-  irs-aaswrapper:
-    edc:
-      api:
-        auth:
-          key: "123456"
 
   #########################
   # Grafana Configuration #
