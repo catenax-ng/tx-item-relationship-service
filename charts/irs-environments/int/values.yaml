@@ -1,12 +1,10 @@
-global:
-  enablePrometheus: true
-  enableGrafana: true
 irs-helm:
   #####################
   # IRS Configuration #
   #####################
   irsUrl: "https://irs.int.demo.catena-x.net"
   ingress:
+    enabled: true
     hosts:
       - host: "irs.int.demo.catena-x.net"
         paths:
@@ -32,24 +30,21 @@ irs-helm:
       jwkSetUri: <path:traceability-irs/data/int/keycloak/oauth2#jwkSetUri>
   edc:
     controlplane:
-      endpoint:
-        data: https://irs-consumer-controlplane.int.demo.catena-x.net/data
-      catalog:
-        limit: "10000"
       apikey:
-        secret: <path:traceability-irs/data/int/controlplane#apiKey>
+        secret: "123456"
 
   #######################
   # Minio Configuration #
   #######################
-  irs-minio:
-    minioUser: <path:traceability-irs/data/int/minio#minioUser>
-    minioPassword: <path:traceability-irs/data/int/minio#minioPassword>
+  minio:
+    rootUser: <path:traceability-irs/data/int/minio#minioUser>
+    rootPassword: <path:traceability-irs/data/int/minio#minioPassword>
 
   #########################
   # Grafana Configuration #
   #########################
-  irs-grafana:
+  grafana:
+    enabled: true
     ingress:
       hosts:
         - host: "irs-grafana.int.demo.catena-x.net"
@@ -61,9 +56,16 @@ irs-helm:
             - "irs-grafana.int.demo.catena-x.net"
           secretName: tls-secret
 
-    username: <path:traceability-irs/data/int/grafana#username>
+    user: <path:traceability-irs/data/int/grafana#username>
     password: <path:traceability-irs/data/int/grafana#password>
 
+  ############################
+  # Prometheus Configuration #
+  ############################
+  prometheus:
+    enabled: true
+
+irs-edc-consumer:
   ##############################
   # EDC Postgres Configuration #
   ##############################

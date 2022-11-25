@@ -1,6 +1,3 @@
-global:
-  enablePrometheus: false
-  enableGrafana: false
 irs-helm:
   #####################
   # IRS Configuration #
@@ -24,20 +21,20 @@ irs-helm:
       jwkSetUri:
   edc:
     controlplane:
-      endpoint:
-        data: http://localhost:10197/data
-      catalog:
-        limit: "1000"
       apikey:
         secret: "123456"
+      endpoint:
+        data: ""
 
   #######################
   # Minio Configuration #
   #######################
-  irs-minio:
-    minioUser: testtest
-    minioPassword: testtest
+  minio:
+    rootUser: testtest
+    rootPassword: testtest
 
+
+irs-edc-consumer:
   ##############################
   # EDC Postgres Configuration #
   ##############################
@@ -48,6 +45,8 @@ irs-helm:
     auth:
       postgresPassword: test
       password: test
+      username: edc
+      database: edc
 
   ##################################
   # EDC Controlplane Configuration #
@@ -57,6 +56,9 @@ irs-helm:
       - enabled: false
 
     edc:
+      receiver:
+        callback:
+          url: "http://{{ .Release.Name }}-irs-helm:8181/internal/endpoint-data-reference"
       postgresql:
         password: test
         user: edc
@@ -206,10 +208,6 @@ edc-provider:
       postgresPassword: test
       password: test
 
-
-##############################
-# AAS Registry Configuration #
-##############################
 registry:
   registrypostgres:
     primary:

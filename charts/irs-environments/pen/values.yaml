@@ -1,12 +1,10 @@
-global:
-  enablePrometheus: false
-  enableGrafana: false
 irs-helm:
   #####################
   # IRS Configuration #
   #####################
   irsUrl: "https://irs-pen.int.demo.catena-x.net"
   ingress:
+    enabled: true
     hosts:
       - host: "irs-pen.int.demo.catena-x.net"
         paths:
@@ -32,20 +30,18 @@ irs-helm:
       jwkSetUri: <path:traceability-irs/data/int/keycloak/oauth2#jwkSetUri>
   edc:
     controlplane:
-      endpoint:
-        data: https://irs-consumer-controlplane-pen.int.demo.catena-x.net/data
-      catalog:
-        limit: "10000"
       apikey:
-        secret: <path:traceability-irs/data/int/controlplane#apiKey>
+        secret: "123456"
 
   #######################
   # Minio Configuration #
   #######################
-  irs-minio:
-    minioUser: <path:traceability-irs/data/int/minio#minioUser>
-    minioPassword: <path:traceability-irs/data/int/minio#minioPassword>
+  minio:
+    rootUser: <path:traceability-irs/data/int/minio#minioUser>
+    rootPassword: <path:traceability-irs/data/int/minio#minioPassword>
 
+
+irs-edc-consumer:
   ##############################
   # EDC Postgres Configuration #
   ##############################
