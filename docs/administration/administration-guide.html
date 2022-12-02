@@ -857,6 +857,8 @@ You can define the URLs as well as most of the secrets yourself.</p>
 <span class="c1">#########################</span>
 <span class="na">grafana</span><span class="pi">:</span>
   <span class="na">enabled</span><span class="pi">:</span> <span class="no">false</span> <i class="conum" data-value="1"></i><b>(1)</b>
+  <span class="na">rbac</span><span class="pi">:</span>
+    <span class="na">create</span><span class="pi">:</span> <span class="no">false</span>
   <span class="na">persistence</span><span class="pi">:</span>
     <span class="na">enabled</span><span class="pi">:</span> <span class="no">false</span>
 
@@ -892,6 +894,8 @@ You can define the URLs as well as most of the secrets yourself.</p>
 <span class="c1">############################</span>
 <span class="na">prometheus</span><span class="pi">:</span>
   <span class="na">enabled</span><span class="pi">:</span> <span class="no">false</span> <i class="conum" data-value="1"></i><b>(1)</b>
+  <span class="na">rbac</span><span class="pi">:</span>
+    <span class="na">create</span><span class="pi">:</span> <span class="no">false</span>
   <span class="na">alertmanager</span><span class="pi">:</span>
     <span class="na">enabled</span><span class="pi">:</span> <span class="no">false</span>
   <span class="na">prometheus-node-exporter</span><span class="pi">:</span>
@@ -1021,10 +1025,7 @@ If left empty, this defaults to the internal endpoint of the controlplane provid
   <span class="na">edc</span><span class="pi">:</span>
     <span class="na">receiver</span><span class="pi">:</span>
       <span class="na">callback</span><span class="pi">:</span>
-        <span class="na">url</span><span class="pi">:</span>
-      <span class="na">receiver</span><span class="pi">:</span>
-        <span class="na">callback</span><span class="pi">:</span>
-          <span class="na">url</span><span class="pi">:</span> <span class="s2">"</span><span class="s">http://{{</span><span class="nv"> </span><span class="s">.Release.Name</span><span class="nv"> </span><span class="s">}}-irs-helm:8181/internal/endpoint-data-reference"</span> <span class="c1"># IRS EDC callback URL, e.g. http://app-irs-helm:8181/internal/endpoint-data-reference</span>
+        <span class="na">url</span><span class="pi">:</span> <span class="s2">"</span><span class="s">http://{{</span><span class="nv"> </span><span class="s">.Release.Name</span><span class="nv"> </span><span class="s">}}-irs-helm:8181/internal/endpoint-data-reference"</span> <span class="c1"># IRS EDC callback URL, e.g. http://app-irs-helm:8181/internal/endpoint-data-reference</span>
     <span class="na">postgresql</span><span class="pi">:</span>
       <span class="na">user</span><span class="pi">:</span> <span class="s">edc</span>
       <span class="na">password</span><span class="pi">:</span> <span class="s">&lt;postgres-password&gt;</span>
@@ -1265,7 +1266,7 @@ Keep the values for these settings safe and do not publish them!
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2022-11-25 15:01:28 UTC
+Last updated 2022-12-02 09:08:15 UTC
 </div>
 </div>
 </body>
