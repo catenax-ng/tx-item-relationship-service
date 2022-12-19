@@ -1,0 +1,48 @@
+@startuml
+skinparam monochrome true
+skinparam shadowing false
+autonumber "<b>[000]"
+
+actor IrsApiBatchConsumer
+activate IrsApiBatchConsumer
+
+
+box "IRSApplication" #LightGrey
+participant IrsAPI
+activate IrsAPI
+participant IRS
+activate IRS
+
+IrsApiBatchConsumer -> IrsAPI : POST /irs/batch [globalAssetIds]?params=batchSize..
+IrsAPI -> IRS : calculate batch order
+IRS -> IRS : Create batch-order
+IRS -> IRS : Register batch-order
+IrsAPI <-- IRS : return <BatchOrderAck>
+
+IrsApiBatchConsumer <-- IrsAPI : return <BatchOrderAck>
+
+
+
+
+loop order completed
+    IrsAPI <-- IRS : batch completed (url)
+
+    opt callbackUrl registered
+        IrsApiBatchConsumer <-- IrsAPI : return <BatchResponse>
+    end
+end
+
+IrsApiBatchConsumer <-- IrsAPI : return <BatchOrderAcknowledgement>
+
+loop !batches.completed
+activate IRS #White
+IRS -> IRS : Execute batch-order
+ref over IRS
+    Execution batch-order
+end ref
+IRS -> IRS : re
+IrsApiBatchConsumer <-- IRS : return <Batch>
+end loop
+
+IrsApiBatchConsumer <-- IRS : return <BatchOrderAck> (Batch Completed)
+@enduml

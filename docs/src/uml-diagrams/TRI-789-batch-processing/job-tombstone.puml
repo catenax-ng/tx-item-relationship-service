@@ -1,0 +1,43 @@
+@startuml
+skinparam monochrome true
+skinparam shadowing false
+
+interface IJob {
+
+}
+
+abstract class AbstractJob {
+- String : id
+- String : globalAssetId
+- state : jobState
+- DateTime : createdOn
+- DateTime :startedOn
+- DateTime :lastModifiedOn
+- DateTime :completed
+- ProcessingError : exception
+}
+
+class Job {
+-
+}
+
+class JobTombstone{
+-
+}
+
+
+
+class ProcessingError  {
+    - Class : exception
+    - String : errorDetail
+    - URL: endpoint
+    - int : retryCounter
+    - Instant : lastModifiedOn
+}
+
+IJob <|.. AbstractJob
+AbstractJob <|-- Job
+AbstractJob <|-- JobTombstone
+JobTombstone -- ProcessingError
+
+@enduml
