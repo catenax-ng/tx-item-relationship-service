@@ -2781,7 +2781,7 @@ Returns paginated jobs with state and execution times.
 
 ### Query parameters
 
-jobStates (optional)
+states (optional)
 
 <span class="param-type">Query Parameter</span> — Requested job states. default: null
 
@@ -3727,4 +3727,4 @@ processingError (optional)
 
 <span class="param-type">[ProcessingError](#ProcessingError)</span>
 
-Last updated 2022-12-21 13:41:46 UTC
+Last updated 2022-12-21 14:17:14 UTC
