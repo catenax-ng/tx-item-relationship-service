@@ -8,6 +8,7 @@ Table of Contents
     -   [Deployment using Helm](#deployment-using-helm)
     -   [Deployment using ArgoCD](#deployment-using-argocd)
 -   [Configuration](#configuration)
+    -   [Spring Configuration](#spring-configuration)
     -   [Helm configuration IRS (values.yaml)](#helm-configuration-irs-values-yaml)
     -   [EDC consumer configuration](#edc-consumer-configuration)
     -   [Secrets](#secrets)
@@ -73,6 +74,176 @@ You can define the URLs as well as most of the secrets yourself.
 
 The Keycloak, DAPS and Vault configuration / secrets depend on your setup and might need to be provided externally.
 
+### Spring Configuration
+
+The IRS application is configured using the Spring configuration mechanism. The main configuration file is the `application.yaml`.
+
+    server:
+      port: 8080 # The port the main application API listens on
+      trustedPort: ${SERVER_TRUSTED_PORT:} # The port used for the unsecured, internal API - if empty, the main port is used
+
+    spring:
+      application:
+        name: item-relationship-service
+      security:
+        oauth2:
+          client:
+            registration:
+              keycloak:
+                authorization-grant-type: client_credentials
+                client-id: ${KEYCLOAK_OAUTH2_CLIENT_ID} # OAuth2 client ID used to authenticate with the IAM
+                client-secret: ${KEYCLOAK_OAUTH2_CLIENT_SECRET} # OAuth2 client secret used to authenticate with the IAM
+            provider:
+              keycloak:
+                token-uri: ${KEYCLOAK_OAUTH2_CLIENT_TOKEN_URI:https://default} # OAuth2 endpoint to request tokens using the client credentials
+          resourceserver:
+            jwt:
+              jwk-set-uri: ${KEYCLOAK_OAUTH2_JWK_SET_URI:https://default} # OAuth2 endpoint to request the JWK set
+
+    management: # Spring management API config, see https://spring.io/guides/gs/centralized-configuration/
+      endpoints:
+        web:
+          exposure:
+            include: health, threaddump, loggers, prometheus, info, metrics
+      endpoint:
+        health:
+          probes:
+            enabled: true
+          group:
+            readiness:
+              include: readinessState, diskSpace
+          show-details: always
+      health:
+        livenessstate:
+          enabled: true
+        readinessstate:
+          enabled: true
+      metrics:
+        distribution:
+          percentiles-histogram:
+            http: true
+        tags:
+          application: ${spring.application.name}
+      server:
+        port: 4004
+
+    logging:
+      pattern:
+        console: "%d %-5level %logger : %msg%n"
+      level:
+        root: WARN
+        org.springframework: INFO
+        org.eclipse.tractusx.irs: INFO
+
+    springdoc: # API docs configuration
+      api-docs:
+        path: /api/api-docs
+      swagger-ui:
+        path: /api/swagger-ui
+      writer-with-order-by-keys: true
+
+    irs: # Application config
+      apiUrl: "${IRS_API_URL:http://localhost:8080}" # Public URL of the application, used in Swagger UI
+      job:
+        callback:
+          timeout:
+            read: PT90S # HTTP read timeout for the Job API callback
+            connect: PT90S # HTTP connect timeout for the Job API callback
+        cleanup: # Determines how often the JobStore is being cleaned up. Different schedulers for completed and failed jobs.
+          scheduler:
+            #          ┌───────────── second (0-59)
+            #          │ ┌───────────── minute (0 - 59)
+            #          │ │ ┌───────────── hour (0 - 23)
+            #          │ │ │ ┌───────────── day of the month (1 - 31)
+            #          │ │ │ │ ┌───────────── month (1 - 12) (or JAN-DEC)
+            #          │ │ │ │ │ ┌───────────── day of the week (0 - 7)
+            #          │ │ │ │ │ │          (or MON-SUN -- 0 or 7 is Sunday)
+            #          │ │ │ │ │ │
+            completed: 0 0 * * * * # every hour
+            failed: 0 0 * * * * # every hour
+        jobstore:
+          ttl: # Determines how long jobs are stored in the respective state. After the TTL has expired, the job will be removed by the cleanup scheduler.
+            failed: P7D # ISO 8601 Duration
+            completed: P7D # ISO 8601 Duration
+          cron:
+            expression: "*/10 * * * * ?" # Determines how often the number of stored jobs is updated in the metrics API.
+
+    blobstore:
+      endpoint: "${MINIO_URL}" # S3 compatible API endpoint (e.g. Minio)
+      accessKey: "${MINIO_ACCESS_KEY}" # S3 access key
+      secretKey: "${MINIO_SECRET_KEY}" # S3 secret key
+      bucketName: irsbucket # the name of the S3 bucket to be created / used by the IRS
+
+    resilience4j:
+      retry: # REST client retry configuration
+        configs:
+          default:
+            maxAttempts: 3 # How often failed REST requests will be retried
+            waitDuration: 10s # How long to wait between each retry
+            enableExponentialBackoff: true # Whether subsequent retries will delay exponentially or not
+            exponentialBackoffMultiplier: 2 # Multiplier for the exponential delay
+            ignore-exceptions: # Do not retry on the listed exceptions
+              - org.springframework.web.client.HttpClientErrorException.NotFound
+        instances:
+          registry:
+            baseConfig: default
+
+
+    edc:
+      controlplane:
+        request-ttl: ${EDC_CONTROLPLANE_REQUEST_TTL:PT10M} # How long to wait for an async EDC negotiation request to finish, ISO 8601 Duration
+        endpoint:
+          data: ${EDC_CONTROLPLANE_ENDPOINT_DATA:} # URL of the EDC consumer controlplane data endpoint
+        provider-suffix: ${EDC_CONTROLPLANE_PROVIDER_SUFFIX:/api/v1/ids/data} # Suffix to add to data requests to the EDC provider controlplane
+        catalog-limit: ${EDC_CONTROLPLANE_CATALOG_LIMIT:1000} # Max number of items to fetch from the EDC provider catalog
+        api-key:
+          header: ${EDC_API_KEY_HEADER:} # API header key to use in communication with the EDC consumer controlplane
+          secret: ${EDC_API_KEY_SECRET:} # API header secret to use in communication with the EDC consumer controlplane
+        datareference:
+          storage:
+            duration: PT1H # Time after which stored data references will be cleaned up, ISO 8601 Duration
+
+      submodel:
+        request-ttl: ${EDC_SUBMODEL_REQUEST_TTL:PT10M} # How long to wait for an async EDC submodel retrieval to finish, ISO 8601 Duration
+        path: ${EDC_SUBMODEL_PATH:/submodel} # The path to append to the submodel data reference endpoint
+        urn-prefix: ${EDC_SUBMODEL_URN_PREFIX:/urn} # A prefix used to identify URNs correctly in the submodel endpoint address
+        timeout:
+          read: PT90S # HTTP read timeout for the submodel client
+          connect: PT90S # HTTP connect timeout for the submodel client
+
+    digitalTwinRegistry:
+      descriptorEndpoint: ${DIGITALTWINREGISTRY_DESCRIPTOR_URL:} # The endpoint to retrieve AAS descriptors from the DTR, must contain the placeholder {aasIdentifier}
+      shellLookupEndpoint: ${DIGITALTWINREGISTRY_SHELL_LOOKUP_URL:} # The endpoint to lookup shells from the DTR, must contain the placeholder {assetIds}
+      oAuthClientId: keycloak # ID of the OAuth2 client registration to use, see config spring.security.oauth2.client
+      timeout:
+        read: PT90S # HTTP read timeout for the digital twin registry client
+        connect: PT90S # HTTP connect timeout for the digital twin registry client
+
+    semanticsHub:
+      modelJsonSchemaEndpoint: "${SEMANTICSHUB_URL:}" # The endpoint to retrieve the json schema of a model, must contain the placeholder {urn}
+      cleanup:
+        #          ┌───────────── second (0-59)
+        #          │ ┌───────────── minute (0 - 59)
+        #          │ │ ┌───────────── hour (0 - 23)
+        #          │ │ │  ┌───────────── day of the month (1 - 31)
+        #          │ │ │  │ ┌───────────── month (1 - 12) (or JAN-DEC)
+        #          │ │ │  │ │ ┌───────────── day of the week (0 - 7)
+        #          │ │ │  │ │ │          (or MON-SUN -- 0 or 7 is Sunday)
+        #          │ │ │  │ │ │
+        scheduler: 0 0 23 * * * # How often to clear the semantic model cache
+      defaultUrns: "${SEMANTICSHUB_DEFAULT_URNS:urn:bamm:io.catenax.serial_part_typization:1.0.0#SerialPartTypization}" # IDs of models to cache at IRS startup
+      oAuthClientId: keycloak # ID of the OAuth2 client registration to use, see config spring.security.oauth2.client
+      timeout:
+        read: PT90S # HTTP read timeout for the semantic hub client
+        connect: PT90S # HTTP connect timeout for the semantic hub client
+
+    bpdm:
+      bpnEndpoint: "${BPDM_URL:}" # Endpoint to resolve BPNs, must contain the placeholders {partnerId} and {idType}
+      oAuthClientId: keycloak # ID of the OAuth2 client registration to use, see config spring.security.oauth2.client
+      timeout:
+        read: PT90S # HTTP read timeout for the bpdm client
+        connect: PT90S # HTTP connect timeout for the bpdm client
+
 ### Helm configuration IRS (values.yaml)
 
     #####################
@@ -97,13 +268,17 @@ The Keycloak, DAPS and Vault configuration / secrets depend on your setup and mi
           secretName: tls-secret
     digitalTwinRegistry:
       url: https://<digital-twin-registry-url>
+      descriptorEndpoint: "{{ tpl .Values.digitalTwinRegistry.url . }}/registry/shell-descriptors/{aasIdentifier}"
+      shellLookupEndpoint: "{{ tpl .Values.digitalTwinRegistry.url . }}/lookup/shells?assetIds={assetIds}"
     semanticsHub:
       url: https://<semantics-hub-url>
-      defaultUrns: >
+      modelJsonSchemaEndpoint: "{{ tpl .Values.semanticsHub.url . }}/models/{urn}/json-schema"
+      defaultUrns: >-
         urn:bamm:io.catenax.serial_part_typization:1.0.0#SerialPartTypization
     #    ,urn:bamm:com.catenax.assembly_part_relationship:1.0.0#AssemblyPartRelationship
     bpdm:
       url: https://<bpdm-url>
+      bpnEndpoint: "{{ tpl .Values.bpdm.url . }}/api/catena/legal-entities/{partnerId}?idType={idType}"
     minioUser: <minio-username>
     minioPassword: <minio-password>
     minioUrl: "http://{{ .Release.Name }}-minio:9000"
@@ -132,6 +307,13 @@ The Keycloak, DAPS and Vault configuration / secrets depend on your setup and mi
         path: /submodel
         urnprefix: /urn
 
+    config:
+      # If true, the config provided below will completely replace the configmap.
+      # In this case, you need to provide all required config values defined above yourself!
+      # If false, the custom config will just be appended to the configmap.
+      override: false
+      # Provide your custom configuration here (overrides IRS Spring application.yaml)
+      content:
 
     #######################
     # Minio Configuration #
@@ -482,4 +664,4 @@ Troubleshooting
 
 Coming soon…​
 
-Last updated 2022-12-21 14:17:14 UTC
+Last updated 2022-12-22 08:09:56 UTC
