@@ -19,7 +19,7 @@ IRS -> IRS : Create batch-order
 IRS -> IRS : Register batch-order
 IrsAPI <-- IRS : return <BatchOrderAck>
 
-IrsApiBatchConsumer <-- IrsAPI : return <BatchOrderAck>
+IrsApiBatchConsumer <-- IrsAPI : return Callback<BatchOrderAck>
 
 
 
@@ -32,17 +32,16 @@ loop order completed
     end
 end
 
-IrsApiBatchConsumer <-- IrsAPI : return <BatchOrderAcknowledgement>
+IrsApiBatchConsumer <-- IrsAPI : return Callback<BatchOrderAcknowledgement>
 
 loop !batches.completed
 activate IRS #White
-IRS -> IRS : Execute batch-order
 ref over IRS
     Execution batch-order
 end ref
-IRS -> IRS : re
-IrsApiBatchConsumer <-- IRS : return <Batch>
+IRS -> IRS : return Batch
+IrsApiBatchConsumer <-- IRS : return Callback<BatchResponse>
 end loop
 
-IrsApiBatchConsumer <-- IRS : return <BatchOrderAck> (Batch Completed)
+IrsApiBatchConsumer <-- IRS : return Callback<BatchOrderAck> (Batch Completed)
 @enduml
