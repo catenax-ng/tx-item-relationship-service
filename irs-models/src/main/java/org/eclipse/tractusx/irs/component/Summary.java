@@ -48,7 +48,7 @@ public class Summary {
     private FetchedItems bpnLookups;
 
     /**
-     * BPN lookup summary
+     * ESS Incident Request summary
      */
     @Schema(description = "Summary of the ESS Incident Request", implementation = AsyncFetchedItems.class)
     private FetchedItems essIncidentRequest;
