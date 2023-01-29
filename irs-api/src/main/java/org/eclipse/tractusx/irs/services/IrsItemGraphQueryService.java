@@ -65,6 +65,7 @@ import org.eclipse.tractusx.irs.connector.job.TransferProcess;
 import org.eclipse.tractusx.irs.exceptions.EntityNotFoundException;
 import org.eclipse.tractusx.irs.persistence.BlobPersistence;
 import org.eclipse.tractusx.irs.persistence.BlobPersistenceException;
+import org.eclipse.tractusx.irs.services.validation.SupplyChainImpactedValidator;
 import org.eclipse.tractusx.irs.util.JsonUtil;
 import org.springframework.beans.support.MutableSortDefinition;
 import org.springframework.beans.support.PagedListHolder;
@@ -91,6 +92,8 @@ public class IrsItemGraphQueryService implements IIrsItemGraphQueryService {
     private final BlobPersistence blobStore;
 
     private final MeterRegistryService meterRegistryService;
+
+    private final SupplyChainImpactedValidator supplyChainImpactedValidator;
 
     @Override
     public PageResult getJobsByState(final @NonNull List<JobState> states, final Pageable pageable) {
@@ -213,6 +216,8 @@ public class IrsItemGraphQueryService implements IIrsItemGraphQueryService {
             log.info("Found job with id {} in status {} with {} relationships, {} tombstones and {} submodels", jobId,
                     multiJob.getJob().getState(), relationships.size(), tombstones.size(), submodels.size());
 
+            supplyChainImpactedValidator.validateNumberOfSubmodels(submodels);
+
             return Jobs.builder()
                        .job(multiJob.getJob()
                                     .toBuilder()
@@ -261,6 +266,7 @@ public class IrsItemGraphQueryService implements IIrsItemGraphQueryService {
                                                           .failed(tombstonesSize - bpnLookupFailed)
                                                           .build())
                       .bpnLookups(FetchedItems.builder().completed(bpnLookupCompleted).failed(bpnLookupFailed).build())
+                      .essIncidentRequest(FetchedItems.builder().completed(0).failed(0).build())
                       .build();
     }
 

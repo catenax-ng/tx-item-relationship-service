@@ -138,6 +138,8 @@ class IrsFunctionalTest {
         assertThat(finishedJob.get().getJob().getSummary().getAsyncFetchedItems().getRunning()).isZero();
         assertThat(finishedJob.get().getJob().getSummary().getBpnLookups().getCompleted()).isZero();
         assertThat(finishedJob.get().getJob().getSummary().getBpnLookups().getFailed()).isZero();
+        assertThat(finishedJob.get().getJob().getSummary().getEssIncidentRequest().getCompleted()).isZero();
+        assertThat(finishedJob.get().getJob().getSummary().getEssIncidentRequest().getFailed()).isZero();
     }
     @Test
     void shouldFillSummaryWithBPNLookup() {
@@ -161,6 +163,8 @@ class IrsFunctionalTest {
         assertThat(finishedJob.get().getJob().getSummary().getAsyncFetchedItems().getRunning()).isZero();
         assertThat(finishedJob.get().getJob().getSummary().getBpnLookups().getCompleted()).isEqualTo(2);
         assertThat(finishedJob.get().getJob().getSummary().getBpnLookups().getFailed()).isZero();
+        assertThat(finishedJob.get().getJob().getSummary().getEssIncidentRequest().getCompleted()).isEqualTo(2);
+        assertThat(finishedJob.get().getJob().getSummary().getEssIncidentRequest().getFailed()).isZero();
     }
 
     private void thereIsJwtAuthentication() {

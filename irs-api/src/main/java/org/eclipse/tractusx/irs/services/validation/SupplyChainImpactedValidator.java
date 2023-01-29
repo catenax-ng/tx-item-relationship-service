@@ -19,39 +19,28 @@
  *
  * SPDX-License-Identifier: Apache-2.0
  ********************************************************************************/
-package org.eclipse.tractusx.irs.component;
+package org.eclipse.tractusx.irs.services.validation;
 
-import io.swagger.v3.oas.annotations.media.Schema;
-import lombok.Builder;
-import lombok.Value;
-import lombok.extern.jackson.Jacksonized;
+import java.util.List;
 
-/**
- * Summary
- */
-@Value
-@Builder(toBuilder = true)
-@Schema(description = "Summary of the job with statistics of the job processing.")
-@Jacksonized
-public class Summary {
+import org.eclipse.tractusx.irs.component.Submodel;
+import org.springframework.stereotype.Service;
 
-    /**
-     * asyncFetchedItems
-     */
-    @Schema(description = "Summary of the fetched jobs", implementation = AsyncFetchedItems.class)
-    private AsyncFetchedItems asyncFetchedItems;
+@Service
+public class SupplyChainImpactedValidator {
 
-    /**
-     * BPN lookup summary
-     */
-    @Schema(description = "Summary of the BPN lookups", implementation = AsyncFetchedItems.class)
-    private FetchedItems bpnLookups;
+    private static final String ASPECT_TYPE_PATTERN = "supply_chain_impacted";
 
-    /**
-     * BPN lookup summary
-     */
-    @Schema(description = "Summary of the ESS Incident Request", implementation = AsyncFetchedItems.class)
-    private FetchedItems essIncidentRequest;
-
+    public void validateNumberOfSubmodels(List<Submodel> submodels) throws IllegalStateException {
+        final long numberOfSubmodels = submodels.stream()
+                                                .filter(submodel -> submodel.getAspectType()
+                                                                            .contains(ASPECT_TYPE_PATTERN))
+                                                .count();
+        if (numberOfSubmodels > 1) {
+            throw new IllegalStateException("SupplychainImpacted response is in illegal state. "
+                    + "The expected number of SupplychainImpacted submodels in job response is 1, "
+                    + "actually there are " + numberOfSubmodels);
+        }
+    }
 
 }
