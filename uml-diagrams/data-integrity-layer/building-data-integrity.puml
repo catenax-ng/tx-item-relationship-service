@@ -1,0 +1,51 @@
+@startuml
+autonumber
+
+skinparam monochrome true
+skinparam shadowing false
+
+actor Actor
+
+Actor -> SubmodelServer : assemble vehicle
+box OEM
+
+participant SubmodelServer
+participant IntegrityAspect
+SubmodelServer -> DTRegistry : AAS for C-X
+note left
+  AAS as digital twin (gearbox)
+  is assembled into vehicle of OEM.
+end note
+SubmodelServer <-- DTRegistry : return AAS
+SubmodelServer -> SubmodelServer_Tier1 : request APR
+
+SubmodelServer <-- SubmodelServer_Tier1: return APR
+SubmodelServer -> SubmodelServer : hash(APR)
+SubmodelServer -> SubmodelServer_Tier1 : get APR-signed
+
+SubmodelServer <-- SubmodelServer_Tier1: return APR-signed
+
+    SubmodelServer -> IntegrityAspect : new()
+activate    IntegrityAspect
+    SubmodelServer -> IntegrityAspect : addCXID(CXId)
+    SubmodelServer -> IntegrityAspect : addHash(APR-signed)
+    SubmodelServer -> IntegrityAspect : addSign(APR-signed)
+    SubmodelServer <-- IntegrityAspect : return
+deactivate IntegrityAspect
+SubmodelServer -> DTRegistry : register(IntegrityAspect)
+SubmodelServer -> DTRegistry : register AAS shell
+SubmodelServer <-- DTRegistry : return 201
+end box
+
+participant EDCConsumer
+participant EDCProvider
+
+box Tier 1
+
+participant SubmodelServer_Tier1
+end box
+
+box SharedServices
+participant DTRegistry
+end box
+@enduml
