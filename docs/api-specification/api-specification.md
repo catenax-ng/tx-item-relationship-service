@@ -3057,13 +3057,13 @@ protocolInformation (optional)
 
 Error response.
 
-error (optional)
-
-<span class="param-type">[String](#string)</span> Error.
-
 messages (optional)
 
 <span class="param-type">[array\[String\]](#string)</span> List of error messages.
+
+error (optional)
+
+<span class="param-type">[String](#string)</span> Error.
 
 statusCode (optional)
 
@@ -3757,4 +3757,4 @@ processingError (optional)
 
 <span class="param-type">[ProcessingError](#ProcessingError)</span>
 
-Last updated 2023-01-25 09:23:00 UTC
+Last updated 2023-02-06 12:30:00 UTC
