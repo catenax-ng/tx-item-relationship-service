@@ -14,6 +14,7 @@ Table of Contents
     -   [Secrets](#secrets)
 -   [Troubleshooting](#troubleshooting)
     -   [Proxy support](#proxy-support)
+    -   [Troubleshooting FAQ](#troubleshooting-faq)
 
 System Overview
 ---------------
@@ -707,4 +708,19 @@ You might need to specify both `http` and `https` options, dependending on your 
 
 If your proxy is requiring authentication, you can use the `.proxyUser` and `.proxyPassword` properties in addition.
 
-Last updated 2023-02-07 11:33:38 UTC
+### Troubleshooting FAQ
+
+#### Minio
+
+##### Error: "The specified bucket does not exist"
+
+IRS tries to read data from or write to the Minio storage, but no bucket exists. This can happen if Minio is running without a persistent volume and restarts, thus losing all data.
+It can also happen if the persistent volume claim is deleted / recreated.
+
+**Proposed solution steps:**
+
+1.  Make sure Minio is configured and running correctly.
+
+2.  Restart the IRS - this will recreate the missing bucket automatically.
+
+Last updated 2023-02-08 12:02:43 UTC
