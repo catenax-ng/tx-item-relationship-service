@@ -229,6 +229,7 @@ grafana:
   sidecar:
     dashboards:
       enabled: true
+      label: grafana_dashboard
 
   importDashboards:
     minio: dashboards/minio-dashboard.json
