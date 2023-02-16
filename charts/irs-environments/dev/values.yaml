@@ -72,9 +72,11 @@ irs-helm:
 
     dashboards:
       default:
+        irs-api-dashboard:
+          file: ../dashboards/irs-api-dashboard.json
+        irs-jobs-dashboard:
+          file: dashboards/irs-jobs-dashboard.json
         minio-dashboard:
-          file: dashboards/minio-dashboard.json
-        minio-second-dashboard:
           json: |
             {
               "annotations": {
