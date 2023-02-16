@@ -72,8 +72,10 @@ irs-helm:
 
     dashboards:
       default:
+        irs-outbound-requests-dashboard:
+          url: https://github.com/catenax-ng/tx-item-relationship-service/blob/main/charts/irs/dashboards/irs-outbound-requests.json
         irs-api-dashboard:
-          file: ../dashboards/irs-api-dashboard.json
+          file: ../../dashboards/irs-api-dashboard.json
         irs-jobs-dashboard:
           file: dashboards/irs-jobs-dashboard.json
         minio-dashboard:
