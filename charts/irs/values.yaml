@@ -223,6 +223,8 @@ grafana:
     default:
       minio-dashboard:
         file: dashboards/minio-dashboard.json
+      irs-jobs-dashboard:
+        file: dashboards/irs-jobs-dashboard.json
 
   sidecar:
     dashboards:
