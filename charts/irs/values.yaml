@@ -219,24 +219,24 @@ grafana:
         options:
           path: /var/lib/grafana/dashboards/default
 
-  dashboards:
-    default:
-      minio-dashboard:
-        file: dashboards/minio-dashboard.json
-      irs-jobs-dashboard:
-        file: dashboards/irs-jobs-dashboard.json
-
-  sidecar:
-    dashboards:
-      enabled: true
-      label: grafana_dashboard
-
-  importDashboards:
-    minio: dashboards/minio-dashboard.json
-    outbound: dashboards/irs-outbound-requests.json
-    irsmonitoring: dashboards/resource-monitoring-dashboard.json
-    irsjobs: dashboards/irs-jobs-dashboard.json
-    irsapi: dashboards/irs-api-dashboard.json
+#  dashboards:
+#    default:
+#      minio-dashboard:
+#        file: dashboards/minio-dashboard.json
+#      irs-jobs-dashboard:
+#        file: dashboards/irs-jobs-dashboard.json
+#
+#  sidecar:
+#    dashboards:
+#      enabled: true
+#      label: grafana_dashboard
+#
+#  importDashboards:
+#    minio: dashboards/minio-dashboard.json
+#    outbound: dashboards/irs-outbound-requests.json
+#    irsmonitoring: dashboards/resource-monitoring-dashboard.json
+#    irsjobs: dashboards/irs-jobs-dashboard.json
+#    irsapi: dashboards/irs-api-dashboard.json
 
 ############################
 # Prometheus Configuration #

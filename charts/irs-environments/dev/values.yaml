@@ -70,10 +70,10 @@ irs-helm:
             options:
               path: /var/lib/grafana/dashboards/default
 
-    sidecar:
-      dashboards:
-        enabled: true
-        label: grafana_dashboard
+#    sidecar:
+#      dashboards:
+#        enabled: true
+#        label: grafana_dashboard
 
     dashboards:
       default:
@@ -81,6 +81,10 @@ irs-helm:
           url: https://raw.githubusercontent.com/catenax-ng/tx-item-relationship-service/main/charts/irs/dashboards/irs-outbound-requests.json
         irs-jobs-dashboard:
           file: irs-jobs-dashboard.json
+        res-dashboard:
+          file: res.json
+        res-zwei-dashboard:
+          file: dashboards/res.json
         minio-dashboard:
           json: |
             {
