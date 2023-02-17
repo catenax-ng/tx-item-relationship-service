@@ -222,9 +222,10 @@ The IRS application is configured using the Spring configuration mechanism. The 
         read: PT90S # HTTP read timeout for the digital twin registry client
         connect: PT90S # HTTP connect timeout for the digital twin registry client
 
-    semanticsHub:
+    semanticshub:
       # The endpoint to retrieve the json schema of a model from the semantic hub. If specified, must contain the placeholder {urn}.
       modelJsonSchemaEndpoint: "${SEMANTICSHUB_URL:}"
+      url: ""
 
       # Path to directory on filesystem where semantic models can be loaded from.
       # The filenames inside the directory must match the Base64 encoded URNs of the models.
@@ -244,6 +245,7 @@ The IRS application is configured using the Spring configuration mechanism. The 
       timeout:
         read: PT90S # HTTP read timeout for the semantic hub client
         connect: PT90S # HTTP connect timeout for the semantic hub client
+      pageSize: "${SEMANTICSHUB_PAGE_SIZE:100}"
 
     bpdm:
       bpnEndpoint: "${BPDM_URL:}" # Endpoint to resolve BPNs, must contain the placeholders {partnerId} and {idType}
@@ -278,9 +280,9 @@ The IRS application is configured using the Spring configuration mechanism. The 
       url: https://<digital-twin-registry-url>
       descriptorEndpoint: "{{ tpl .Values.digitalTwinRegistry.url . }}/registry/shell-descriptors/{aasIdentifier}"
       shellLookupEndpoint: "{{ tpl .Values.digitalTwinRegistry.url . }}/lookup/shells?assetIds={assetIds}"
-    semanticsHub:
+    semanticshub:
       url: https://<semantics-hub-url>
-      modelJsonSchemaEndpoint: "{{ tpl .Values.semanticsHub.url . }}/models/{urn}/json-schema"
+      modelJsonSchemaEndpoint: "{{ tpl .Values.semanticsHub.url . }}/{urn}/json-schema"
       defaultUrns: >-
         urn:bamm:io.catenax.serial_part_typization:1.0.0#SerialPartTypization
     #    ,urn:bamm:com.catenax.assembly_part_relationship:1.0.0#AssemblyPartRelationship
@@ -723,4 +725,4 @@ It can also happen if the persistent volume claim is deleted / recreated.
 
 2.  Restart the IRS - this will recreate the missing bucket automatically.
 
-Last updated 2023-02-08 12:02:43 UTC
+Last updated 2023-02-17 15:20:29 UTC
