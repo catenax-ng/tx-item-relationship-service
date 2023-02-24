@@ -269,5 +269,15 @@ Using the ./test/omejdn-service.rest.rest, you can execute the token request to 
 ### Decisions
 
 1. No BPN mockup
-2. Use custom helm chart for semantic hub due to the fact that we already have data in the chart. Otherwise we would need to run a script to add data into semantic hub. This can be done later. It could even be added into script for creating the test data
-3. Use custom helm chart for daps service. In this helm chart is already configured a client, otherwise other manual steps would be required
+2. Use a custom helm chart for semantic hub.
+   1. Reason: test data provided
+   2. Next steps:  
+      1. Use the official helm chart from: https://eclipse-tractusx.github.io/sldt-semantic-hub
+      2. Include scripts to provide test data into the script ``` upload-testdata.sh ```
+3. Use a custom helm chart for daps.
+   1. Reason: already configured with c default client
+   2. Next steps:  
+      1. Use the official helm chart from: https://catenax-ng.github.io/product-DAPS
+      2. Provide configuration with default client from start.
+4. Use a custom helm chart for digital twin
+   1. Reason: A secret for pulling docker images is missing to use the default chart from: https://eclipse-tractusx.github.io/sldt-digital-twin-registry
