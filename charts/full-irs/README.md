@@ -216,7 +216,7 @@ The script takes 3 parameters as input:
 * INSTALL_EDC: default is set to true. If this is passed as true, will delete all helm charts related to EDC (vault, DAPS, EDC consumer and EDC provider) and install them again.
 * INSTALL_IRS: default is set to true. If this is passed as true, will delete all helm charts related to IRS (dependencies, IRS backend and IRS frontend) and install them again.
 
-To forward the ports, the script: ```startForwardingPorts.sh``` should be run.
+To forward the ports, the script: ```forwardingPorts.sh``` should be run.
 
 ### Run test data
 
