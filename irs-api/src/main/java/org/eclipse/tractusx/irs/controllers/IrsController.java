@@ -23,6 +23,7 @@ package org.eclipse.tractusx.irs.controllers;
 
 import static io.swagger.v3.oas.annotations.enums.ParameterIn.QUERY;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
+import static org.springframework.http.MediaType.APPLICATION_PROBLEM_JSON_VALUE;
 
 import java.util.List;
 import java.util.UUID;
@@ -98,19 +99,19 @@ public class IrsController {
                                                               })
                                          }),
                             @ApiResponse(responseCode = "400", description = "Job registration failed.",
-                                         content = { @Content(mediaType = APPLICATION_JSON_VALUE,
+                                         content = { @Content(mediaType = APPLICATION_PROBLEM_JSON_VALUE,
                                                               schema = @Schema(implementation = ErrorResponse.class),
                                                               examples = @ExampleObject(name = "error",
                                                                                         ref = "#/components/examples/error-response-400"))
                                          }),
                             @ApiResponse(responseCode = "401", description = "Authorized failed.",
-                                         content = { @Content(mediaType = APPLICATION_JSON_VALUE,
+                                         content = { @Content(mediaType = APPLICATION_PROBLEM_JSON_VALUE,
                                                               schema = @Schema(implementation = ErrorResponse.class),
                                                               examples = @ExampleObject(name = "error",
                                                                                         ref = "#/components/examples/error-response-401"))
                                          }),
                             @ApiResponse(responseCode = "403", description = "Authorized failed.",
-                                         content = { @Content(mediaType = APPLICATION_JSON_VALUE,
+                                         content = { @Content(mediaType = APPLICATION_PROBLEM_JSON_VALUE,
                                                               schema = @Schema(implementation = ErrorResponse.class),
                                                               examples = @ExampleObject(name = "error",
                                                                                         ref = "#/components/examples/error-response-403"))
@@ -144,25 +145,25 @@ public class IrsController {
                                                                                         ref = "#/components/examples/partial-job-result"))
                                          }),
                             @ApiResponse(responseCode = "400", description = "Return job failed.",
-                                         content = { @Content(mediaType = APPLICATION_JSON_VALUE,
+                                         content = { @Content(mediaType = APPLICATION_PROBLEM_JSON_VALUE,
                                                               schema = @Schema(implementation = ErrorResponse.class),
                                                               examples = @ExampleObject(name = "error",
                                                                                         ref = "#/components/examples/error-response-400"))
                                          }),
                             @ApiResponse(responseCode = "401", description = "Authorized failed.",
-                                         content = { @Content(mediaType = APPLICATION_JSON_VALUE,
+                                         content = { @Content(mediaType = APPLICATION_PROBLEM_JSON_VALUE,
                                                               schema = @Schema(implementation = ErrorResponse.class),
                                                               examples = @ExampleObject(name = "error",
                                                                                         ref = "#/components/examples/error-response-401"))
                                          }),
                             @ApiResponse(responseCode = "403", description = "Authorized failed.",
-                                         content = { @Content(mediaType = APPLICATION_JSON_VALUE,
+                                         content = { @Content(mediaType = APPLICATION_PROBLEM_JSON_VALUE,
                                                               schema = @Schema(implementation = ErrorResponse.class),
                                                               examples = @ExampleObject(name = "error",
                                                                                         ref = "#/components/examples/error-response-403"))
                                          }),
                             @ApiResponse(responseCode = "404", description = "Job with the requested jobId not found.",
-                                         content = { @Content(mediaType = APPLICATION_JSON_VALUE,
+                                         content = { @Content(mediaType = APPLICATION_PROBLEM_JSON_VALUE,
                                                               schema = @Schema(implementation = ErrorResponse.class),
                                                               examples = @ExampleObject(name = "error",
                                                                                         ref = "#/components/examples/error-response-404"))
@@ -188,25 +189,25 @@ public class IrsController {
                tags = { "Item Relationship Service" })
     @ApiResponses(value = { @ApiResponse(responseCode = "200", description = "Job with requested jobId canceled."),
                             @ApiResponse(responseCode = "400", description = "Cancel job failed.",
-                                         content = { @Content(mediaType = APPLICATION_JSON_VALUE,
+                                         content = { @Content(mediaType = APPLICATION_PROBLEM_JSON_VALUE,
                                                               schema = @Schema(implementation = ErrorResponse.class),
                                                               examples = @ExampleObject(name = "error",
                                                                                         ref = "#/components/examples/error-response-400"))
                                          }),
                             @ApiResponse(responseCode = "401", description = "Authorized failed.",
-                                         content = { @Content(mediaType = APPLICATION_JSON_VALUE,
+                                         content = { @Content(mediaType = APPLICATION_PROBLEM_JSON_VALUE,
                                                               schema = @Schema(implementation = ErrorResponse.class),
                                                               examples = @ExampleObject(name = "error",
                                                                                         ref = "#/components/examples/error-response-401"))
                                          }),
                             @ApiResponse(responseCode = "403", description = "Authorized failed.",
-                                         content = { @Content(mediaType = APPLICATION_JSON_VALUE,
+                                         content = { @Content(mediaType = APPLICATION_PROBLEM_JSON_VALUE,
                                                               schema = @Schema(implementation = ErrorResponse.class),
                                                               examples = @ExampleObject(name = "error",
                                                                                         ref = "#/components/examples/error-response-403"))
                                          }),
                             @ApiResponse(responseCode = "404", description = "Job for requested jobId not found.",
-                                         content = { @Content(mediaType = APPLICATION_JSON_VALUE,
+                                         content = { @Content(mediaType = APPLICATION_PROBLEM_JSON_VALUE,
                                                               schema = @Schema(implementation = ErrorResponse.class),
                                                               examples = @ExampleObject(name = "error",
                                                                                         ref = "#/components/examples/error-response-404"))
@@ -235,19 +236,19 @@ public class IrsController {
                                                                                         ref = "#/components/examples/complete-job-list-processing-state"))
                                          }),
                             @ApiResponse(responseCode = "400", description = "Return jobs for requested job states failed.",
-                                         content = { @Content(mediaType = APPLICATION_JSON_VALUE,
+                                         content = { @Content(mediaType = APPLICATION_PROBLEM_JSON_VALUE,
                                                               schema = @Schema(implementation = ErrorResponse.class),
                                                               examples = @ExampleObject(name = "error",
                                                                                         ref = "#/components/examples/error-response-400"))
                                          }),
                             @ApiResponse(responseCode = "401", description = "Authorized failed.",
-                                         content = { @Content(mediaType = APPLICATION_JSON_VALUE,
+                                         content = { @Content(mediaType = APPLICATION_PROBLEM_JSON_VALUE,
                                                               schema = @Schema(implementation = ErrorResponse.class),
                                                               examples = @ExampleObject(name = "error",
                                                                                         ref = "#/components/examples/error-response-401"))
                                          }),
                             @ApiResponse(responseCode = "403", description = "Authorized failed.",
-                                         content = { @Content(mediaType = APPLICATION_JSON_VALUE,
+                                         content = { @Content(mediaType = APPLICATION_PROBLEM_JSON_VALUE,
                                                               schema = @Schema(implementation = ErrorResponse.class),
                                                               examples = @ExampleObject(name = "error",
                                                                                         ref = "#/components/examples/error-response-403"))
@@ -277,13 +278,13 @@ public class IrsController {
                                                               })
                                          }),
                             @ApiResponse(responseCode = "401", description = "Authorized failed.",
-                                         content = { @Content(mediaType = APPLICATION_JSON_VALUE,
+                                         content = { @Content(mediaType = APPLICATION_PROBLEM_JSON_VALUE,
                                                               schema = @Schema(implementation = ErrorResponse.class),
                                                               examples = @ExampleObject(name = "error",
                                                                                         ref = "#/components/examples/error-response-401"))
                                          }),
                             @ApiResponse(responseCode = "403", description = "Authorized failed.",
-                                         content = { @Content(mediaType = APPLICATION_JSON_VALUE,
+                                         content = { @Content(mediaType = APPLICATION_PROBLEM_JSON_VALUE,
                                                               schema = @Schema(implementation = ErrorResponse.class),
                                                               examples = @ExampleObject(name = "error",
                                                                                         ref = "#/components/examples/error-response-403"))

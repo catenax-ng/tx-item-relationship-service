@@ -3,7 +3,10 @@ info:
   description: The API of the Item Relationship Service (IRS) for retrieving item
     graphs along the value chain of CATENA-X partners.
   title: IRS API
-  version: "2.0"
+  version: "2.0.0"
+  license:
+    name: "Apache 2.0"
+    url: "https://www.apache.org/licenses/LICENSE-2.0.html"
 servers:
   - url: http://localhost:8080
 security:
@@ -71,7 +74,7 @@ paths:
             job states.
         "400":
           content:
-            application/json:
+            application/problem+json:
               examples:
                 error:
                   $ref: '#/components/examples/error-response-400'
@@ -80,7 +83,7 @@ paths:
           description: Return jobs for requested job states failed.
         "401":
           content:
-            application/json:
+            application/problem+json:
               examples:
                 error:
                   $ref: '#/components/examples/error-response-401'
@@ -89,7 +92,7 @@ paths:
           description: Authorized failed.
         "403":
           content:
-            application/json:
+            application/problem+json:
               examples:
                 error:
                   $ref: '#/components/examples/error-response-403'
@@ -123,7 +126,7 @@ paths:
           description: Returns id of registered job.
         "400":
           content:
-            application/json:
+            application/problem+json:
               examples:
                 error:
                   $ref: '#/components/examples/error-response-400'
@@ -132,7 +135,7 @@ paths:
           description: Job registration failed.
         "401":
           content:
-            application/json:
+            application/problem+json:
               examples:
                 error:
                   $ref: '#/components/examples/error-response-401'
@@ -141,7 +144,7 @@ paths:
           description: Authorized failed.
         "403":
           content:
-            application/json:
+            application/problem+json:
               examples:
                 error:
                   $ref: '#/components/examples/error-response-403'
@@ -199,7 +202,7 @@ paths:
             id.
         "400":
           content:
-            application/json:
+            application/problem+json:
               examples:
                 error:
                   $ref: '#/components/examples/error-response-400'
@@ -208,7 +211,7 @@ paths:
           description: Return job failed.
         "401":
           content:
-            application/json:
+            application/problem+json:
               examples:
                 error:
                   $ref: '#/components/examples/error-response-401'
@@ -217,7 +220,7 @@ paths:
           description: Authorized failed.
         "403":
           content:
-            application/json:
+            application/problem+json:
               examples:
                 error:
                   $ref: '#/components/examples/error-response-403'
@@ -226,7 +229,7 @@ paths:
           description: Authorized failed.
         "404":
           content:
-            application/json:
+            application/problem+json:
               examples:
                 error:
                   $ref: '#/components/examples/error-response-404'
@@ -262,7 +265,7 @@ paths:
           description: Job with requested jobId canceled.
         "400":
           content:
-            application/json:
+            application/problem+json:
               examples:
                 error:
                   $ref: '#/components/examples/error-response-400'
@@ -271,7 +274,7 @@ paths:
           description: Cancel job failed.
         "401":
           content:
-            application/json:
+            application/problem+json:
               examples:
                 error:
                   $ref: '#/components/examples/error-response-401'
@@ -280,7 +283,7 @@ paths:
           description: Authorized failed.
         "403":
           content:
-            application/json:
+            application/problem+json:
               examples:
                 error:
                   $ref: '#/components/examples/error-response-403'
@@ -289,7 +292,7 @@ paths:
           description: Authorized failed.
         "404":
           content:
-            application/json:
+            application/problem+json:
               examples:
                 error:
                   $ref: '#/components/examples/error-response-404'
@@ -318,7 +321,7 @@ paths:
           description: Returns all available aspect models.
         "401":
           content:
-            application/json:
+            application/problem+json:
               examples:
                 error:
                   $ref: "#/components/examples/error-response-401"
@@ -327,7 +330,7 @@ paths:
           description: Authorized failed.
         "403":
           content:
-            application/json:
+            application/problem+json:
               examples:
                 error:
                   $ref: "#/components/examples/error-response-403"

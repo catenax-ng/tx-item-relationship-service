@@ -24,6 +24,7 @@ package org.eclipse.tractusx.irs.configuration;
 import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Info;
+import io.swagger.v3.oas.models.info.License;
 import io.swagger.v3.oas.models.security.OAuthFlow;
 import io.swagger.v3.oas.models.security.OAuthFlows;
 import io.swagger.v3.oas.models.security.Scopes;
@@ -61,7 +62,9 @@ public class OpenApiConfiguration {
                             .info(new Info().title("IRS API")
                                             .version(IrsApplication.API_VERSION)
                                             .description(
-                                                    "The API of the Item Relationship Service (IRS) for retrieving item graphs along the value chain of CATENA-X partners."));
+                                                    "The API of the Item Relationship Service (IRS) for retrieving item graphs along the value chain of CATENA-X partners.")
+                                            .license(new License().name("Apache 2.0")
+                                                                  .url("https://www.apache.org/licenses/LICENSE-2.0.html")));
     }
 
     /**
