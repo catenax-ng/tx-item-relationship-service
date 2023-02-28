@@ -41,6 +41,20 @@ entries:
     version: 0.1.0
   irs-edc-consumer:
   - apiVersion: v2
+    appVersion: 0.1.6
+    created: "2023-02-28T10:39:12.350373741Z"
+    dependencies:
+    - name: common
+      repository: https://charts.bitnami.com/bitnami
+      version: 1.x.x
+    description: IRS Helm chart for the EDC consumer
+    digest: 68a6d122bb2828beb1422ec6592065ff6dd2d34a65c95733f9593d2a0860eba3
+    name: irs-edc-consumer
+    type: application
+    urls:
+    - https://github.com/catenax-ng/tx-item-relationship-service/releases/download/irs-edc-consumer-1.0.4/irs-edc-consumer-1.0.4.tgz
+    version: 1.0.4
+  - apiVersion: v2
     appVersion: 0.2.0
     created: "2023-02-21T12:09:04.139374995Z"
     dependencies:
@@ -413,4 +427,4 @@ entries:
     urls:
     - https://github.com/catenax-ng/tx-item-relationship-service/releases/download/irs-helm-2.0.0/irs-helm-2.0.0.tgz
     version: 2.0.0
-generated: "2023-02-28T09:51:52.035453481Z"
+generated: "2023-02-28T10:39:12.350571144Z"
