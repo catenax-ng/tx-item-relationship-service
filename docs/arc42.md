@@ -175,12 +175,6 @@ The interfaces show how the components interact with each other and which interf
 ### Component diagram
 
 ![arc42_002](./assets/arc42/arc42_002.png)
-```bash
-The interfaces show how the components interact with each other and which interfaces the IRS is providing.
-
-Component Diagram
-
-```
 
 ### Component description
 
