@@ -99,7 +99,7 @@ The IRS acts as a middleware between consumers and manufacturers. This section d
 
 ## Business context
 
-![arc42_000](https://.github.io/tx-item-relationship-service/docs/assets/arc42/arc42_000.png)
+![arc42_000](https://catenax-ng.github.io/tx-item-relationship-service/docs/assets/arc42/arc42_000.png)
 
 ### Consumer
 
@@ -113,7 +113,7 @@ As of now, the IRS uses its own IAM credentials to gather the required data. Thi
 
 ## Technical context
 
-![arc42_001](https://.github.io/tx-item-relationship-service/docs/assets/arc42/arc42_001.png)
+![arc42_001](https://catenax-ng.github.io/tx-item-relationship-service/docs/assets/arc42/arc42_001.png)
 
 ### Component overview
 
@@ -174,7 +174,7 @@ The interfaces show how the components interact with each other and which interf
 
 ### Component diagram
 
-![arc42_002](https://.github.io/tx-item-relationship-service/docs/assets/arc42/arc42_002.png)
+![arc42_002](https://catenax-ng.github.io/tx-item-relationship-service/docs/assets/arc42/arc42_002.png)
 
 ### Component description
 
@@ -192,7 +192,7 @@ The interfaces show how the components interact with each other and which interf
 
 ### Component diagram
 
-![arc42_003](https://.github.io/tx-item-relationship-service/docs/assets/arc42/arc42_003.png)
+![arc42_003](https://catenax-ng.github.io/tx-item-relationship-service/docs/assets/arc42/arc42_003.png)
 
 ### Component description
 
@@ -217,7 +217,7 @@ The IRS REST controller to provide a RESTful web service.
 
 #### Component diagram
 
-![arc42_004](https://.github.io/tx-item-relationship-service/docs/assets/arc42/arc42_004.png)
+![arc42_004](https://catenax-ng.github.io/tx-item-relationship-service/docs/assets/arc42/arc42_004.png)
 
 #### Component description
 
@@ -235,7 +235,7 @@ The **RecursiveJobHandler** component provide the logic to build jobs with recur
 
 #### Component diagram
 
-![arc42_005](https://.github.io/tx-item-relationship-service/docs/assets/arc42/arc42_005.png)
+![arc42_005](https://catenax-ng.github.io/tx-item-relationship-service/docs/assets/arc42/arc42_005.png)
 
 #### Component description
 
@@ -252,7 +252,7 @@ The TransferProcessManager creates executions and provides them to the executor 
 
 #### Component diagram
 
-![arc42_006](https://.github.io/tx-item-relationship-service/docs/assets/arc42/arc42_006.png)
+![arc42_006](https://catenax-ng.github.io/tx-item-relationship-service/docs/assets/arc42/arc42_006.png)
 
 #### Component description
 
@@ -275,7 +275,7 @@ Since we cannot rely on synchronous responses regarding the requests of submodel
 
 ### IRS interaction diagram
 
-![arc42_007](https://.github.io/tx-item-relationship-service/docs/assets/arc42/arc42_007.png)
+![arc42_007](https://catenax-ng.github.io/tx-item-relationship-service/docs/assets/arc42/arc42_007.png)
 
 ## Runtime view
 
@@ -285,25 +285,25 @@ This section covers the main processes of the IRS and explains how data is trans
 
 This section describes the overall flow of the IRS
 
-![arc42_008](https://.github.io/tx-item-relationship-service/docs/assets/arc42/arc42_008.png)
+![arc42_008](https://catenax-ng.github.io/tx-item-relationship-service/docs/assets/arc42/arc42_008.png)
 
 ### Submodel
 
 This section describes how the IRS fetches submodel payload.
 
-![arc42_009](https://.github.io/tx-item-relationship-service/docs/assets/arc42/arc42_009.png)
+![arc42_009](https://catenax-ng.github.io/tx-item-relationship-service/docs/assets/arc42/arc42_009.png)
 
 ### Job orchestration flow
 
 This section describes the job orchestration in IRS.
 
-![arc42_010](https://.github.io/tx-item-relationship-service/docs/assets/arc42/arc42_010.png)
+![arc42_010](https://catenax-ng.github.io/tx-item-relationship-service/docs/assets/arc42/arc42_010.png)
 
 ## Scenario 1: Create job
 
 This section describes what happens when user creates a new job.
 
-![arc42_011](https://.github.io/tx-item-relationship-service/docs/assets/arc42/arc42_011.png)
+![arc42_011](https://catenax-ng.github.io/tx-item-relationship-service/docs/assets/arc42/arc42_011.png)
 
 ### Overview
 
@@ -318,7 +318,7 @@ The input provided by the caller determines how the job will operate (starting p
 
 This section describes how a job is asynchronously executed inside the IRS.
 
-![arc42_012](https://.github.io/tx-item-relationship-service/docs/assets/arc42/arc42_012.png)
+![arc42_012](https://catenax-ng.github.io/tx-item-relationship-service/docs/assets/arc42/arc42_012.png)
 
 ### Overview
 
@@ -333,7 +333,7 @@ As soon as all transfers are finished, the results will be combined and stored i
 
 ## Scenario 3: Request for JobResponse
 
-![arc42_013](https://.github.io/tx-item-relationship-service/docs/assets/arc42/arc42_013.png)
+![arc42_013](https://catenax-ng.github.io/tx-item-relationship-service/docs/assets/arc42/arc42_013.png)
 
 ### Overview
 
@@ -344,7 +344,7 @@ This will then be passed to the caller.
 
 ## Scenario 4: Cancel job execution
 
-![arc42_014](https://.github.io/tx-item-relationship-service/docs/assets/arc42/arc42_014.png)
+![arc42_014](https://catenax-ng.github.io/tx-item-relationship-service/docs/assets/arc42/arc42_014.png)
 
 ### Overview
 
@@ -356,7 +356,7 @@ Afterwards, the IRS will return the updated job details of the canceled job to t
 
 The deployment view shows the IRS application on ArgoCD, which is a continuous delivery tool for Kubernetes. Kubernetes manifests are specified using Helm charts. Helm is a package manager for Kubernetes. IRS is developed in a cloud-agnostic manner, so the application could be installed in any cloud infrastructure (on-premises, hybrid, or public cloud infrastructure).
 
-![arc42_015](https://.github.io/tx-item-relationship-service/docs/assets/arc42/arc42_015.png)
+![arc42_015](https://catenax-ng.github.io/tx-item-relationship-service/docs/assets/arc42/arc42_015.png)
 
 ### Operator
 
@@ -398,19 +398,19 @@ For information on how to run the application locally, please check the README d
 
 The isolated environment contains the IRS as well as the surrounding services, excluding the external IAM.
 
-![arc42_016](https://.github.io/tx-item-relationship-service/docs/assets/arc42/arc42_016.png)
+![arc42_016](https://catenax-ng.github.io/tx-item-relationship-service/docs/assets/arc42/arc42_016.png)
 
 ### Integrated environment
 
 The integrated environment contains the IRS and is integrated with the rest of the Catena-X network.
 
-![arc42_017](https://.github.io/tx-item-relationship-service/docs/assets/arc42/arc42_017.png)
+![arc42_017](https://catenax-ng.github.io/tx-item-relationship-service/docs/assets/arc42/arc42_017.png)
 
 ## Level 1 - IRS application
 
 This section focuses only on the IRS itself, detached from its neighbors. It shows the resources deployed in Kubernetes for the IRS.
 
-![arc42_018](https://.github.io/tx-item-relationship-service/docs/assets/arc42/arc42_018.png)
+![arc42_018](https://catenax-ng.github.io/tx-item-relationship-service/docs/assets/arc42/arc42_018.png)
 
 ### Pod
 
@@ -434,11 +434,11 @@ The ingress uses a reverse proxy to provide specified Service ports to the inter
 
 ### Domain entity model
 
-![arc42_019](https://.github.io/tx-item-relationship-service/docs/assets/arc42/arc42_019.png)
+![arc42_019](https://catenax-ng.github.io/tx-item-relationship-service/docs/assets/arc42/arc42_019.png)
 
 ### Domain model
 
-![arc42_020](https://.github.io/tx-item-relationship-service/docs/assets/arc42/arc42_020.png)
+![arc42_020](https://catenax-ng.github.io/tx-item-relationship-service/docs/assets/arc42/arc42_020.png)
 
 ### API Model
 
@@ -457,15 +457,15 @@ A job can be in one of the following states:
 | COMPLETED | The job has completed. See the job response for details on the data. |
 | ERROR | The job could not be processed correctly by the IRS due to a technical problem. |
 
-![arc42_021](https://.github.io/tx-item-relationship-service/docs/assets/arc42/arc42_021.png)
+![arc42_021](https://catenax-ng.github.io/tx-item-relationship-service/docs/assets/arc42/arc42_021.png)
 
 ### Job Store Datamodel
 
-![arc42_022](https://.github.io/tx-item-relationship-service/docs/assets/arc42/arc42_022.png)
+![arc42_022](https://catenax-ng.github.io/tx-item-relationship-service/docs/assets/arc42/arc42_022.png)
 
 ### Job Response  Datamodel
 
-![arc42_023](https://.github.io/tx-item-relationship-service/docs/assets/arc42/arc42_023.png)
+![arc42_023](https://catenax-ng.github.io/tx-item-relationship-service/docs/assets/arc42/arc42_023.png)
 
 ```json
 {
@@ -638,7 +638,7 @@ The hexagonal architecture divides a system into several loosely-coupled interch
 
 For the IRS, this means decoupling the application logic from components like the BLOB store, the REST API controllers or the AAS client connection. With an interface between the parts (so-called port), it is easy to switch to other implementations, e.g. if you want to change the persistence implementation. No changes to the application logic will be necessary.
 
-![arc42_024](https://.github.io/tx-item-relationship-service/docs/assets/arc42/arc42_024.png)
+![arc42_024](https://catenax-ng.github.io/tx-item-relationship-service/docs/assets/arc42/arc42_024.png)
 
 ## "Under-the-hood" concepts
 
