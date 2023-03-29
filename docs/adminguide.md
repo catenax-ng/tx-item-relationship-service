@@ -198,6 +198,12 @@ edc:
       read: PT90S # HTTP read timeout for the submodel client
       connect: PT90S # HTTP connect timeout for the submodel client
 
+  catalog:
+    cache:
+      enabled: true # Set to false to disable caching
+      ttl: P1D # Time after which a cached Item is no longer valid and the real catalog is called instead
+      maxCachedItems: 64000 # Maximum amount of cached catalog items
+
 digitalTwinRegistry:
   descriptorEndpoint: ${DIGITALTWINREGISTRY_DESCRIPTOR_URL:} # The endpoint to retrieve AAS descriptors from the DTR, must contain the placeholder {aasIdentifier}
   shellLookupEndpoint: ${DIGITALTWINREGISTRY_SHELL_LOOKUP_URL:} # The endpoint to lookup shells from the DTR, must contain the placeholder {assetIds}
@@ -238,6 +244,7 @@ bpdm:
     read: PT90S # HTTP read timeout for the bpdm client
     connect: PT90S # HTTP connect timeout for the bpdm client
 
+apiAllowedBpn: ${API_ALLOWED_BPN:BPNL00000003CRHK}
 ```
 
 ### Helm configuration IRS (values.yaml)
@@ -258,6 +265,7 @@ digitalTwinRegistry:
     {{ tpl (.Values.digitalTwinRegistry.url | default "") . }}/lookup/shells?assetIds={assetIds}
 semanticshub:
   url:  # https://<semantics-hub-url>
+  pageSize: "100"  # Number of aspect models to retrieve per page
   modelJsonSchemaEndpoint: >-
     {{- if .Values.semanticshub.url }}
     {{- tpl (.Values.semanticshub.url | default "" ) . }}/{urn}/json-schema
@@ -274,7 +282,7 @@ bpdm:
   bpnEndpoint: >-
     {{ tpl (.Values.bpdm.url | default "") . }}/api/catena/legal-entities/{partnerId}?idType={idType}
 minioUser: "minio"  # <minio-username>
-minioPassword: "minioPass"  # <minio-password>
+minioPassword:  # <minio-password>
 minioUrl: "http://{{ .Release.Name }}-minio:9000"
 keycloak:
   oauth2:
@@ -301,6 +309,11 @@ edc:
       ttl: PT10M  # Requests to dataplane will time out after this duration (see https://en.wikipedia.org/wiki/ISO_8601#Durations)
     path: /submodel
     urnprefix: /urn
+  catalog:
+    cache:
+      enabled: true  # Set to false to disable caching
+      ttl: P1D  # Time after which a cached Item is no longer valid and the real catalog is called instead
+      maxCachedItems: 64000  # Maximum amount of cached catalog items
 
 config:
   # If true, the config provided below will completely replace the configmap.
@@ -403,12 +416,6 @@ grafana:
           folder: ''
           type: file
           disableDeletion: false
-          editable: true
-          options:
-            path: /var/lib/grafana/dashboards/default
-
-  dashboards:
-    default:
 ```
 
 1. Use this to enable or disable the monitoring components
@@ -488,8 +495,7 @@ edc-controlplane:
         nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
         nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
       endpoints:
-        - ids
-        - data
+        - protocol
       className: ""
       tls:
         - hosts:
@@ -527,7 +533,7 @@ edc-controlplane:
       edc.oauth.client.id=<daps-client-id>
       edc.oauth.private.key.alias=<daps-privatekey-name>
       edc.oauth.provider.jwks.url=<daps-jwks-url>
-      edc.oauth.public.key.alias=<daps-certificate-name>
+      edc.oauth.certificate.alias=<daps-certificate-name>
       edc.oauth.token.url=<daps-token-url>
       edc.vault.hashicorp.url=<vault-url>
       edc.vault.hashicorp.token=<vault-token>
@@ -568,7 +574,7 @@ edc-dataplane:
       edc.oauth.private.key.alias=<daps-privatekey-name>
       edc.oauth.provider.audience=idsc:IDS_CONNECTORS_ALL
       edc.oauth.provider.jwks.url=<daps-jwks-url>
-      edc.oauth.public.key.alias=<daps-certificate-name>
+      edc.oauth.certificate.alias=<daps-certificate-name>
       edc.oauth.token.url=<daps-token-url>
       edc.vault.hashicorp.url=<vault-url>
       edc.vault.hashicorp.token=<vault-token>
