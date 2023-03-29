@@ -250,6 +250,27 @@ apiAllowedBpn: ${API_ALLOWED_BPN:BPNL00000003CRHK}
 ### Helm configuration IRS (values.yaml)
 
 ```yaml
+          labelSelector:
+            matchExpressions:
+              - key: app.kubernetes.io/name
+                operator: DoesNotExist
+          topologyKey: kubernetes.io/hostname
+
+# Following Catena-X Helm Best Practices @url: https://catenax-ng.github.io/docs/kubernetes-basics/helm
+# @url: https://github.com/helm/charts/blob/master/stable/nginx-ingress/values.yaml#L210
+livenessProbe:
+  failureThreshold: 6
+  initialDelaySeconds: 30
+  periodSeconds: 10
+  successThreshold: 1
+  timeoutSeconds: 1
+readinessProbe:
+  failureThreshold: 3
+  initialDelaySeconds: 30
+  periodSeconds: 10
+  successThreshold: 1
+  timeoutSeconds: 1
+
 #####################
 # IRS Configuration #
 #####################
@@ -338,7 +359,11 @@ minio:
   persistence:
     size: 1Gi
   resources:
+    limits:
+      cpu: 1
+      memory: 4Gi
     requests:
+      cpu: 0.25
       memory: 4Gi
   rootUser: "minio"  # <minio-username>
   rootPassword: "minioPass"  # <minio-password>
@@ -391,31 +416,6 @@ grafana:
     enabled: false
 
   user:  # <grafana-username>
-  password:  # <grafana-password>
-
-  admin:
-    existingSecret: "{{ .Release.Name }}-irs-helm"
-    userKey: grafanaUser
-    passwordKey: grafanaPassword
-
-  datasources:
-    datasources.yaml:
-      apiVersion: 1
-      datasources:
-        - name: Prometheus
-          type: prometheus
-          url: "http://{{ .Release.Name }}-prometheus-server"
-          isDefault: true
-
-  dashboardProviders:
-    dashboardproviders.yaml:
-      apiVersion: 1
-      providers:
-        - name: 'default'
-          orgId: 1
-          folder: ''
-          type: file
-          disableDeletion: false
 ```
 
 1. Use this to enable or disable the monitoring components

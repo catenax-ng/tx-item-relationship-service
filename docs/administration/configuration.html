@@ -897,7 +897,28 @@ You can define the URLs as well as most of the secrets yourself.</p>
 <div class="sectionbody">
 <div class="listingblock">
 <div class="content">
-<pre class="rouge highlight"><code data-lang="yaml"><span class="c1">#####################</span>
+<pre class="rouge highlight"><code data-lang="yaml">          <span class="na">labelSelector</span><span class="pi">:</span>
+            <span class="na">matchExpressions</span><span class="pi">:</span>
+              <span class="pi">-</span> <span class="na">key</span><span class="pi">:</span> <span class="s">app.kubernetes.io/name</span>
+                <span class="na">operator</span><span class="pi">:</span> <span class="s">DoesNotExist</span>
+          <span class="na">topologyKey</span><span class="pi">:</span> <span class="s">kubernetes.io/hostname</span>
+
+<span class="c1"># Following Catena-X Helm Best Practices @url: https://catenax-ng.github.io/docs/kubernetes-basics/helm</span>
+<span class="c1"># @url: https://github.com/helm/charts/blob/master/stable/nginx-ingress/values.yaml#L210</span>
+<span class="na">livenessProbe</span><span class="pi">:</span>
+  <span class="na">failureThreshold</span><span class="pi">:</span> <span class="m">6</span>
+  <span class="na">initialDelaySeconds</span><span class="pi">:</span> <span class="m">30</span>
+  <span class="na">periodSeconds</span><span class="pi">:</span> <span class="m">10</span>
+  <span class="na">successThreshold</span><span class="pi">:</span> <span class="m">1</span>
+  <span class="na">timeoutSeconds</span><span class="pi">:</span> <span class="m">1</span>
+<span class="na">readinessProbe</span><span class="pi">:</span>
+  <span class="na">failureThreshold</span><span class="pi">:</span> <span class="m">3</span>
+  <span class="na">initialDelaySeconds</span><span class="pi">:</span> <span class="m">30</span>
+  <span class="na">periodSeconds</span><span class="pi">:</span> <span class="m">10</span>
+  <span class="na">successThreshold</span><span class="pi">:</span> <span class="m">1</span>
+  <span class="na">timeoutSeconds</span><span class="pi">:</span> <span class="m">1</span>
+
+<span class="c1">#####################</span>
 <span class="c1"># IRS Configuration #</span>
 <span class="c1">#####################</span>
 <span class="na">irsUrl</span><span class="pi">:</span>  <span class="c1"># "https://&lt;irs-url&gt;"</span>
@@ -985,7 +1006,11 @@ You can define the URLs as well as most of the secrets yourself.</p>
   <span class="na">persistence</span><span class="pi">:</span>
     <span class="na">size</span><span class="pi">:</span> <span class="s">1Gi</span>
   <span class="na">resources</span><span class="pi">:</span>
+    <span class="na">limits</span><span class="pi">:</span>
+      <span class="na">cpu</span><span class="pi">:</span> <span class="m">1</span>
+      <span class="na">memory</span><span class="pi">:</span> <span class="s">4Gi</span>
     <span class="na">requests</span><span class="pi">:</span>
+      <span class="na">cpu</span><span class="pi">:</span> <span class="m">0.25</span>
       <span class="na">memory</span><span class="pi">:</span> <span class="s">4Gi</span>
   <span class="na">rootUser</span><span class="pi">:</span> <span class="s2">"</span><span class="s">minio"</span>  <span class="c1"># &lt;minio-username&gt;</span>
   <span class="na">rootPassword</span><span class="pi">:</span> <span class="s2">"</span><span class="s">minioPass"</span>  <span class="c1"># &lt;minio-password&gt;</span>
@@ -1037,32 +1062,7 @@ You can define the URLs as well as most of the secrets yourself.</p>
   <span class="na">persistence</span><span class="pi">:</span>
     <span class="na">enabled</span><span class="pi">:</span> <span class="no">false</span>
 
-  <span class="na">user</span><span class="pi">:</span>  <span class="c1"># &lt;grafana-username&gt;</span>
-  <span class="na">password</span><span class="pi">:</span>  <span class="c1"># &lt;grafana-password&gt;</span>
-
-  <span class="na">admin</span><span class="pi">:</span>
-    <span class="na">existingSecret</span><span class="pi">:</span> <span class="s2">"</span><span class="s">{{</span><span class="nv"> </span><span class="s">.Release.Name</span><span class="nv"> </span><span class="s">}}-irs-helm"</span>
-    <span class="na">userKey</span><span class="pi">:</span> <span class="s">grafanaUser</span>
-    <span class="na">passwordKey</span><span class="pi">:</span> <span class="s">grafanaPassword</span>
-
-  <span class="na">datasources</span><span class="pi">:</span>
-    <span class="na">datasources.yaml</span><span class="pi">:</span>
-      <span class="na">apiVersion</span><span class="pi">:</span> <span class="m">1</span>
-      <span class="na">datasources</span><span class="pi">:</span>
-        <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">Prometheus</span>
-          <span class="na">type</span><span class="pi">:</span> <span class="s">prometheus</span>
-          <span class="na">url</span><span class="pi">:</span> <span class="s2">"</span><span class="s">http://{{</span><span class="nv"> </span><span class="s">.Release.Name</span><span class="nv"> </span><span class="s">}}-prometheus-server"</span>
-          <span class="na">isDefault</span><span class="pi">:</span> <span class="no">true</span>
-
-  <span class="na">dashboardProviders</span><span class="pi">:</span>
-    <span class="na">dashboardproviders.yaml</span><span class="pi">:</span>
-      <span class="na">apiVersion</span><span class="pi">:</span> <span class="m">1</span>
-      <span class="na">providers</span><span class="pi">:</span>
-        <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s1">'</span><span class="s">default'</span>
-          <span class="na">orgId</span><span class="pi">:</span> <span class="m">1</span>
-          <span class="na">folder</span><span class="pi">:</span> <span class="s1">'</span><span class="s">'</span>
-          <span class="na">type</span><span class="pi">:</span> <span class="s">file</span>
-          <span class="na">disableDeletion</span><span class="pi">:</span> <span class="no">false</span></code></pre>
+  <span class="na">user</span><span class="pi">:</span>  <span class="c1"># &lt;grafana-username&gt;</span></code></pre>
 </div>
 </div>
 <div class="colist arabic">
@@ -1428,7 +1428,7 @@ Keep the values for these settings safe and do not publish them!
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2023-03-29 08:49:39 UTC
+Last updated 2023-03-29 13:30:01 UTC
 </div>
 </div>
 </body>
