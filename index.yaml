@@ -42,6 +42,20 @@ entries:
   irs-edc-consumer:
   - apiVersion: v2
     appVersion: 0.3.0
+    created: "2023-03-30T09:51:12.988623296Z"
+    dependencies:
+    - name: common
+      repository: https://charts.bitnami.com/bitnami
+      version: 1.x.x
+    description: IRS Helm chart for the EDC consumer
+    digest: a6d16a43d18f3d59d52383ee75b0d040d2ae11ef8ab0168b4d34b216acfbf345
+    name: irs-edc-consumer
+    type: application
+    urls:
+    - https://github.com/catenax-ng/tx-item-relationship-service/releases/download/irs-edc-consumer-1.1.2/irs-edc-consumer-1.1.2.tgz
+    version: 1.1.2
+  - apiVersion: v2
+    appVersion: 0.3.0
     created: "2023-03-28T12:57:44.753883278Z"
     dependencies:
     - name: common
@@ -139,6 +153,35 @@ entries:
     - https://github.com/catenax-ng/tx-item-relationship-service/releases/download/irs-edc-consumer-1.0.0/irs-edc-consumer-1.0.0.tgz
     version: 1.0.0
   irs-helm:
+  - apiVersion: v2
+    appVersion: 2.4.0
+    created: "2023-03-30T09:51:13.207194214Z"
+    dependencies:
+    - name: common
+      repository: https://charts.bitnami.com/bitnami
+      version: 1.x.x
+    - condition: minio.enabled
+      name: minio
+      repository: https://charts.min.io/
+      version: 5.0.1
+    - condition: prometheus.enabled
+      name: prometheus
+      repository: https://prometheus-community.github.io/helm-charts
+      version: 17.0.1
+    - condition: grafana.enabled
+      name: grafana
+      repository: https://grafana.github.io/helm-charts
+      version: 6.44.8
+    description: IRS Helm chart for Kubernetes
+    digest: bcdc4e321782e1826184519adb8849c08b9402f36ddf4cdf0608bd34990561a1
+    home: https://eclipse-tractusx.github.io/
+    name: irs-helm
+    sources:
+    - https://github.com/eclipse-tractusx/item-relationship-service
+    type: application
+    urls:
+    - https://github.com/catenax-ng/tx-item-relationship-service/releases/download/irs-helm-5.0.7/irs-helm-5.0.7.tgz
+    version: 5.0.7
   - apiVersion: v2
     appVersion: 2.3.2
     created: "2023-03-28T12:57:44.963413267Z"
@@ -585,4 +628,4 @@ entries:
     urls:
     - https://github.com/catenax-ng/tx-item-relationship-service/releases/download/irs-helm-2.0.0/irs-helm-2.0.0.tgz
     version: 2.0.0
-generated: "2023-03-28T12:57:44.963619768Z"
+generated: "2023-03-30T09:51:13.207621817Z"
