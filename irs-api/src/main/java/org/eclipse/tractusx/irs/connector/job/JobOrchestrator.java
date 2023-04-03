@@ -26,6 +26,7 @@ import static org.eclipse.tractusx.irs.controllers.IrsAppConstants.JOB_EXECUTION
 
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -217,6 +218,59 @@ public class JobOrchestrator<T extends DataRequest, P extends TransferProcess> {
 
         final List<MultiTransferJob> multiTransferJobs = deleteJobs(failedJobs);
         log.info("Deleted {} failed jobs", multiTransferJobs.size());
+    }
+
+    public List<String> resumeJobsDuringIRSRestart() {
+        List<MultiTransferJob> pendingJobs = getPendingJobs();
+        List<String> resumedJobs = new ArrayList<>();
+
+        for (MultiTransferJob multiJob : pendingJobs) {
+            Optional<MultiTransferJob> resumedJob = resumeJob(multiJob);
+            resumedJob.ifPresent(job -> resumedJobs.add(job.getJobIdString()));
+        }
+
+        return resumedJobs;
+    }
+
+    private List<MultiTransferJob> getPendingJobs() {
+        List<JobState> validStates = List.of(JobState.INITIAL, JobState.RUNNING, JobState.TRANSFERS_FINISHED);
+        return jobStore.findByStates(validStates);
+    }
+
+    private Optional<MultiTransferJob> resumeJob(MultiTransferJob multiJob) {
+        Stream<T> requests = Stream.empty();
+
+        requests = initiateRequestQueue(multiJob, requests);
+
+        long transferCount = startTransferProcess(multiJob, requests);
+
+        if (transferCount == 0) {
+            callCompleteHandlerIfFinished(multiJob.getJobIdString());
+        }
+
+        return jobStore.find(multiJob.getJobIdString()).map(job -> job.getJob().getState().equals(JobState.ERROR) ? null : job);
+    }
+
+    private Stream<T> initiateRequestQueue(final MultiTransferJob multiJob, Stream<T> requests) {
+        try {
+            requests = handler.initiate(multiJob);
+        } catch (RuntimeException e) {
+            markJobInError(multiJob, e, JOB_EXECUTION_FAILED);
+            meterService.incrementJobFailed();
+        }
+
+        return requests;
+    }
+
+    private long startTransferProcess(final MultiTransferJob multiJob, final Stream<T> requests) {
+        long transferCount = 0;
+        try {
+            transferCount = startTransfers(multiJob, requests);
+        } catch (JobException e) {
+            markJobInError(multiJob, e, ("Transfer process interrupted unexpectedly."));
+            meterService.incrementException();
+        }
+        return transferCount;
     }
 
     private List<MultiTransferJob> deleteJobs(final List<MultiTransferJob> jobs) {

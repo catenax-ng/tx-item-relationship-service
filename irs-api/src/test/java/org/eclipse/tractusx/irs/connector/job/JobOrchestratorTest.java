@@ -38,6 +38,8 @@ import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
 import java.time.ZonedDateTime;
+import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.regex.Pattern;
@@ -85,6 +87,8 @@ class JobOrchestratorTest {
 
     TestMother generate = new TestMother();
     MultiTransferJob job = generate.job(JobState.RUNNING);
+    MultiTransferJob jobInitialState = generate.job(JobState.INITIAL);
+    MultiTransferJob jobTransfersFinishedState = generate.job(JobState.TRANSFERS_FINISHED);
     DataRequest dataRequest = generate.dataRequest();
     DataRequest dataRequest2 = generate.dataRequest();
     TransferInitiateResponse okResponse = generate.okResponse();
@@ -380,6 +384,50 @@ class JobOrchestratorTest {
         verify(jobStore).find(job.getJobIdString());
         verifyNoMoreInteractions(jobStore);
         verifyNoInteractions(processManager);
+    }
+
+    @Test
+    void resumeJobsDuringIRSRestart_JobHandlerError_ThrowsJobException() {
+        //Act
+        when(jobStore.findByStates(any())).thenReturn(List.of(jobInitialState, jobTransfersFinishedState, job));
+        when(handler.initiate(any(MultiTransferJob.class))).thenThrow(new RuntimeException());
+
+        MultiTransferJob newJob = job.toBuilder().transitionError("Handler could not initiate the indicated job", "error").build();
+
+        when(jobStore.find(any())).thenReturn(Optional.of(jobInitialState));
+        when(jobStore.find(job.getJobIdString())).thenReturn(Optional.of(newJob));
+
+        List<String> response = sut.resumeJobsDuringIRSRestart();
+
+        verify(handler, times(3)).initiate(any());
+        assertThat(response).hasSize(2).doesNotContain(job.getJobIdString());
+    }
+
+
+    @Test
+    void resumeJobsDuringIRSRestart_PendingJobsAreFound_OkResponse() {
+        // Arrange
+        final List<MultiTransferJob> jobList = List.of(jobInitialState, jobTransfersFinishedState, job);
+        when(jobStore.findByStates(any())).thenReturn(jobList);
+        when(handler.initiate(any())).then(invocation -> Stream.of(dataRequest));
+        // Process Manager gets called and returns a successful response.
+        when(processManager.initiateRequest(any(), any(), any(), any())).thenReturn(okResponse);
+
+        // Act
+        List<String> resumedJobs = sut.resumeJobsDuringIRSRestart();
+
+        verify(processManager, times(3)).initiateRequest(any(), any(), any(), any());
+        assertThat(resumedJobs).hasSize(3);
+    }
+
+    @Test
+    void resumeJobsDuringIRSRestart_NoPendingJobsStored() {
+        when(jobStore.findByStates(any())).thenReturn(Collections.emptyList());
+
+        List<String> resumedJobs = sut.resumeJobsDuringIRSRestart();
+
+        verify(jobStore).findByStates(any());
+        assertThat(resumedJobs).isEqualTo(Collections.emptyList());
     }
 
     private Object byCompletingJob() {
