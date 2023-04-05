@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.1.2] - 2023-03-30
+### Added
+- Add edc-postgres resource limits
+
 ## [1.1.1] - 2023-03-28
 ### Changed
 - Renamed `edc.receiver.http.endpoint` to `edc.receiver.http.dynamic.endpoint`
