@@ -143,8 +143,8 @@ def create_submodel_descriptor(id_short_, identification_, semantic_id_, endpoin
     )
 
 
-def print_response(response_):
-    print(response_)
+def print_response(message_prefix, response_):
+    print(message_prefix, "\n--------------\n", response_, "\n\n")
     if response_.status_code > 205:
         print(response_.text)
 
@@ -292,7 +292,7 @@ if __name__ == "__main__":
                     response = session.request(method="POST",
                                                url=create_submodel_url(submodel_upload_url, submodel_identification),
                                                headers=headers, data=payload)
-                    print_response(response)
+                    print_response("2. Create submodel on submodel server:" , response)
 
                 # 3. Create edc asset
                 if submodel_name == "EsrCertificateStateStatistic" and esr_url is not None:
@@ -302,30 +302,30 @@ if __name__ == "__main__":
                 response = session.request(method="POST", url=edc_upload_url + edc_asset_path,
                                            headers=headers_with_api_key,
                                            data=payload)
-                print_response(response)
+                print_response("3. Create edc asset:", response)
 
                 # 4. Create edc policy
                 payload = create_edc_policy_payload(contract_id, asset_prop_id)
                 response = session.request(method="POST", url=edc_upload_url + edc_policy_path,
                                            headers=headers_with_api_key,
                                            data=payload)
-                print_response(response)
+                print_response("4. Create edc policy: " , response)
                 # 5. Create edc contract definition
                 payload = create_edc_contract_definition_payload(contract_id, contract_id, asset_prop_id)
                 response = session.request(method="POST", url=edc_upload_url + edc_contract_definition_path,
                                            headers=headers_with_api_key,
                                            data=payload)
-                print_response(response)
+                print_response("5. Create edc contract definition:" , response)
                 contract_id = contract_id + 1
 
-        # Create aas shell
+        # 6. Create aas shell
         if submodel_descriptors:
             payload = create_aas_shell(catenax_id, name_at_manufacturer, identification, specific_asset_ids,
                                        submodel_descriptors)
             response = session.request(method="POST", url=create_digital_twin_payload_url(aas_url),
                                        headers=headers,
                                        data=payload)
-            print_response(response)
+            print_response("6. Create aas shell" , response)
 
     timestamp_end = time.time()
     duration = timestamp_end - timestamp_start
