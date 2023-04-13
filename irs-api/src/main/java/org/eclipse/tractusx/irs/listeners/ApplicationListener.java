@@ -22,18 +22,27 @@
  ********************************************************************************/
 package org.eclipse.tractusx.irs.listeners;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.eclipse.tractusx.irs.connector.job.JobOrchestrator;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.stereotype.Component;
 
 /**
  * Application listener triggers job resumption during IRS restart.
  */
 @Slf4j
+@Component
+@RequiredArgsConstructor
 public class ApplicationListener {
+    final private JobOrchestrator jobOrchestrator;
+    @Async
     @EventListener(ApplicationReadyEvent.class)
-    public void restartJobsAfterIRSRestart() {
-        log.info("Retrieving pending jobs from IRS and triggering their execution.");
+    public void applicationReadyEvent() {
+        log.info("Resuming pending jobs...");
+        jobOrchestrator.resumeJobsDuringIRSRestart();
     }
 }
 
