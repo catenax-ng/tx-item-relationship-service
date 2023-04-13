@@ -84,7 +84,7 @@ public interface JobStore {
      * @param jobId     the job identifier.
      * @param processId identifier of the transfer process to attach.
      */
-    void addTransferProcess(String jobId, String processId);
+    void addTransferProcess(String jobId, String processId, DataRequest dataRequest);
 
     /**
      * Mark transfer process completed for the job.
@@ -124,7 +124,7 @@ public interface JobStore {
     /**
      * Cancel the job with identifier
      *
-     * @param jobId
+     * @param jobId the job identifier.
      * @return cancel job (if it existed)
      */
     Optional<MultiTransferJob> cancelJob(String jobId);

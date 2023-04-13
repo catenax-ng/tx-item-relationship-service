@@ -27,10 +27,9 @@ import static java.lang.String.format;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-import java.util.Set;
+import java.util.Map;
 import java.util.UUID;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -61,7 +60,7 @@ public class MultiTransferJob {
      * Collection of transfer IDs that have not yet completed for the job.
      */
     @Singular
-    private final Set<String> transferProcessIds;
+    private final Map<String,DataRequest> transferProcessIds;
     /**
      * The attached job.
      */
@@ -77,8 +76,8 @@ public class MultiTransferJob {
     @Singular
     private List<TransferProcess> completedTransfers;
 
-    public Collection<String> getTransferProcessIds() {
-        return Collections.unmodifiableSet(this.transferProcessIds);
+    public Map<String, DataRequest> getTransferProcessIds() {
+        return Collections.unmodifiableMap(this.transferProcessIds);
     }
 
     @JsonIgnore

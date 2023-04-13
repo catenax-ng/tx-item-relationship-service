@@ -28,6 +28,7 @@ import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -221,11 +222,11 @@ public class JobOrchestrator<T extends DataRequest, P extends TransferProcess> {
     }
 
     public List<String> resumeJobsDuringIRSRestart() {
-        List<MultiTransferJob> pendingJobs = getPendingJobs();
-        List<String> resumedJobs = new ArrayList<>();
+        final List<MultiTransferJob> pendingJobs = getPendingJobs();
+        final List<String> resumedJobs = new ArrayList<>();
 
-        for (MultiTransferJob multiJob : pendingJobs) {
-            Optional<MultiTransferJob> resumedJob = resumeJob(multiJob);
+        for (final MultiTransferJob multiJob : pendingJobs) {
+            final Optional<MultiTransferJob> resumedJob = resumeJob(multiJob);
             resumedJob.ifPresent(job -> resumedJobs.add(job.getJobIdString()));
         }
 
@@ -233,27 +234,28 @@ public class JobOrchestrator<T extends DataRequest, P extends TransferProcess> {
     }
 
     private List<MultiTransferJob> getPendingJobs() {
-        List<JobState> validStates = List.of(JobState.INITIAL, JobState.RUNNING, JobState.TRANSFERS_FINISHED);
+        final List<JobState> validStates = List.of(JobState.INITIAL, JobState.RUNNING, JobState.TRANSFERS_FINISHED);
         return jobStore.findByStates(validStates);
     }
 
-    private Optional<MultiTransferJob> resumeJob(MultiTransferJob multiJob) {
-        Stream<T> requests = Stream.empty();
+    private Optional<MultiTransferJob> resumeJob(final MultiTransferJob multiJob) {
+        final Stream<T> requests = initiateRequestQueue(multiJob);
 
-        requests = initiateRequestQueue(multiJob, requests);
-
-        long transferCount = startTransferProcess(multiJob, requests);
+        final long transferCount = startTransferProcess(multiJob, requests);
 
         if (transferCount == 0) {
             callCompleteHandlerIfFinished(multiJob.getJobIdString());
         }
 
-        return jobStore.find(multiJob.getJobIdString()).map(job -> job.getJob().getState().equals(JobState.ERROR) ? null : job);
+        return jobStore.find(multiJob.getJobIdString())
+                       .map(job -> job.getJob().getState().equals(JobState.ERROR) ? null : job);
     }
 
-    private Stream<T> initiateRequestQueue(final MultiTransferJob multiJob, Stream<T> requests) {
+    private Stream<T> initiateRequestQueue(final MultiTransferJob multiJob) {
+        Stream<T> requests = Stream.empty();
         try {
-            requests = handler.initiate(multiJob);
+            final Map<String, DataRequest> transferProcessIds = multiJob.getTransferProcessIds();
+            requests = (Stream<T>) transferProcessIds.values().stream();
         } catch (RuntimeException e) {
             markJobInError(multiJob, e, JOB_EXECUTION_FAILED);
             meterService.incrementJobFailed();
@@ -267,7 +269,7 @@ public class JobOrchestrator<T extends DataRequest, P extends TransferProcess> {
         try {
             transferCount = startTransfers(multiJob, requests);
         } catch (JobException e) {
-            markJobInError(multiJob, e, ("Transfer process interrupted unexpectedly."));
+            markJobInError(multiJob, e, "Transfer process interrupted unexpectedly.");
             meterService.incrementException();
         }
         return transferCount;
@@ -310,9 +312,7 @@ public class JobOrchestrator<T extends DataRequest, P extends TransferProcess> {
 
     private void publishJobProcessingFinishedEventIfFinished(final String jobId) {
         jobStore.find(jobId).ifPresent(job -> {
-            if (job.getJob().getState().equals(JobState.COMPLETED) || job.getJob()
-                                                                         .getState()
-                                                                         .equals(JobState.ERROR)) {
+            if (job.getJob().getState().equals(JobState.COMPLETED) || job.getJob().getState().equals(JobState.ERROR)) {
                 applicationEventPublisher.publishEvent(
                         new JobProcessingFinishedEvent(job.getJobIdString(), job.getJob().getState(),
                                 job.getJobParameter().getCallbackUrl()));
@@ -329,7 +329,7 @@ public class JobOrchestrator<T extends DataRequest, P extends TransferProcess> {
         final JobParameter jobData = job.getJobParameter();
 
         final var response = processManager.initiateRequest(dataRequest,
-                transferId -> jobStore.addTransferProcess(job.getJobIdString(), transferId),
+                transfer -> jobStore.addTransferProcess(job.getJobIdString(), transfer, dataRequest),
                 this::transferProcessCompleted, jobData);
 
         if (response.getStatus() != ResponseStatus.OK) {
