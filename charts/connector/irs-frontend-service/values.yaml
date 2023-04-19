@@ -1,0 +1,83 @@
+---
+replicaCount: 1
+
+image:
+  repository: ghcr.io/catenax-ng/product-item-relationship-service-frontend
+  pullPolicy: Always
+  tag: 1.0.3
+
+serviceAccount:
+  create: true
+  annotations: {}
+  name: ""
+
+livenessProbe:
+  enabled: true
+
+readinessProbe:
+  enabled: true
+
+service:
+  type: ClusterIP
+  port: 8080
+
+resources:
+  limits:
+    cpu: 250m
+    memory: 512Mi
+  requests:
+    cpu: 250m
+    memory: 512Mi
+
+autoscaling:
+  enabled: false
+  minReplicas: 1
+  maxReplicas: 2
+  targetCPUUtilizationPercentage: 80
+  targetMemoryUtilizationPercentage: 80
+
+securityContext:
+  # fsGroup: 999
+  # runAsUser: 999
+  # allowPrivilegeEscalation: false
+  # runAsNonRoot: true
+  # seccompProfile:
+  #   type: RuntimeDefault
+  # capabilities:
+  #   drop: ["ALL"]
+
+ingress:
+  enabled: true
+  className: "nginx"
+  annotations:
+    nginx.ingress.kubernetes.io/ssl-passthrough: "false"
+    nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
+    nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
+  hosts:
+    - host: "irs-frontend.dev.demo.catena-x.net"
+      paths:
+        - path: /
+          pathType: ImplementationSpecific
+  tls:
+    - hosts:
+        - "irs-frontend.dev.demo.catena-x.net"
+      secretName: tls-secret
+
+registry:
+  default:
+    global:
+      asset:
+        id: urn:uuid:d3c0bf85-d44f-47c5-990d-fec8a36065c6
+  vite:
+    manual:
+      url: https://github.com/catenax-ng/product-item-relationship-service-frontend/blob/main/docs/userManual.md
+  url:
+    local: https://irs.dev.demo.catena-x.net
+keycloak:
+  url: <path:traceability-irs/data/dev/keycloak/oauth2#tokenUri>
+  grand:
+    type: client_credentials
+  scope: profile email
+  client:
+    id: <path:traceability-irs/data/dev/keycloak/oauth2#clientId>
+    secret: <path:traceability-irs/data/dev/keycloak/oauth2#clientSecret>
