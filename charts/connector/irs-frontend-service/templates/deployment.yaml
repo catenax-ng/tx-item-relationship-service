@@ -2,7 +2,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ .Chart.Name }}
+  name: {{ include "irs-frontend-service.fullname" . }}
   namespace: {{ .Release.Namespace | default "default" | quote }}
   labels:
     {{- include "irs-frontend-service.labels" . | nindent 4 }}
