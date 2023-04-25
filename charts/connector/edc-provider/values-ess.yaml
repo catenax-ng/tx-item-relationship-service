@@ -11,6 +11,8 @@ irs-edc-provider:
         limits:
           cpu: 1
           memory: 1.5Gi
+      persistence:
+        size: 2Gi
 
   ##################################
   # EDC Controlplane Configuration #
