@@ -37,6 +37,7 @@ import java.util.function.UnaryOperator;
 import java.util.stream.Collectors;
 
 import lombok.extern.slf4j.Slf4j;
+import org.eclipse.tractusx.irs.aaswrapper.job.ItemDataRequest;
 import org.eclipse.tractusx.irs.component.enums.JobState;
 import org.jetbrains.annotations.Nullable;
 
@@ -106,7 +107,7 @@ public abstract class BaseJobStore implements JobStore {
     }
 
     @Override
-    public void addTransferProcess(final String jobId, final String processId, final DataRequest dataRequest) {
+    public void addTransferProcess(final String jobId, final String processId, final ItemDataRequest dataRequest) {
         log.info("Adding transfer process {} to job {}", processId, jobId);
         modifyJob(jobId, job -> job.toBuilder().transferProcessId(processId, dataRequest).transitionInProgress().build());
     }

@@ -24,7 +24,9 @@ package org.eclipse.tractusx.irs.listeners;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.eclipse.tractusx.irs.connector.job.DataRequest;
 import org.eclipse.tractusx.irs.connector.job.JobOrchestrator;
+import org.eclipse.tractusx.irs.connector.job.TransferProcess;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.Async;
@@ -37,12 +39,13 @@ import org.springframework.stereotype.Component;
 @Component
 @RequiredArgsConstructor
 public class ApplicationListener {
-    final private JobOrchestrator jobOrchestrator;
+
+    private final JobOrchestrator<DataRequest, TransferProcess> jobOrchestrator;
     @Async
     @EventListener(ApplicationReadyEvent.class)
     public void applicationReadyEvent() {
         log.info("Resuming pending jobs...");
-        jobOrchestrator.resumeJobsDuringIRSRestart();
+        jobOrchestrator.resumePendingJobsDuringIRSRestart();
     }
 }
 

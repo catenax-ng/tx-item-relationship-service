@@ -41,6 +41,7 @@ import lombok.NonNull;
 import lombok.Singular;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
+import org.eclipse.tractusx.irs.aaswrapper.job.ItemDataRequest;
 import org.eclipse.tractusx.irs.component.Job;
 import org.eclipse.tractusx.irs.component.JobErrorDetails;
 import org.eclipse.tractusx.irs.component.JobParameter;
@@ -60,7 +61,7 @@ public class MultiTransferJob {
      * Collection of transfer IDs that have not yet completed for the job.
      */
     @Singular
-    private final Map<String,DataRequest> transferProcessIds;
+    private final Map<String, ItemDataRequest> transferProcessIds;
     /**
      * The attached job.
      */
@@ -76,7 +77,7 @@ public class MultiTransferJob {
     @Singular
     private List<TransferProcess> completedTransfers;
 
-    public Map<String, DataRequest> getTransferProcessIds() {
+    public Map<String, ItemDataRequest> getTransferProcessIds() {
         return Collections.unmodifiableMap(this.transferProcessIds);
     }
 

@@ -36,6 +36,7 @@ import java.util.stream.Stream;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.eclipse.tractusx.irs.aaswrapper.job.ItemDataRequest;
 import org.eclipse.tractusx.irs.aaswrapper.job.JobProcessingFinishedEvent;
 import org.eclipse.tractusx.irs.component.GlobalAssetIdentification;
 import org.eclipse.tractusx.irs.component.Job;
@@ -43,6 +44,7 @@ import org.eclipse.tractusx.irs.component.JobParameter;
 import org.eclipse.tractusx.irs.component.enums.JobState;
 import org.eclipse.tractusx.irs.services.MeterRegistryService;
 import org.eclipse.tractusx.irs.services.SecurityHelperService;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.scheduling.annotation.Scheduled;
 
@@ -221,9 +223,9 @@ public class JobOrchestrator<T extends DataRequest, P extends TransferProcess> {
         log.info("Deleted {} failed jobs", multiTransferJobs.size());
     }
 
-    public List<String> resumeJobsDuringIRSRestart() {
-        final List<MultiTransferJob> pendingJobs = getPendingJobs();
+    public List<String> resumePendingJobsDuringIRSRestart() {
         final List<String> resumedJobs = new ArrayList<>();
+        final List<MultiTransferJob> pendingJobs = getPendingJobsFromJobStore();
 
         for (final MultiTransferJob multiJob : pendingJobs) {
             final Optional<MultiTransferJob> resumedJob = resumeJob(multiJob);
@@ -233,9 +235,10 @@ public class JobOrchestrator<T extends DataRequest, P extends TransferProcess> {
         return resumedJobs;
     }
 
-    private List<MultiTransferJob> getPendingJobs() {
-        final List<JobState> validStates = List.of(JobState.INITIAL, JobState.RUNNING, JobState.TRANSFERS_FINISHED);
-        return jobStore.findByStates(validStates);
+
+    private List<MultiTransferJob> getPendingJobsFromJobStore() {
+        final List<JobState> pendingStates = List.of(JobState.INITIAL, JobState.RUNNING, JobState.TRANSFERS_FINISHED);
+        return jobStore.findByStates(pendingStates);
     }
 
     private Optional<MultiTransferJob> resumeJob(final MultiTransferJob multiJob) {
@@ -254,7 +257,7 @@ public class JobOrchestrator<T extends DataRequest, P extends TransferProcess> {
     private Stream<T> initiateRequestQueue(final MultiTransferJob multiJob) {
         Stream<T> requests = Stream.empty();
         try {
-            final Map<String, DataRequest> transferProcessIds = multiJob.getTransferProcessIds();
+            final Map<String, ItemDataRequest> transferProcessIds = multiJob.getTransferProcessIds();
             requests = (Stream<T>) transferProcessIds.values().stream();
         } catch (RuntimeException e) {
             markJobInError(multiJob, e, JOB_EXECUTION_FAILED);
@@ -329,7 +332,7 @@ public class JobOrchestrator<T extends DataRequest, P extends TransferProcess> {
         final JobParameter jobData = job.getJobParameter();
 
         final var response = processManager.initiateRequest(dataRequest,
-                transfer -> jobStore.addTransferProcess(job.getJobIdString(), transfer, dataRequest),
+                transfer -> jobStore.addTransferProcess(job.getJobIdString(), transfer, (ItemDataRequest) dataRequest),
                 this::transferProcessCompleted, jobData);
 
         if (response.getStatus() != ResponseStatus.OK) {
