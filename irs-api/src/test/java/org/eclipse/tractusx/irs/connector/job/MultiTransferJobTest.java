@@ -26,9 +26,10 @@ import static org.eclipse.tractusx.irs.util.TestMother.jobParameter;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
-import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
+import org.eclipse.tractusx.irs.aaswrapper.job.ItemDataRequest;
 import org.eclipse.tractusx.irs.component.enums.AspectType;
 import org.eclipse.tractusx.irs.component.enums.JobState;
 import org.eclipse.tractusx.irs.util.TestMother;
@@ -42,12 +43,13 @@ class MultiTransferJobTest {
     TestMother generate = new TestMother();
 
     MultiTransferJob job = generate.job();
+    ItemDataRequest dataRequest = generate.dataRequest();
 
     @Test
     void getTransferProcessIds_Immutable() {
-        final Collection<String> transferProcessIds = job.getTransferProcessIds();
+        final Map<String, ItemDataRequest> transferProcessIds = job.getTransferProcessIds();
 
-        assertThatExceptionOfType(UnsupportedOperationException.class).isThrownBy(() -> transferProcessIds.add(word));
+        assertThatExceptionOfType(UnsupportedOperationException.class).isThrownBy(() -> transferProcessIds.put(word, dataRequest));
     }
 
     @Test
