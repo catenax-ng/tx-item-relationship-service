@@ -31,8 +31,17 @@ import org.eclipse.tractusx.irs.connector.job.DataRequest;
 @Value
 public class ItemDataRequest implements DataRequest {
 
-    private final String itemId;
-    private final Integer depth;
+    String itemId;
+    Integer depth;
+
+    public ItemDataRequest() {
+        this(null, 0);
+    }
+
+    public ItemDataRequest(final String itemId, final Integer depth) {
+        this.itemId = itemId;
+        this.depth = depth;
+    }
 
     public static ItemDataRequest rootNode(final String itemId) {
         return new ItemDataRequest(itemId, 0);

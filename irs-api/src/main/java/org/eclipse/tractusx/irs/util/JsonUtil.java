@@ -31,6 +31,8 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.eclipse.tractusx.irs.aaswrapper.job.AASTransferProcess;
+import org.eclipse.tractusx.irs.aaswrapper.job.ItemDataRequest;
+import org.eclipse.tractusx.irs.connector.job.DataRequest;
 import org.eclipse.tractusx.irs.connector.job.TransferProcess;
 import org.eclipse.tractusx.irs.exceptions.JsonParseException;
 
@@ -49,7 +51,10 @@ public class JsonUtil {
     static {
         final SimpleModule simpleModule = new SimpleModule().addAbstractTypeMapping(TransferProcess.class,
                 AASTransferProcess.class);
+        final SimpleModule dataRequestModule = new SimpleModule().addAbstractTypeMapping(DataRequest.class,
+                ItemDataRequest.class);
 
+        MAPPER.registerModule(dataRequestModule);
         MAPPER.registerModule(simpleModule);
         MAPPER.registerModule(new Jdk8Module());
         MAPPER.registerModule(new JavaTimeModule());
