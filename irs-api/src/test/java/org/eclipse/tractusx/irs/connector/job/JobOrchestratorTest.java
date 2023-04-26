@@ -46,7 +46,6 @@ import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
 import org.eclipse.tractusx.irs.component.enums.JobState;
-import org.eclipse.tractusx.irs.services.MeterRegistryService;
 import org.eclipse.tractusx.irs.util.TestMother;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -57,7 +56,6 @@ import org.mockito.Captor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.context.ApplicationEventPublisher;
 
 @ExtendWith(MockitoExtension.class)
 class JobOrchestratorTest {
@@ -70,12 +68,6 @@ class JobOrchestratorTest {
 
     @Mock
     RecursiveJobHandler<DataRequest, TransferProcess> handler;
-
-    @Mock
-    MeterRegistryService meterRegistryService;
-
-    @Mock
-    ApplicationEventPublisher applicationEventPublisher;
 
     @InjectMocks
     JobOrchestrator<DataRequest, TransferProcess> sut;
@@ -94,7 +86,6 @@ class JobOrchestratorTest {
     TransferInitiateResponse okResponse = generate.okResponse();
     TransferInitiateResponse okResponse2 = generate.okResponse();
     TransferInitiateResponse errorRetryResponse = generate.response(ResponseStatus.ERROR_RETRY);
-    TransferInitiateResponse fatalErrorResponse = generate.response(ResponseStatus.FATAL_ERROR);
     TransferProcess transfer = generate.transfer();
 
     @Test
