@@ -11,6 +11,8 @@ irs-edc-provider:
         limits:
           cpu: 1.5
           memory: 1.5Gi
+      extendedConfiguration:
+        idle_in_transaction_session_timeout: 300s
       persistence:
         size: 2Gi
 
