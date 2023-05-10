@@ -30,6 +30,8 @@ import java.util.UUID;
 import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.examples.Example;
 import org.eclipse.tractusx.irs.component.AsyncFetchedItems;
+import org.eclipse.tractusx.irs.component.BatchResponse;
+import org.eclipse.tractusx.irs.component.BatchOrderResponse;
 import org.eclipse.tractusx.irs.component.Bpn;
 import org.eclipse.tractusx.irs.component.GlobalAssetIdentification;
 import org.eclipse.tractusx.irs.component.Job;
@@ -59,6 +61,7 @@ import org.eclipse.tractusx.irs.component.enums.BomLifecycle;
 import org.eclipse.tractusx.irs.component.enums.Direction;
 import org.eclipse.tractusx.irs.component.enums.JobState;
 import org.eclipse.tractusx.irs.component.enums.ProcessStep;
+import org.eclipse.tractusx.irs.component.enums.ProcessingState;
 import org.eclipse.tractusx.irs.dtos.ErrorResponse;
 import org.eclipse.tractusx.irs.semanticshub.AspectModel;
 import org.eclipse.tractusx.irs.semanticshub.AspectModels;
@@ -75,10 +78,11 @@ import org.springframework.http.HttpStatus;
 public class OpenApiExamples {
     private static final ZonedDateTime EXAMPLE_ZONED_DATETIME = ZonedDateTime.parse("2022-02-03T14:48:54.709Z");
     private static final String JOB_ID = "e5347c88-a921-11ec-b909-0242ac120002";
+
+    private static final UUID UUID_ID = UUID.fromString("f253718e-a270-4367-901b-9d50d9bd8462");
     private static final String GLOBAL_ASSET_ID = "urn:uuid:6c311d29-5753-46d4-b32c-19b918ea93b0";
     private static final String SUBMODEL_IDENTIFICATION = "urn:uuid:fc784d2a-5506-4e61-8e34-21600f8cdeff";
     private static final String JOB_HANDLE_ID_1 = "6c311d29-5753-46d4-b32c-19b918ea93b0";
-    private static final int DEFAULT_DEPTH = 4;
 
     public void createExamples(final Components components) {
         components.addExamples("job-handle", toExample(createJobHandle(JOB_HANDLE_ID_1)));
@@ -105,10 +109,13 @@ public class OpenApiExamples {
                                                                             .withStatusCode(HttpStatus.NOT_FOUND)
                                                                             .build()));
         components.addExamples("complete-job-result", createCompleteJobResult());
+        components.addExamples("complete-order-result", createCompleteOrderResult());
+        components.addExamples("complete-batch-result", createCompleteBatchResult());
         components.addExamples("job-result-without-uncompleted-result-tree", createJobResultWithoutTree());
         components.addExamples("partial-job-result", createPartialJobResult());
         components.addExamples("canceled-job-result", createCanceledJobResult());
         components.addExamples("failed-job-result", createFailedJobResult());
+        components.addExamples("canceled-job-response", createCanceledJobResponse());
         components.addExamples("complete-job-list-processing-state", createJobListProcessingState());
         components.addExamples("aspect-models-list", createAspectModelsResult());
     }
@@ -188,7 +195,7 @@ public class OpenApiExamples {
     private JobParameter createJobParameter() {
         return JobParameter.builder()
                            .bomLifecycle(BomLifecycle.AS_BUILT)
-                           .depth(DEFAULT_DEPTH)
+                           .depth(1)
                            .aspects(List.of(AspectType.SERIAL_PART_TYPIZATION.toString(), AspectType.ADDRESS_ASPECT.toString()))
                            .direction(Direction.DOWNWARD)
                            .collectAspects(false)
@@ -234,6 +241,51 @@ public class OpenApiExamples {
                              .build());
     }
 
+    private Example createCompleteOrderResult() {
+        return toExample(BatchOrderResponse.builder()
+                                           .orderId(UUID_ID)
+                                           .state(ProcessingState.COMPLETED)
+                                           .batchChecksum(1)
+                                           .batches(
+                                                   List.of(BatchOrderResponse.BatchResponse
+                                                           .builder().batchId(UUID_ID)
+                                                           .batchNumber(1)
+                                                           .jobsInBatchChecksum(1)
+                                                           .batchUrl("https://../irs/orders/" + UUID_ID + "/batches/" + UUID_ID)
+                                                           .batchProcessingState(ProcessingState.PARTIAL)
+                                                           .build()))
+                                           .build());
+    }
+
+    private Example createCompleteBatchResult() {
+        return toExample(BatchResponse.builder()
+                                      .batchId(UUID_ID)
+                                      .orderId(UUID_ID)
+                                      .batchNumber(1)
+                                      .batchTotal(1)
+                                      .totalJobs(1)
+                                      .startedOn(EXAMPLE_ZONED_DATETIME)
+                                      .completedOn(EXAMPLE_ZONED_DATETIME)
+                                      .jobs(List.of(JobStatusResult.builder()
+                                                                   .id(UUID.fromString(JOB_HANDLE_ID_1))
+                                                                   .state(JobState.COMPLETED)
+                                                                   .startedOn(EXAMPLE_ZONED_DATETIME)
+                                                                   .completedOn(EXAMPLE_ZONED_DATETIME)
+                                                                   .build()))
+                                      .jobsInBatchChecksum(1)
+                                      .batchProcessingState(ProcessingState.COMPLETED).build());
+    }
+
+    private Example createCanceledJobResponse() {
+        return toExample(Job.builder()
+                .id(UUID.fromString(JOB_HANDLE_ID_1))
+                .globalAssetId(createGAID(GLOBAL_ASSET_ID))
+                .state(JobState.CANCELED)
+                .lastModifiedOn(EXAMPLE_ZONED_DATETIME)
+                .startedOn(EXAMPLE_ZONED_DATETIME)
+                .completedOn(EXAMPLE_ZONED_DATETIME).build());
+    }
+
     private Submodel createSubmodel() {
         return Submodel.builder()
                        .aspectType("urn:bamm:io.catenax.assembly_part_relationship:1.0.0")
@@ -245,7 +297,7 @@ public class OpenApiExamples {
     private Map<String, Object> createAssemblyPartRelationshipPayloadMap() {
         final String assemblyPartRelationshipPayload =
                 "{\"catenaXId\": \"urn:uuid:d9bec1c6-e47c-4d18-ba41-0a5fe8b7f447\", "
-                        + "\"childParts\": [ { \"assembledOn\": \"2022-02-03T14:48:54.709Z\", \"childCatenaXId\": \"urn:uuid:d9bec1c6-e47c-4d18-ba41-0a5fe8b7f447\", "
+                        + "\"childParts\": [ { \"createdOn\": \"2022-02-03T14:48:54.709Z\", \"childCatenaXId\": \"urn:uuid:d9bec1c6-e47c-4d18-ba41-0a5fe8b7f447\", "
                         + "\"lastModifiedOn\": \"2022-02-03T14:48:54.709Z\", \"lifecycleContext\": \"AsBuilt\", \"quantity\": "
                         + "{\"measurementUnit\": {\"datatypeURI\": \"urn:bamm:io.openmanufacturing:meta-model:1.0.0#piece\",\"lexicalValue\": \"piece\"},\"quantityNumber\": 1}}]}";
 

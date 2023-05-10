@@ -91,13 +91,23 @@ spec:
                 secretKeyRef:
                   name: {{ template "irs.secretName" . }}
                   key: keycloakClientSecret
+            - name: PORTAL_OAUTH2_CLIENT_ID
+              valueFrom:
+                secretKeyRef:
+                  name: {{ template "irs.secretName" . }}
+                  key: portalClientId
+            - name: PORTAL_OAUTH2_CLIENT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: {{ template "irs.secretName" . }}
+                  key: portalClientSecret
             - name: EDC_API_KEY_SECRET
               valueFrom:
                 secretKeyRef:
                   name: {{ template "irs.secretName" . }}
                   key: edcApiSecret
             {{- if .Values.env }}
-            {{- include "common.tplvalues.render" (dict "value" .Values.primary.extraEnvVars "context" $) | nindent 12 }}
+            {{- include "common.tplvalues.render" (dict "value" .Values.env "context" $) | nindent 12 }}
             {{- end }}
           ports:
             - name: http

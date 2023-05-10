@@ -34,7 +34,7 @@ import org.eclipse.tractusx.irs.aaswrapper.job.AASTransferProcess;
 import org.eclipse.tractusx.irs.aaswrapper.job.ItemDataRequest;
 import org.eclipse.tractusx.irs.connector.job.DataRequest;
 import org.eclipse.tractusx.irs.connector.job.TransferProcess;
-import org.eclipse.tractusx.irs.exceptions.JsonParseException;
+import org.eclipse.tractusx.irs.common.JsonParseException;
 
 /**
  * JSON object mapper.
