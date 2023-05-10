@@ -44,7 +44,6 @@ import org.eclipse.tractusx.irs.component.JobParameter;
 import org.eclipse.tractusx.irs.component.enums.JobState;
 import org.eclipse.tractusx.irs.services.MeterRegistryService;
 import org.eclipse.tractusx.irs.services.SecurityHelperService;
-import org.jetbrains.annotations.NotNull;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.scheduling.annotation.Scheduled;
 
@@ -232,11 +231,14 @@ public class JobOrchestrator<T extends DataRequest, P extends TransferProcess> {
             resumedJob.ifPresent(job -> resumedJobs.add(job.getJobIdString()));
         }
 
+        log.info(pendingJobs.size() + " were resumed successfully.");
+
         return resumedJobs;
     }
 
 
     private List<MultiTransferJob> getPendingJobsFromJobStore() {
+        log.info("Fetching pending jobs for initialization.");
         final List<JobState> pendingStates = List.of(JobState.INITIAL, JobState.RUNNING, JobState.TRANSFERS_FINISHED);
         return jobStore.findByStates(pendingStates);
     }
