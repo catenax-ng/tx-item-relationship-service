@@ -264,7 +264,6 @@ if __name__ == "__main__":
 
     for tmp_data in testdata:
         if bpns_list is None or tmp_data["bpnl"] in bpns_list or not bpns_list:
-            print(f"uploading bpnl {tmp_data['catenaXId']}")
             catenax_id = tmp_data["catenaXId"]
             identification = uuid.uuid4().urn
             tmp_keys = tmp_data.keys()
