@@ -2749,6 +2749,7 @@ font-style: italic;
     },
     "completedOn" : "2000-01-23T04:56:07.000+00:00",
     "parameter" : {
+      "bpn" : "bpn",
       "depth" : 171976544,
       "bomLifecycle" : "asBuilt",
       "collectAspects" : true,
@@ -3236,6 +3237,7 @@ font-style: italic;
   },
   "completedOn" : "2000-01-23T04:56:07.000+00:00",
   "parameter" : {
+    "bpn" : "bpn",
     "depth" : 171976544,
     "bomLifecycle" : "asBuilt",
     "collectAspects" : true,
@@ -6087,6 +6089,7 @@ font-style: italic;
     },
     "completedOn" : "2000-01-23T04:56:07.000+00:00",
     "parameter" : {
+      "bpn" : "bpn",
       "depth" : 171976544,
       "bomLifecycle" : "asBuilt",
       "collectAspects" : true,
@@ -6406,6 +6409,7 @@ font-style: italic;
     <li><a href="#LinkedItem"><code>LinkedItem</code> - </a></li>
     <li><a href="#MeasurementUnit"><code>MeasurementUnit</code> - </a></li>
     <li><a href="#PageResult"><code>PageResult</code> - </a></li>
+    <li><a href="#PartChainIdentificationKey"><code>PartChainIdentificationKey</code> - </a></li>
     <li><a href="#ProcessingError"><code>ProcessingError</code> - </a></li>
     <li><a href="#ProtocolInformation"><code>ProtocolInformation</code> - </a></li>
     <li><a href="#Quantity"><code>Quantity</code> - </a></li>
@@ -6608,6 +6612,7 @@ font-style: italic;
 <div class="param">bomLifecycle (optional)</div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span> The lifecycle context in which the child part was assembled into the parent part. </div>
         <div class="param-enum-header">Enum:</div>
         <div class="param-enum">asBuilt</div><div class="param-enum">asPlanned</div>
+<div class="param">bpn (optional)</div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span>  </div>
 <div class="param">callbackUrl (optional)</div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span>  </div>
 <div class="param">collectAspects (optional)</div><div class="param-desc"><span class="param-type"><a href="#boolean">Boolean</a></span>  </div>
 <div class="param">depth (optional)</div><div class="param-desc"><span class="param-type"><a href="#integer">Integer</a></span>  format: int32</div>
@@ -6682,6 +6687,14 @@ font-style: italic;
     </div>  <!-- field-items -->
   </div>
   <div class="model">
+    <h3><a name="PartChainIdentificationKey"><code>PartChainIdentificationKey</code> - </a> <a class="up" href="#__Models">Up</a></h3>
+    <div class='model-description'>Key object contains required attributes for identify part chain entry node.</div>
+    <div class="field-items">
+      <div class="param">bpn (optional)</div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span> BPN for part chain identification needed in decentral registry approach </div>
+<div class="param">globalAssetId </div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span> Id of global asset. </div>
+    </div>  <!-- field-items -->
+  </div>
+  <div class="model">
     <h3><a name="ProcessingError"><code>ProcessingError</code> - </a> <a class="up" href="#__Models">Up</a></h3>
     <div class='model-description'></div>
     <div class="field-items">
@@ -6738,8 +6751,8 @@ font-style: italic;
 <div class="param">direction (optional)</div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span> Item graph traversal direction. </div>
         <div class="param-enum-header">Enum:</div>
         <div class="param-enum">upward</div><div class="param-enum">downward</div>
-<div class="param">globalAssetIds </div><div class="param-desc"><span class="param-type"><a href="#string">array[String]</a></span>  </div>
 <div class="param">jobTimeout (optional)</div><div class="param-desc"><span class="param-type"><a href="#integer">Integer</a></span> Timeout in seconds for each job processing inside the complete order. format: int32</div>
+<div class="param">keys </div><div class="param-desc"><span class="param-type"><a href="#PartChainIdentificationKey">array[PartChainIdentificationKey]</a></span>  </div>
 <div class="param">lookupBPNs (optional)</div><div class="param-desc"><span class="param-type"><a href="#boolean">Boolean</a></span> Flag to specify whether BPNs should be collected and resolved via the configured BPDM URL. Default is false. </div>
 <div class="param">timeout (optional)</div><div class="param-desc"><span class="param-type"><a href="#integer">Integer</a></span> Timeout in seconds for the complete batch order processing. format: int32</div>
     </div>  <!-- field-items -->
@@ -6770,7 +6783,7 @@ font-style: italic;
 <div class="param">direction (optional)</div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span> Item graph traversal direction. </div>
         <div class="param-enum-header">Enum:</div>
         <div class="param-enum">upward</div><div class="param-enum">downward</div>
-<div class="param">globalAssetId </div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span> Id of global asset. </div>
+<div class="param">key </div><div class="param-desc"><span class="param-type"><a href="#PartChainIdentificationKey">PartChainIdentificationKey</a></span>  </div>
 <div class="param">lookupBPNs (optional)</div><div class="param-desc"><span class="param-type"><a href="#boolean">Boolean</a></span> Flag to specify whether BPNs should be collected and resolved via the configured BPDM URL. Default is false. </div>
     </div>  <!-- field-items -->
   </div>
