@@ -812,10 +812,11 @@ pre.rouge {
       <span class="na">allowedNames</span><span class="pi">:</span> <span class="s">ID 3.0 Trace, ID 3.1 Trace, R2_Traceability</span> <span class="c1"># List of comma separated names of the policies to accept.</span>
 
 <span class="na">digitalTwinRegistry</span><span class="pi">:</span>
-  <span class="na">type</span><span class="pi">:</span> <span class="s">central</span>
+  <span class="na">type</span><span class="pi">:</span> <span class="s">${DIGITALTWINREGISTRY_TYPE:decentral}</span> <span class="c1"># The type of DTR. This can be either "central" or "decentral". If "decentral", descriptorEndpoint, shellLookupEndpoint and oAuthClientId is not required.</span>
   <span class="na">descriptorEndpoint</span><span class="pi">:</span> <span class="s">${DIGITALTWINREGISTRY_DESCRIPTOR_URL:}</span> <span class="c1"># The endpoint to retrieve AAS descriptors from the DTR, must contain the placeholder {aasIdentifier}</span>
   <span class="na">shellLookupEndpoint</span><span class="pi">:</span> <span class="s">${DIGITALTWINREGISTRY_SHELL_LOOKUP_URL:}</span> <span class="c1"># The endpoint to lookup shells from the DTR, must contain the placeholder {assetIds}</span>
   <span class="na">oAuthClientId</span><span class="pi">:</span> <span class="s">keycloak</span> <span class="c1"># ID of the OAuth2 client registration to use, see config spring.security.oauth2.client</span>
+  <span class="na">discoveryFinderUrl</span><span class="pi">:</span> <span class="s">${DIGITALTWINREGISTRY_DISCOVERY_FINDER_URL:}</span> <span class="c1"># The endpoint to discover EDC endpoints to a particular BPN.</span>
   <span class="na">timeout</span><span class="pi">:</span>
     <span class="na">read</span><span class="pi">:</span> <span class="s">PT90S</span> <span class="c1"># HTTP read timeout for the digital twin registry client</span>
     <span class="na">connect</span><span class="pi">:</span> <span class="s">PT90S</span> <span class="c1"># HTTP connect timeout for the digital twin registry client</span>
@@ -874,7 +875,7 @@ pre.rouge {
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2023-06-07 14:34:31 UTC
+Last updated 2023-06-13 10:28:04 UTC
 </div>
 </div>
 </body>
