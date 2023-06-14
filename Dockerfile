@@ -60,7 +60,7 @@ COPY --chmod=755 --from=maven /build/irs-api/target/irs-api-*-exec.jar app.jar
 
 USER ${UID}:${GID}
 
-ENTRYPOINT ["java", "-Djava.util.logging.config.file=./logging.properties", "-jar", "app.jar"]
+ENTRYPOINT ["java", "-Djava.util.logging.config.file=./log4j2.properties", "-jar", "app.jar"]
 
 HEALTHCHECK --interval=5m --timeout=3s \
   CMD curl -f http://localhost:4004/actuator/health || exit 1
