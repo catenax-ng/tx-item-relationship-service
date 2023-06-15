@@ -32,6 +32,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+import org.eclipse.tractusx.irs.aaswrapper.job.ItemDataRequest;
 import org.eclipse.tractusx.irs.component.Job;
 import org.eclipse.tractusx.irs.component.JobErrorDetails;
 import org.eclipse.tractusx.irs.component.enums.JobState;
@@ -53,6 +54,8 @@ class InMemoryJobStoreTest {
     TransferProcess process2 = generate.transfer();
     String processId2 = process2.getId();
     String errorDetail = faker.lorem().sentence();
+    ItemDataRequest request1 = generate.dataRequest();
+    ItemDataRequest request2 = generate.dataRequest();
 
     @Test
     void find_WhenNotFound() {
@@ -62,9 +65,9 @@ class InMemoryJobStoreTest {
     @Test
     void findByProcessId_WhenFound() {
         sut.create(job);
-        sut.addTransferProcess(job.getJobIdString(), processId1);
+        sut.addTransferProcess(job.getJobIdString(), processId1, request1);
         sut.create(job2);
-        sut.addTransferProcess(job2.getJobIdString(), processId2);
+        sut.addTransferProcess(job2.getJobIdString(), processId2, request2);
 
         refreshJob();
         assertThat(sut.findByProcessId(processId1)).contains(job);
@@ -73,7 +76,7 @@ class InMemoryJobStoreTest {
     @Test
     void findByProcessId_WhenNotFound() {
         sut.create(job);
-        sut.addTransferProcess(job.getJobIdString(), processId1);
+        sut.addTransferProcess(job.getJobIdString(), processId1, request1);
 
         assertThat(sut.findByProcessId(processId2)).isEmpty();
     }
@@ -88,9 +91,9 @@ class InMemoryJobStoreTest {
     @Test
     void addTransferProcess() {
         sut.create(job);
-        sut.addTransferProcess(job.getJobIdString(), processId1);
+        sut.addTransferProcess(job.getJobIdString(), processId1, request1);
         refreshJob();
-        assertThat(job.getTransferProcessIds()).containsExactly(processId1);
+        assertThat(job.getTransferProcessIds()).containsKey(processId1); // Unchecked call alert.
         assertThat(job.getJob().getState()).isEqualTo(JobState.RUNNING);
     }
 
@@ -106,13 +109,13 @@ class InMemoryJobStoreTest {
     void completeTransferProcess_WhenTransferFound() {
         // Arrange
         sut.create(job);
-        sut.addTransferProcess(job.getJobIdString(), processId1);
+        sut.addTransferProcess(job.getJobIdString(), processId1, request1);
 
         // Act
         sut.completeTransferProcess(job.getJobIdString(), process1);
 
         // Assert
-        assertThat(job.getTransferProcessIds()).isEmpty();
+        assertThat(job.getTransferProcessIds().keySet()).isEmpty();
     }
 
     @Test
@@ -121,7 +124,7 @@ class InMemoryJobStoreTest {
         sut.completeTransferProcess(job.getJobIdString(), process1);
 
         // Assert
-        assertThat(job.getTransferProcessIds()).isEmpty();
+        assertThat(job.getTransferProcessIds().keySet()).isEmpty();
     }
 
     @Test
@@ -129,7 +132,7 @@ class InMemoryJobStoreTest {
         // Arrange
         sut.create(job);
         final String jobId = job.getJobIdString();
-        sut.addTransferProcess(jobId, processId1);
+        sut.addTransferProcess(jobId, processId1, request1);
         sut.completeTransferProcess(jobId, process1);
 
         // Act
@@ -138,15 +141,15 @@ class InMemoryJobStoreTest {
 
         // Assert
         refreshJob();
-        assertThat(job.getTransferProcessIds()).isEmpty();
+        assertThat(job.getTransferProcessIds().entrySet()).isEmpty();
     }
 
     @Test
     void completeTransferProcess_WhenNotLastTransfer_DoesNotTransitionJob() {
         // Arrange
         sut.create(job);
-        sut.addTransferProcess(job.getJobIdString(), processId1);
-        sut.addTransferProcess(job.getJobIdString(), processId2);
+        sut.addTransferProcess(job.getJobIdString(), processId1, request1);
+        sut.addTransferProcess(job.getJobIdString(), processId2, request2);
 
         // Act
         sut.completeTransferProcess(job.getJobIdString(), process1);
@@ -160,8 +163,8 @@ class InMemoryJobStoreTest {
     void completeTransferProcess_WhenLastTransfer_TransitionsJob() {
         // Arrange
         sut.create(job);
-        sut.addTransferProcess(job.getJobIdString(), processId1);
-        sut.addTransferProcess(job.getJobIdString(), processId2);
+        sut.addTransferProcess(job.getJobIdString(), processId1, request1);
+        sut.addTransferProcess(job.getJobIdString(), processId2, request2);
 
         // Act
         sut.completeTransferProcess(job.getJobIdString(), process1);
@@ -205,7 +208,7 @@ class InMemoryJobStoreTest {
     void completeJob_WhenJobInTransfersCompletedState() {
         // Arrange
         sut.create(job);
-        sut.addTransferProcess(job.getJobIdString(), processId1);
+        sut.addTransferProcess(job.getJobIdString(), processId1, request1);
         sut.completeTransferProcess(job.getJobIdString(), process1);
         // Act
         sut.completeJob(job.getJobIdString(), this::doNothing);
@@ -219,7 +222,7 @@ class InMemoryJobStoreTest {
     void completeJob_WhenJobInTransfersInProgressState() {
         // Arrange
         sut.create(job);
-        sut.addTransferProcess(job.getJobIdString(), processId1);
+        sut.addTransferProcess(job.getJobIdString(), processId1, request1);
         // Act
         sut.completeJob(job.getJobIdString(), this::doNothing);
         // Assert
@@ -259,7 +262,7 @@ class InMemoryJobStoreTest {
     void markJobInError_WhenJobInTransfersCompletedState() {
         // Arrange
         sut.create(job);
-        sut.addTransferProcess(job.getJobIdString(), processId1);
+        sut.addTransferProcess(job.getJobIdString(), processId1, request1);
         sut.completeTransferProcess(job.getJobIdString(), process1);
         // Act
         sut.markJobInError(job.getJobIdString(), errorDetail, errorDetail);
@@ -273,7 +276,7 @@ class InMemoryJobStoreTest {
     void markJobInError_WhenJobInTransfersInProgressState() {
         // Arrange
         sut.create(job);
-        sut.addTransferProcess(job.getJobIdString(), processId1);
+        sut.addTransferProcess(job.getJobIdString(), processId1, request1);
         // Act
         sut.markJobInError(job.getJobIdString(), errorDetail, errorDetail);
         // Assert
@@ -287,7 +290,7 @@ class InMemoryJobStoreTest {
         // Arrange
         final ZonedDateTime nowPlusFiveHours = ZonedDateTime.now().plusSeconds(TTL_IN_HOUR_SECONDS * 5);
         sut.create(job);
-        sut.addTransferProcess(job.getJobIdString(), processId1);
+        sut.addTransferProcess(job.getJobIdString(), processId1, request1);
         sut.completeTransferProcess(job.getJobIdString(), process1);
         sut.completeJob(job.getJobIdString(), this::doNothing);
         // Act
@@ -304,7 +307,7 @@ class InMemoryJobStoreTest {
         // Arrange
         final ZonedDateTime nowPlusFiveHours = ZonedDateTime.now().plusSeconds(TTL_IN_HOUR_SECONDS * 5);
         sut.create(job);
-        sut.addTransferProcess(job.getJobIdString(), processId1);
+        sut.addTransferProcess(job.getJobIdString(), processId1, request1);
         sut.markJobInError(job.getJobIdString(), errorDetail, errorDetail);
         // Act
         final List<MultiTransferJob> failedJobs = sut.findByStateAndCompletionDateOlderThan(JobState.ERROR,
@@ -336,7 +339,7 @@ class InMemoryJobStoreTest {
     @Test
     void jobStateIsInProgress() {
         sut.create(job);
-        sut.addTransferProcess(job.getJobIdString(), processId1);
+        sut.addTransferProcess(job.getJobIdString(), processId1, request1);
         final Optional<MultiTransferJob> multiTransferJob = sut.get(job.getJobIdString());
         assertThat(multiTransferJob).isPresent();
         assertThat(multiTransferJob.get().getJob().getState()).isEqualTo(JobState.RUNNING);
@@ -459,7 +462,7 @@ class InMemoryJobStoreTest {
         MultiTransferJob job1 = job.toBuilder().build();
 
         // Act
-        sut.addTransferProcess(job.getJobId().toString(), processId1);
+        sut.addTransferProcess(job.getJobId().toString(), processId1, request1);
         MultiTransferJob job2 = sut.find(job.getJob().getId().toString()).get();
 
         // Assert

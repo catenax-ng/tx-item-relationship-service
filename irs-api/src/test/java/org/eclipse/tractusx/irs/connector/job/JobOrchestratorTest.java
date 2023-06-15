@@ -38,13 +38,14 @@ import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
 import java.time.ZonedDateTime;
+import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
 import org.eclipse.tractusx.irs.component.enums.JobState;
-import org.eclipse.tractusx.irs.services.MeterRegistryService;
 import org.eclipse.tractusx.irs.util.TestMother;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -55,7 +56,6 @@ import org.mockito.Captor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.context.ApplicationEventPublisher;
 
 @ExtendWith(MockitoExtension.class)
 class JobOrchestratorTest {
@@ -69,12 +69,6 @@ class JobOrchestratorTest {
     @Mock
     RecursiveJobHandler<DataRequest, TransferProcess> handler;
 
-    @Mock
-    MeterRegistryService meterRegistryService;
-
-    @Mock
-    ApplicationEventPublisher applicationEventPublisher;
-
     @InjectMocks
     JobOrchestrator<DataRequest, TransferProcess> sut;
 
@@ -85,10 +79,13 @@ class JobOrchestratorTest {
 
     TestMother generate = new TestMother();
     MultiTransferJob job = generate.job(JobState.RUNNING);
+    MultiTransferJob jobInitialState = generate.job(JobState.INITIAL);
+    MultiTransferJob jobTransfersFinishedState = generate.job(JobState.TRANSFERS_FINISHED);
     DataRequest dataRequest = generate.dataRequest();
     DataRequest dataRequest2 = generate.dataRequest();
     TransferInitiateResponse okResponse = generate.okResponse();
     TransferInitiateResponse okResponse2 = generate.okResponse();
+    TransferInitiateResponse errorRetryResponse = generate.response(ResponseStatus.ERROR_RETRY);
     TransferProcess transfer = generate.transfer();
 
     @Test
@@ -383,6 +380,63 @@ class JobOrchestratorTest {
         verifyNoInteractions(processManager);
     }
 
+    @Test
+    void resumePendingJobsDuringIRSRestart_ProcessManagerError_ThrowsJobExceptionForAll() {
+        //Act
+        final List<MultiTransferJob> jobList = List.of(jobInitialState, jobTransfersFinishedState, job);
+        when(jobStore.findByStates(any())).thenReturn(jobList);
+
+        when(processManager.initiateRequest(any(), any(), any(), any())).thenThrow(new JobException());
+
+        List<String> resumedJobs = sut.resumePendingJobsDuringIRSRestart();
+
+        assertThat(resumedJobs).isEmpty();
+        verify(processManager, times(3)).initiateRequest(any(), any(), any(), any());
+    }
+
+    @Test
+    void resumePendingJobsDuringIRSRestart_ProcessManagerError_ThrowsJobExceptionForFirstJob() {
+        final List<MultiTransferJob> jobList = List.of(jobInitialState, jobTransfersFinishedState, job);
+        when(jobStore.findByStates(any())).thenReturn(jobList);
+        lenient().when(processManager.initiateRequest(eq(dataRequest), any(), any(), eq(jobInitialState.getJobParameter()))).thenReturn(errorRetryResponse);
+        lenient().when(processManager.initiateRequest(any(), any(), any(), eq(jobTransfersFinishedState.getJobParameter()))).thenReturn(okResponse);
+        lenient().when(processManager.initiateRequest(any(), any(), any(), eq(job.getJobParameter()))).thenReturn(okResponse2);
+
+        when(jobStore.find(jobInitialState.getJobIdString())).thenReturn(Optional.empty());
+        when(jobStore.find(jobTransfersFinishedState.getJobIdString())).thenReturn(Optional.of(jobTransfersFinishedState));
+        when(jobStore.find(job.getJobIdString())).thenReturn(Optional.of(job));
+
+        List<String> resumedJobs = sut.resumePendingJobsDuringIRSRestart();
+
+        assertThat(resumedJobs).hasSize(2);
+        verify(processManager, times(3)).initiateRequest(any(), any(), any(), any());
+    }
+
+    @Test
+    void resumePendingJobsDuringIRSRestart_PendingJobsAreFound_OkResponse() {
+        // Arrange
+        final List<MultiTransferJob> jobList = List.of(jobInitialState, jobTransfersFinishedState, job);
+        when(jobStore.findByStates(any())).thenReturn(jobList);
+        when(processManager.initiateRequest(any(), any(), any(), any())).thenReturn(okResponse);
+        when(jobStore.find(any())).thenReturn(Optional.of(job));
+
+        // Act
+        List<String> resumedJobs = sut.resumePendingJobsDuringIRSRestart();
+
+        verify(processManager, times(3)).initiateRequest(any(), any(), any(), any());
+        assertThat(resumedJobs).hasSize(3);
+    }
+
+    @Test
+    void resumePendingJobsDuringIRSRestart_NoPendingJobsStored() {
+        when(jobStore.findByStates(any())).thenReturn(Collections.emptyList());
+
+        List<String> resumedJobs = sut.resumePendingJobsDuringIRSRestart();
+
+        verify(jobStore).findByStates(any());
+        assertThat(resumedJobs).isEqualTo(Collections.emptyList());
+    }
+
     private Object byCompletingJob() {
         job = job.toBuilder().transitionTransfersFinished().build();
         lenient().when(jobStore.find(job.getJobIdString())).thenReturn(Optional.of(job));
@@ -410,4 +464,10 @@ class JobOrchestratorTest {
         sut.transferProcessCompleted(transfer);
     }
 
+    // Temporary tests:
+
+    @Test
+    void parseToJobObject() {
+
+    }
 }

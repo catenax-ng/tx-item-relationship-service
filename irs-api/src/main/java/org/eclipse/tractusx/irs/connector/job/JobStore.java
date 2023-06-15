@@ -27,6 +27,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.Consumer;
 
+import org.eclipse.tractusx.irs.aaswrapper.job.ItemDataRequest;
 import org.eclipse.tractusx.irs.component.enums.JobState;
 import org.jetbrains.annotations.Nullable;
 
@@ -83,8 +84,9 @@ public interface JobStore {
      *
      * @param jobId     the job identifier.
      * @param processId identifier of the transfer process to attach.
+     * @param dataRequest data request related to the indicated transfer process.
      */
-    void addTransferProcess(String jobId, String processId);
+    void addTransferProcess(String jobId, String processId, ItemDataRequest dataRequest);
 
     /**
      * Mark transfer process completed for the job.
@@ -124,7 +126,7 @@ public interface JobStore {
     /**
      * Cancel the job with identifier
      *
-     * @param jobId
+     * @param jobId the job identifier.
      * @return cancel job (if it existed)
      */
     Optional<MultiTransferJob> cancelJob(String jobId);

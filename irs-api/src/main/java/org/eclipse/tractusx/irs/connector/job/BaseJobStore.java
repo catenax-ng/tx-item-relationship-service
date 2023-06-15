@@ -26,6 +26,7 @@ import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
@@ -33,8 +34,10 @@ import java.util.function.Consumer;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.function.UnaryOperator;
+import java.util.stream.Collectors;
 
 import lombok.extern.slf4j.Slf4j;
+import org.eclipse.tractusx.irs.aaswrapper.job.ItemDataRequest;
 import org.eclipse.tractusx.irs.component.enums.JobState;
 import org.jetbrains.annotations.Nullable;
 
@@ -90,7 +93,7 @@ public abstract class BaseJobStore implements JobStore {
 
     @Override
     public Optional<MultiTransferJob> findByProcessId(final String processId) {
-        return getAll().stream().filter(j -> j.getTransferProcessIds().contains(processId)).findFirst();
+        return getAll().stream().filter(j -> j.getTransferProcessIds().containsKey(processId)).findFirst();
     }
 
     @Override
@@ -104,9 +107,9 @@ public abstract class BaseJobStore implements JobStore {
     }
 
     @Override
-    public void addTransferProcess(final String jobId, final String processId) {
+    public void addTransferProcess(final String jobId, final String processId, final ItemDataRequest dataRequest) {
         log.info("Adding transfer process {} to job {}", processId, jobId);
-        modifyJob(jobId, job -> job.toBuilder().transferProcessId(processId).transitionInProgress().build());
+        modifyJob(jobId, job -> job.toBuilder().transferProcessId(processId, dataRequest).transitionInProgress().build());
     }
 
     @Override
@@ -119,9 +122,10 @@ public abstract class BaseJobStore implements JobStore {
         log.info("Completing transfer process {} for job {}", process.getId(), jobId);
         modifyJob(jobId, job -> {
             final var remainingTransfers = job.getTransferProcessIds()
+                                              .entrySet()
                                               .stream()
-                                              .filter(id -> !id.equals(process.getId()))
-                                              .toList();
+                                              .filter(transfer -> !transfer.getKey().equals(process.getId()))
+                                              .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
             final var newJob = job.toBuilder()
                                   .clearTransferProcessIds()
                                   .transferProcessIds(remainingTransfers)

@@ -28,6 +28,7 @@ import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -36,6 +37,7 @@ import java.util.stream.Stream;
 
 import io.micrometer.core.instrument.simple.SimpleMeterRegistry;
 import org.eclipse.tractusx.irs.aaswrapper.job.AASTransferProcess;
+import org.eclipse.tractusx.irs.aaswrapper.job.ItemDataRequest;
 import org.eclipse.tractusx.irs.component.GlobalAssetIdentification;
 import org.eclipse.tractusx.irs.component.Job;
 import org.eclipse.tractusx.irs.component.JobParameter;
@@ -197,12 +199,12 @@ public class TestMother {
     public MultiTransferJob job(JobState jobState) {
         return MultiTransferJob.builder()
                                .job(fakeJob(jobState))
+                                .transferProcessIds(Map.of(faker.lorem().characters(), dataRequest()))
                                .build();
     }
 
-    public DataRequest dataRequest() {
-        return new DataRequest() {
-        };
+    public ItemDataRequest dataRequest() {
+        return new ItemDataRequest(UUID.randomUUID().toString(), 3);
     }
 
     public TransferInitiateResponse okResponse() {

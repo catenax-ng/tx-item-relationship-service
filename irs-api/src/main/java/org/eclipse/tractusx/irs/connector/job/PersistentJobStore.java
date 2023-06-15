@@ -99,7 +99,7 @@ public class PersistentJobStore extends BaseJobStore {
             final Optional<MultiTransferJob> job = blobStore.getBlob(toBlobId(jobId)).flatMap(this::toJob);
 
             if (job.isPresent()) {
-                final List<String> ids = Stream.concat(job.get().getTransferProcessIds().stream(),
+                final List<String> ids = Stream.concat(job.get().getTransferProcessIds().keySet().stream(),
                                                        job.get().getCompletedTransfers().stream().map(TransferProcess::getId))
                                                .collect(Collectors.toList());
                 ids.add(jobId);

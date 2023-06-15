@@ -20,34 +20,30 @@
  *
  * SPDX-License-Identifier: Apache-2.0
  ********************************************************************************/
-package org.eclipse.tractusx.irs.aaswrapper.job;
+package org.eclipse.tractusx.irs.listeners;
 
-import lombok.Value;
-import org.eclipse.tractusx.irs.connector.job.DataRequest;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.eclipse.tractusx.irs.connector.job.JobOrchestrator;
+import org.springframework.boot.context.event.ApplicationReadyEvent;
+import org.springframework.context.event.EventListener;
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.stereotype.Component;
 
 /**
- * Data Request for CatenaX IDs
+ * Application listener triggers job resumption during IRS restart.
  */
-@Value
-public class ItemDataRequest implements DataRequest {
+@Slf4j
+@Component
+@RequiredArgsConstructor
+public class ApplicationListener {
 
-    String itemId;
-    Integer depth;
-
-    public ItemDataRequest() {
-        this(null, 0);
-    }
-
-    public ItemDataRequest(final String itemId, final Integer depth) {
-        this.itemId = itemId;
-        this.depth = depth;
-    }
-
-    public static ItemDataRequest rootNode(final String itemId) {
-        return new ItemDataRequest(itemId, 0);
-    }
-
-    public static ItemDataRequest nextDepthNode(final String itemId, final Integer currentDepth) {
-        return new ItemDataRequest(itemId, currentDepth + 1);
+    private final JobOrchestrator<?, ?> jobOrchestrator;
+    @Async
+    @EventListener(ApplicationReadyEvent.class)
+    public void applicationReadyEvent() {
+        log.info("Resuming pending jobs...");
+        jobOrchestrator.resumePendingJobsDuringIRSRestart();
     }
 }
+
