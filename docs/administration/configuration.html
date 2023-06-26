@@ -809,6 +809,14 @@ You can define the URLs as well as most of the secrets yourself.</p>
   <span class="na">secretKey</span><span class="pi">:</span> <span class="s2">"</span><span class="s">${MINIO_SECRET_KEY}"</span> <span class="c1"># S3 secret key</span>
   <span class="na">bucketName</span><span class="pi">:</span> <span class="s">irsbucket</span> <span class="c1"># the name of the S3 bucket to be created / used by the IRS</span>
 
+<span class="na">policystore</span><span class="pi">:</span>
+  <span class="na">persistence</span><span class="pi">:</span>
+    <span class="na">endpoint</span><span class="pi">:</span> <span class="s2">"</span><span class="s">${MINIO_URL}"</span> <span class="c1"># S3 compatible API endpoint (e.g. Minio)</span>
+    <span class="na">accessKey</span><span class="pi">:</span> <span class="s2">"</span><span class="s">${MINIO_ACCESS_KEY}"</span> <span class="c1"># S3 access key</span>
+    <span class="na">secretKey</span><span class="pi">:</span> <span class="s2">"</span><span class="s">${MINIO_SECRET_KEY}"</span> <span class="c1"># S3 secret key</span>
+    <span class="na">bucketName</span><span class="pi">:</span> <span class="s">irs-policy-bucket</span> <span class="c1"># the name of the S3 bucket to be created / used by the policy store</span>
+    <span class="na">daysToLive</span><span class="pi">:</span> <span class="s">-1</span> <span class="c1"># number of days to keep policies in the store, use -1 to disable cleanup</span>
+
 <span class="na">resilience4j</span><span class="pi">:</span>
   <span class="na">retry</span><span class="pi">:</span> <span class="c1"># REST client retry configuration</span>
     <span class="na">configs</span><span class="pi">:</span>
@@ -1483,7 +1491,7 @@ Keep the values for these settings safe and do not publish them!
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2023-06-22 14:04:36 UTC
+Last updated 2023-06-26 15:30:41 UTC
 </div>
 </div>
 </body>
