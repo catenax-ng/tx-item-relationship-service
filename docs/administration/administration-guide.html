@@ -907,11 +907,12 @@ You can define the URLs as well as most of the secrets yourself.</p>
         <span class="na">exponentialBackoffMultiplier</span><span class="pi">:</span> <span class="m">2</span> <span class="c1"># Multiplier for the exponential delay</span>
         <span class="na">ignore-exceptions</span><span class="pi">:</span> <span class="c1"># Do not retry on the listed exceptions</span>
           <span class="pi">-</span> <span class="s">org.springframework.web.client.HttpClientErrorException.NotFound</span>
+          <span class="pi">-</span> <span class="s">org.eclipse.tractusx.irs.edc.client.ItemNotFoundInCatalogException</span>
     <span class="na">instances</span><span class="pi">:</span>
       <span class="na">registry</span><span class="pi">:</span>
         <span class="na">baseConfig</span><span class="pi">:</span> <span class="s">default</span>
 
-<span class="na">edc</span><span class="pi">:</span>
+<span class="na">irs-edc-client</span><span class="pi">:</span>
   <span class="na">callback-url</span><span class="pi">:</span> <span class="s">${EDC_TRANSFER_CALLBACK_URL:}</span> <span class="c1"># The URL where the EDR token callback will be sent to.</span>
   <span class="na">controlplane</span><span class="pi">:</span>
     <span class="na">request-ttl</span><span class="pi">:</span> <span class="s">${EDC_CONTROLPLANE_REQUEST_TTL:PT10M}</span> <span class="c1"># How long to wait for an async EDC negotiation request to finish, ISO 8601 Duration</span>
@@ -944,6 +945,8 @@ You can define the URLs as well as most of the secrets yourself.</p>
       <span class="na">enabled</span><span class="pi">:</span> <span class="no">true</span> <span class="c1"># Set to false to disable caching</span>
       <span class="na">ttl</span><span class="pi">:</span> <span class="s">P1D</span> <span class="c1"># Time after which a cached Item is no longer valid and the real catalog is called instead</span>
       <span class="na">maxCachedItems</span><span class="pi">:</span> <span class="m">64000</span> <span class="c1"># Maximum amount of cached catalog items</span>
+<span class="na">edc</span><span class="pi">:</span>
+  <span class="na">catalog</span><span class="pi">:</span>
     <span class="na">policies</span><span class="pi">:</span>
       <span class="c1"># IRS will only negotiate contracts for offers with a policy as defined in the allowedNames list.</span>
       <span class="c1"># If a requested asset does not provide one of these policies, a tombstone will be created and this node will not be processed.</span>
@@ -995,6 +998,7 @@ You can define the URLs as well as most of the secrets yourself.</p>
 <span class="na">ess</span><span class="pi">:</span>
   <span class="na">localBpn</span><span class="pi">:</span> <span class="s">${ESS_LOCAL_BPN:}</span> <span class="c1"># BPN value of product - used during EDC notification communication</span>
   <span class="na">localEdcEndpoint</span><span class="pi">:</span> <span class="s">${EDC_PROVIDER_URL:}</span> <span class="c1"># EDC Provider Url - used during EDC notification communication</span>
+  <span class="na">managementPath</span><span class="pi">:</span> <span class="s">${EDC_MANAGEMENT_PATH:/management/v2}</span> <span class="c1"># EDC management API path - used for notification asset creation</span>
   <span class="na">irs</span><span class="pi">:</span>
     <span class="na">url</span><span class="pi">:</span> <span class="s2">"</span><span class="s">${IRS_URL:}"</span> <span class="c1"># IRS Url to connect with</span>
   <span class="na">discovery</span><span class="pi">:</span>
@@ -1091,10 +1095,6 @@ You can define the URLs as well as most of the secrets yourself.</p>
     <span class="na">path</span><span class="pi">:</span> <span class="s">/submodel</span>
     <span class="na">urnprefix</span><span class="pi">:</span> <span class="s">/urn</span>
   <span class="na">catalog</span><span class="pi">:</span>
-    <span class="na">cache</span><span class="pi">:</span>
-      <span class="na">enabled</span><span class="pi">:</span> <span class="no">false</span>  <span class="c1"># Set to false to disable caching</span>
-      <span class="na">ttl</span><span class="pi">:</span> <span class="s">P1D</span>  <span class="c1"># Time after which a cached Item is no longer valid and the real catalog is called instead</span>
-      <span class="na">maxCachedItems</span><span class="pi">:</span> <span class="m">64000</span>  <span class="c1"># Maximum amount of cached catalog items</span>
     <span class="na">policies</span><span class="pi">:</span>
       <span class="c1"># IRS will only negotiate contracts for offers with a policy as defined in the allowedNames list.</span>
       <span class="c1"># If a requested asset does not provide one of these policies, a tombstone will be created and this node will not be processed.</span>
@@ -1108,6 +1108,7 @@ You can define the URLs as well as most of the secrets yourself.</p>
 <span class="na">ess</span><span class="pi">:</span>
   <span class="na">mockEdcResult</span><span class="pi">:</span>  <span class="c1"># Map of BPNs and YES/NO strings - this configures the ESS mock response in case it called to investigate a BPN</span>
   <span class="na">mockRecursiveEdcAsset</span><span class="pi">:</span>  <span class="c1"># List of BPNs for which the special, mocked notification asset should be used</span>
+  <span class="na">managementPath</span><span class="pi">:</span> <span class="s2">"</span><span class="s">/management/v2"</span>  <span class="c1"># EDC management API path - used for notification asset creation</span>
 
 <span class="na">config</span><span class="pi">:</span>
   <span class="c1"># If true, the config provided below will completely replace the configmap.</span>
@@ -1198,7 +1199,10 @@ You can define the URLs as well as most of the secrets yourself.</p>
 
   <span class="na">admin</span><span class="pi">:</span>
     <span class="na">existingSecret</span><span class="pi">:</span> <span class="s2">"</span><span class="s">{{</span><span class="nv"> </span><span class="s">.Release.Name</span><span class="nv"> </span><span class="s">}}-irs-helm"</span>
-    <span class="na">userKey</span><span class="pi">:</span> <span class="s">grafanaUser</span></code></pre>
+    <span class="na">userKey</span><span class="pi">:</span> <span class="s">grafanaUser</span>
+    <span class="na">passwordKey</span><span class="pi">:</span> <span class="s">grafanaPassword</span>
+
+  <span class="na">datasources</span><span class="pi">:</span></code></pre>
 </div>
 </div>
 <div class="colist arabic">
@@ -1669,7 +1673,7 @@ It can also happen if the persistent volume claim is deleted / recreated.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2023-07-06 10:28:02 UTC
+Last updated 2023-07-14 14:38:04 UTC
 </div>
 </div>
 </body>

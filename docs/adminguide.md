@@ -184,11 +184,12 @@ resilience4j:
         exponentialBackoffMultiplier: 2 # Multiplier for the exponential delay
         ignore-exceptions: # Do not retry on the listed exceptions
           - org.springframework.web.client.HttpClientErrorException.NotFound
+          - org.eclipse.tractusx.irs.edc.client.ItemNotFoundInCatalogException
     instances:
       registry:
         baseConfig: default
 
-edc:
+irs-edc-client:
   callback-url: ${EDC_TRANSFER_CALLBACK_URL:} # The URL where the EDR token callback will be sent to.
   controlplane:
     request-ttl: ${EDC_CONTROLPLANE_REQUEST_TTL:PT10M} # How long to wait for an async EDC negotiation request to finish, ISO 8601 Duration
@@ -221,6 +222,8 @@ edc:
       enabled: true # Set to false to disable caching
       ttl: P1D # Time after which a cached Item is no longer valid and the real catalog is called instead
       maxCachedItems: 64000 # Maximum amount of cached catalog items
+edc:
+  catalog:
     policies:
       # IRS will only negotiate contracts for offers with a policy as defined in the allowedNames list.
       # If a requested asset does not provide one of these policies, a tombstone will be created and this node will not be processed.
@@ -272,6 +275,7 @@ bpdm:
 ess:
   localBpn: ${ESS_LOCAL_BPN:} # BPN value of product - used during EDC notification communication
   localEdcEndpoint: ${EDC_PROVIDER_URL:} # EDC Provider Url - used during EDC notification communication
+  managementPath: ${EDC_MANAGEMENT_PATH:/management/v2} # EDC management API path - used for notification asset creation
   irs:
     url: "${IRS_URL:}" # IRS Url to connect with
   discovery:
@@ -366,10 +370,6 @@ edc:
     path: /submodel
     urnprefix: /urn
   catalog:
-    cache:
-      enabled: false  # Set to false to disable caching
-      ttl: P1D  # Time after which a cached Item is no longer valid and the real catalog is called instead
-      maxCachedItems: 64000  # Maximum amount of cached catalog items
     policies:
       # IRS will only negotiate contracts for offers with a policy as defined in the allowedNames list.
       # If a requested asset does not provide one of these policies, a tombstone will be created and this node will not be processed.
@@ -383,6 +383,7 @@ discovery:
 ess:
   mockEdcResult:  # Map of BPNs and YES/NO strings - this configures the ESS mock response in case it called to investigate a BPN
   mockRecursiveEdcAsset:  # List of BPNs for which the special, mocked notification asset should be used
+  managementPath: "/management/v2"  # EDC management API path - used for notification asset creation
 
 config:
   # If true, the config provided below will completely replace the configmap.
@@ -474,6 +475,9 @@ grafana:
   admin:
     existingSecret: "{{ .Release.Name }}-irs-helm"
     userKey: grafanaUser
+    passwordKey: grafanaPassword
+
+  datasources:
 ```
 
 1. Use this to enable or disable the monitoring components
