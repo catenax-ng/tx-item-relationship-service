@@ -947,7 +947,7 @@ You can define the URLs as well as most of the secrets yourself.</p>
   <span class="na">type</span><span class="pi">:</span> <span class="s">decentral</span>  <span class="c1"># The type of DTR. This can be either "central" or "decentral". If "decentral", descriptorEndpoint, shellLookupEndpoint and oAuthClientId is not required.</span>
   <span class="na">url</span><span class="pi">:</span>  <span class="c1"># "https://&lt;digital-twin-registry-url&gt;"</span>
   <span class="na">descriptorEndpoint</span><span class="pi">:</span> <span class="pi">&gt;-</span>
-    <span class="s">{{ tpl (.Values.digitalTwinRegistry.url | default "") . }}/registry/shell-descriptors/{aasIdentifier}</span>
+    <span class="s">{{ tpl (.Values.digitalTwinRegistry.url | default "") . }}/shell-descriptors/{aasIdentifier}</span>
   <span class="na">shellLookupEndpoint</span><span class="pi">:</span> <span class="pi">&gt;-</span>
     <span class="s">{{ tpl (.Values.digitalTwinRegistry.url | default "") . }}/lookup/shells?assetIds={assetIds}</span>
   <span class="na">discoveryFinderUrl</span><span class="pi">:</span>  <span class="c1"># "https://&lt;discovery-finder-url&gt;</span>
@@ -1292,7 +1292,7 @@ Keep the values for these settings safe and do not publish them!
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2023-07-19 13:23:26 UTC
+Last updated 2023-07-21 08:23:09 UTC
 </div>
 </div>
 </body>
