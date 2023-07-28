@@ -1,0 +1,24 @@
+@startuml
+autonumber
+
+skinparam monochrome true
+skinparam shadowing false
+
+actor Actor
+
+box IRS
+participant IRS
+
+end box
+
+
+box Tier 1
+participant AAS
+participant EDC
+participant SubmodelServer
+
+end box
+
+
+IRS --> AAS : getAAS  
+@enduml
