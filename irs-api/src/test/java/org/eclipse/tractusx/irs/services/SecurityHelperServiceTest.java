@@ -23,13 +23,17 @@
 package org.eclipse.tractusx.irs.services;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 import static org.springframework.security.oauth2.jwt.JwtClaimNames.SUB;
 
 import java.time.Instant;
+import java.util.List;
 import java.util.Map;
 
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.jwt.Jwt;
@@ -78,6 +82,54 @@ class SecurityHelperServiceTest {
         assertThat(bpnClaim).isEqualTo(BPN);
     }
 
+    @Test
+    void shouldReturnIsAdminForAdminRole() {
+        // given
+        thereIsGrantedAuthority("admin_irs");
+
+        // when
+        final Boolean result = securityHelperService.isAdmin();
+
+        // then
+        assertThat(result).isTrue();
+    }
+
+    @Test
+    void shouldReturnIsNotAdminForOtherRole() {
+        // given
+        thereIsGrantedAuthority("other_role");
+
+        // when
+        final Boolean result = securityHelperService.isAdmin();
+
+        // then
+        assertThat(result).isFalse();
+    }
+
+    @Test
+    void shouldReturnClientIdForViewIrs() {
+        // given
+        thereIsGrantedAuthority("view_irs");
+
+        // when
+        final String result = securityHelperService.getClientIdForViewIrs();
+
+        // then
+        assertThat(result).isEqualTo(CLIENT_ID);
+    }
+
+    @Test
+    void shouldReturnEmptyStringForWrongRole() {
+        // given
+        thereIsGrantedAuthority("vie_abc");
+
+        // when
+        final String result = securityHelperService.getClientIdForViewIrs();
+
+        // then
+        assertThat(result).isEqualTo("");
+    }
+
     private void thereIsJwtAuthentication() {
         final JwtAuthenticationToken jwtAuthenticationToken = new JwtAuthenticationToken(jwt());
         SecurityContext securityContext = Mockito.mock(SecurityContext.class);
@@ -88,6 +140,13 @@ class SecurityHelperServiceTest {
     Jwt jwt() {
         return new Jwt("token", Instant.now(), Instant.now().plusSeconds(30), Map.of("alg", "none"),
                 Map.of(SUB, CLIENT_ID, "clientId", CLIENT_ID, "bpn", BPN));
+    }
+
+    private void thereIsGrantedAuthority(String role) {
+        JwtAuthenticationToken jwtAuthenticationToken = new JwtAuthenticationToken(jwt(), List.of(new SimpleGrantedAuthority(role)));
+        SecurityContext securityContext = mock(SecurityContext.class);
+        when(securityContext.getAuthentication()).thenReturn(jwtAuthenticationToken);
+        SecurityContextHolder.setContext(securityContext);
     }
 
 }
