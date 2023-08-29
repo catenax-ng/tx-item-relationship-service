@@ -9,6 +9,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added fetchCatalog to EDCCatalogFacade
 - Introduced new API endpoint to update 'validUntil' property of Policy - PUT {{IRS_HOST}}/irs/policies/{policyId}
 
+### Changed
+- Updated IRS Digital Twin Registry Client to support latest version 0.3.14-M1
+
 ### Fixed
 - Fixed bug where BPN's were delivered without 'manufacturerName' property filled
 
