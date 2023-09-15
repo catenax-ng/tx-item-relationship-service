@@ -20,8 +20,9 @@
  *
  * SPDX-License-Identifier: Apache-2.0
  ********************************************************************************/
-package org.eclipse.tractusx.irs.policystore.models;
+package org.eclipse.tractusx.irs.edc.client.policy.model;
 
+import java.time.OffsetDateTime;
 import java.util.List;
 
 import lombok.AllArgsConstructor;
@@ -29,14 +30,19 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 /**
- * A Constraints object use in Permission
+ * A policy with valid time and list of permissions
  */
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-public class Constraints {
+public class Policy {
 
-    private List<Constraint> and;
-    private List<Constraint> or;
+    private String policyId;
+    private OffsetDateTime validUntil;
+    private List<Permission> permissions;
 
+    public Policy update(final OffsetDateTime validUntil) {
+        this.validUntil = validUntil;
+        return this;
+    }
 }

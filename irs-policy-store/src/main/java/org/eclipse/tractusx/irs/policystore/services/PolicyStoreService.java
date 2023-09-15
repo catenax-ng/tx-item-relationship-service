@@ -112,7 +112,12 @@ public class PolicyStoreService implements AcceptedPoliciesProvider {
     }
 
     private AcceptedPolicy toAcceptedPolicy(final Policy policy) {
-        return new AcceptedPolicy(policy.getPolicyId(), policy.getValidUntil());
+        return new AcceptedPolicy(
+                new org.eclipse.tractusx.irs.edc.client.policy.model.Policy(
+                        policy.getPolicyId(),
+                        policy.getValidUntil(),
+                        policy.getPermissions()
+        ), policy.getValidUntil());
     }
 
 }

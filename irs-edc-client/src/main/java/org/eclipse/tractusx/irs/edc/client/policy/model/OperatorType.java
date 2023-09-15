@@ -20,7 +20,7 @@
  *
  * SPDX-License-Identifier: Apache-2.0
  ********************************************************************************/
-package org.eclipse.tractusx.irs.policystore.models;
+package org.eclipse.tractusx.irs.edc.client.policy.model;
 
 import java.util.NoSuchElementException;
 import java.util.stream.Stream;

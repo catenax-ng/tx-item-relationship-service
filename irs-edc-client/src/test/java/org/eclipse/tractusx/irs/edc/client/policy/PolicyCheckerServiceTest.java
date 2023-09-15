@@ -51,8 +51,8 @@ class PolicyCheckerServiceTest {
 
     @BeforeEach
     void setUp() {
-        final var policyList = List.of(new AcceptedPolicy("ID 3.0 Trace", OffsetDateTime.now().plusYears(1)),
-                new AcceptedPolicy("FrameworkAgreement.traceability", OffsetDateTime.now().plusYears(1)));
+        final var policyList = List.of(new AcceptedPolicy(new org.eclipse.tractusx.irs.edc.client.policy.model.Policy(), OffsetDateTime.now().plusYears(1)),
+                new AcceptedPolicy(new org.eclipse.tractusx.irs.edc.client.policy.model.Policy(), OffsetDateTime.now().plusYears(1)));
         when(policyStore.getAcceptedPolicies()).thenReturn(policyList);
         final List<String> leftOperands = List.of("PURPOSE");
         final List<String> rightOperands = List.of("active");
@@ -100,8 +100,8 @@ class PolicyCheckerServiceTest {
     @Test
     void shouldConfirmValidPolicyWhenWildcardIsSet() {
         // given
-        final var policyList = List.of(new AcceptedPolicy("ID 3.0 Trace", OffsetDateTime.now().plusYears(1)),
-                new AcceptedPolicy("*", OffsetDateTime.now().plusYears(1)));
+        final var policyList = List.of(new AcceptedPolicy(new org.eclipse.tractusx.irs.edc.client.policy.model.Policy(), OffsetDateTime.now().plusYears(1)),
+                new AcceptedPolicy(new org.eclipse.tractusx.irs.edc.client.policy.model.Policy(), OffsetDateTime.now().plusYears(1)));
         when(policyStore.getAcceptedPolicies()).thenReturn(policyList);
         Policy policy = createAtomicConstraintPolicy("FrameworkAgreement.traceability", "active");
         // when
@@ -114,7 +114,7 @@ class PolicyCheckerServiceTest {
     @Test
     void shouldRejectWhenWildcardIsPartOfPolicy() {
         // given
-        final var policyList = List.of(new AcceptedPolicy("Policy*", OffsetDateTime.now().plusYears(1)));
+        final var policyList = List.of(new AcceptedPolicy(new org.eclipse.tractusx.irs.edc.client.policy.model.Policy(), OffsetDateTime.now().plusYears(1)));
         when(policyStore.getAcceptedPolicies()).thenReturn(policyList);
         Policy policy = createAtomicConstraintPolicy("FrameworkAgreement.traceability", "active");
         // when
@@ -128,9 +128,9 @@ class PolicyCheckerServiceTest {
     void shouldValidateAndConstraints() {
         // given
         final var policyList = List.of(
-                new AcceptedPolicy("FrameworkAgreement.traceability", OffsetDateTime.now().plusYears(1)),
-                new AcceptedPolicy("Membership", OffsetDateTime.now().plusYears(1)),
-                new AcceptedPolicy("ID 3.1 Trace", OffsetDateTime.now().plusYears(1)));
+                new AcceptedPolicy(new org.eclipse.tractusx.irs.edc.client.policy.model.Policy(), OffsetDateTime.now().plusYears(1)),
+                new AcceptedPolicy(new org.eclipse.tractusx.irs.edc.client.policy.model.Policy(), OffsetDateTime.now().plusYears(1)),
+                new AcceptedPolicy(new org.eclipse.tractusx.irs.edc.client.policy.model.Policy(), OffsetDateTime.now().plusYears(1)));
         when(policyStore.getAcceptedPolicies()).thenReturn(policyList);
         Policy policy = createAndConstraintPolicy(
                 List.of(createAtomicConstraint("FrameworkAgreement.traceability", "active"),
@@ -147,8 +147,8 @@ class PolicyCheckerServiceTest {
     void shouldRejectAndConstraintsWhenOnlyOneMatch() {
         // given
         final var policyList = List.of(
-                new AcceptedPolicy("FrameworkAgreement.traceability", OffsetDateTime.now().plusYears(1)),
-                new AcceptedPolicy("FrameworkAgreement.dismantler", OffsetDateTime.now().plusYears(1)));
+                new AcceptedPolicy(new org.eclipse.tractusx.irs.edc.client.policy.model.Policy(), OffsetDateTime.now().plusYears(1)),
+                new AcceptedPolicy(new org.eclipse.tractusx.irs.edc.client.policy.model.Policy(), OffsetDateTime.now().plusYears(1)));
         when(policyStore.getAcceptedPolicies()).thenReturn(policyList);
         Policy policy = createAndConstraintPolicy(
                 List.of(createAtomicConstraint("FrameworkAgreement.traceability", "active"),
@@ -164,8 +164,8 @@ class PolicyCheckerServiceTest {
     void shouldValidateOrConstraints() {
         // given
         final var policyList = List.of(
-                new AcceptedPolicy("FrameworkAgreement.traceability", OffsetDateTime.now().plusYears(1)),
-                new AcceptedPolicy("FrameworkAgreement.dismantler", OffsetDateTime.now().plusYears(1)));
+                new AcceptedPolicy(new org.eclipse.tractusx.irs.edc.client.policy.model.Policy(), OffsetDateTime.now().plusYears(1)),
+                new AcceptedPolicy(new org.eclipse.tractusx.irs.edc.client.policy.model.Policy(), OffsetDateTime.now().plusYears(1)));
         when(policyStore.getAcceptedPolicies()).thenReturn(policyList);
         Policy policy = createOrConstraintPolicy(
                 List.of(createAtomicConstraint("FrameworkAgreement.traceability", "active"),
@@ -180,8 +180,8 @@ class PolicyCheckerServiceTest {
     @Test
     void shouldRejectOrConstraintsWhenNoneMatch() {
         // given
-        final var policyList = List.of(new AcceptedPolicy("FrameworkAgreement.test", OffsetDateTime.now().plusYears(1)),
-                new AcceptedPolicy("FrameworkAgreement.dismantler", OffsetDateTime.now().plusYears(1)));
+        final var policyList = List.of(new AcceptedPolicy(new org.eclipse.tractusx.irs.edc.client.policy.model.Policy(), OffsetDateTime.now().plusYears(1)),
+                new AcceptedPolicy(new org.eclipse.tractusx.irs.edc.client.policy.model.Policy(), OffsetDateTime.now().plusYears(1)));
         when(policyStore.getAcceptedPolicies()).thenReturn(policyList);
         Policy policy = createAndConstraintPolicy(
                 List.of(createAtomicConstraint("FrameworkAgreement.traceability", "active"),
@@ -197,8 +197,8 @@ class PolicyCheckerServiceTest {
     void shouldValidateXOneConstraints() {
         // given
         final var policyList = List.of(
-                new AcceptedPolicy("FrameworkAgreement.traceability", OffsetDateTime.now().plusYears(1)),
-                new AcceptedPolicy("FrameworkAgreement.dismantler", OffsetDateTime.now().plusYears(1)));
+                new AcceptedPolicy(new org.eclipse.tractusx.irs.edc.client.policy.model.Policy(), OffsetDateTime.now().plusYears(1)),
+                new AcceptedPolicy(new org.eclipse.tractusx.irs.edc.client.policy.model.Policy(), OffsetDateTime.now().plusYears(1)));
         when(policyStore.getAcceptedPolicies()).thenReturn(policyList);
 
         Policy policy = createXOneConstraintPolicy(
@@ -214,8 +214,8 @@ class PolicyCheckerServiceTest {
     @Test
     void shouldRejectXOneConstraintsWhenNoneMatch() {
         // given
-        final var policyList = List.of(new AcceptedPolicy("FrameworkAgreement.test", OffsetDateTime.now().plusYears(1)),
-                new AcceptedPolicy("FrameworkAgreement.dismantler", OffsetDateTime.now().plusYears(1)));
+        final var policyList = List.of(new AcceptedPolicy(new org.eclipse.tractusx.irs.edc.client.policy.model.Policy(), OffsetDateTime.now().plusYears(1)),
+                new AcceptedPolicy(new org.eclipse.tractusx.irs.edc.client.policy.model.Policy(), OffsetDateTime.now().plusYears(1)));
         when(policyStore.getAcceptedPolicies()).thenReturn(policyList);
         Policy policy = createXOneConstraintPolicy(
                 List.of(createAtomicConstraint("FrameworkAgreement.traceability", "active"),
@@ -231,8 +231,8 @@ class PolicyCheckerServiceTest {
     void shouldRejectXOneConstraintsWhenMoreThanOneMatch() {
         // given
         final var policyList = List.of(
-                new AcceptedPolicy("FrameworkAgreement.traceability", OffsetDateTime.now().plusYears(1)),
-                new AcceptedPolicy("Membership", OffsetDateTime.now().plusYears(1)));
+                new AcceptedPolicy(new org.eclipse.tractusx.irs.edc.client.policy.model.Policy(), OffsetDateTime.now().plusYears(1)),
+                new AcceptedPolicy(new org.eclipse.tractusx.irs.edc.client.policy.model.Policy(), OffsetDateTime.now().plusYears(1)));
         when(policyStore.getAcceptedPolicies()).thenReturn(policyList);
         Policy policy = createXOneConstraintPolicy(
                 List.of(createAtomicConstraint("FrameworkAgreement.traceability", "active"),
@@ -248,9 +248,9 @@ class PolicyCheckerServiceTest {
     void shouldAcceptMultipleRightOperands() {
         // given
         final var policyList = List.of(
-                new AcceptedPolicy("FrameworkAgreement.traceability", OffsetDateTime.now().plusYears(1)),
-                new AcceptedPolicy("FrameworkAgreement.dismantler", OffsetDateTime.now().plusYears(1)),
-                new AcceptedPolicy("Membership", OffsetDateTime.now().plusYears(1)));
+                new AcceptedPolicy(new org.eclipse.tractusx.irs.edc.client.policy.model.Policy(), OffsetDateTime.now().plusYears(1)),
+                new AcceptedPolicy(new org.eclipse.tractusx.irs.edc.client.policy.model.Policy(), OffsetDateTime.now().plusYears(1)),
+                new AcceptedPolicy(new org.eclipse.tractusx.irs.edc.client.policy.model.Policy(), OffsetDateTime.now().plusYears(1)));
         when(policyStore.getAcceptedPolicies()).thenReturn(policyList);
         final PolicyCheckerService testee = new PolicyCheckerService(policyStore, List.of("active", "inactive"),
                 List.of());

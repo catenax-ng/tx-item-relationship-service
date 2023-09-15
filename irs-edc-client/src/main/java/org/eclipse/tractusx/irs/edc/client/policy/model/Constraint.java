@@ -1,4 +1,4 @@
-package org.eclipse.tractusx.irs.policystore.models;
+package org.eclipse.tractusx.irs.edc.client.policy.model;
 
 import java.util.List;
 

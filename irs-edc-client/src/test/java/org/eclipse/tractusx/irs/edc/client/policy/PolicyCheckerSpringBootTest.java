@@ -49,8 +49,8 @@ class PolicyCheckerSpringBootTest {
     void shouldValidateWithDefaultOperands() {
         // given
         final var policyList = List.of(
-                new AcceptedPolicy("FrameworkAgreement.traceability", OffsetDateTime.now().plusYears(1)),
-                new AcceptedPolicy("ID 3.1 Trace", OffsetDateTime.now().plusYears(1)));
+                new AcceptedPolicy(new org.eclipse.tractusx.irs.edc.client.policy.model.Policy(), OffsetDateTime.now().plusYears(1)),
+                new AcceptedPolicy(new org.eclipse.tractusx.irs.edc.client.policy.model.Policy(), OffsetDateTime.now().plusYears(1)));
         when(policiesProvider.getAcceptedPolicies()).thenReturn(policyList);
         Policy policy = createAndConstraintPolicy(
                 List.of(createAtomicConstraint("FrameworkAgreement.traceability", "active"),

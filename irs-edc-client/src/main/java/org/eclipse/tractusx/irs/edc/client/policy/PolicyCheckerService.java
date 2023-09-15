@@ -37,7 +37,7 @@ import org.eclipse.edc.policy.model.OrConstraint;
 import org.eclipse.edc.policy.model.Permission;
 import org.eclipse.edc.policy.model.Policy;
 import org.eclipse.edc.policy.model.XoneConstraint;
-import org.eclipse.tractusx.irs.data.StringMapper;
+import org.eclipse.tractusx.irs.edc.client.policy.model.Constraints;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.util.UriUtils;
@@ -56,18 +56,77 @@ public class PolicyCheckerService {
     @Value("${irs-edc-client.catalog.policies.acceptedLeftOperands:PURPOSE}")
     private final List<String> acceptedLeftOperands;
 
-    public boolean isValid(final Policy policy) {
-        final List<PolicyDefinition> policyList = getAllowedPolicies();
-        log.info("Checking policy {} against allowed policies: {}", StringMapper.mapToString(policy),
-                String.join(",", policyList.stream().map(PolicyDefinition::getRightExpressionValue).toList()));
+    public boolean isValid(final Policy actualPolicy) {
+        final List<AcceptedPolicy> acceptedPolicyList = getValidStoredPolicyIds();
+//        log.info("Checking actualPolicy {} against allowed policies: {}", StringMapper.mapToString(actualPolicy),
+//                String.join(",", policyList.stream().map(PolicyDefinition::getRightExpressionValue).toList()));
         if (getValidStoredPolicyIds().contains("*")) {
             return true;
         }
-        return policy.getPermissions().stream().allMatch(permission -> isValid(permission, policyList));
+        return acceptedPolicyList.stream().anyMatch(acceptedPolicy -> isValid(acceptedPolicy, actualPolicy));
+//        return actualPolicy.getPermissions().stream().allMatch(permission -> isValid(permission, policyList));
+    }
+
+    private boolean isValid(final AcceptedPolicy acceptedPolicy, final Policy actualPolicy) {
+        return actualPolicy.getPermissions().stream().anyMatch(actualPermission -> anyValid(acceptedPolicy, actualPermission));
+    }
+
+    private boolean anyValid(final AcceptedPolicy acceptedPolicy, final Permission actualPermission) {
+        return acceptedPolicy.policy().getPermissions().stream().anyMatch(acceptedPermission -> validPermission(acceptedPermission, actualPermission));
+    }
+
+    private boolean validPermission(final org.eclipse.tractusx.irs.edc.client.policy.model.Permission acceptedPermission, final Permission actualPermission) {
+        return actualPermission.getAction().getType().equals(acceptedPermission.getAction().toString())
+                && actualPermission.getConstraints().stream().allMatch(actualConstraint -> validateConstraint(acceptedPermission.getConstraints(), actualConstraint));
+    }
+
+    private boolean validateConstraint(final List<Constraints> constraints, final Constraint actualConstraint) {
+        if (actualConstraint instanceof AtomicConstraint atomicConstraint) {
+            return existIn(constraints, atomicConstraint);
+        } else if (actualConstraint instanceof AndConstraint andConstraint) {
+            return andConstraint.getConstraints().stream().allMatch(actualConst -> existInAnd(constraints, actualConst));
+        } else if (actualConstraint instanceof OrConstraint orConstraint) {
+            return orConstraint.getConstraints().stream().anyMatch(actualConst -> existInOr(constraints, actualConst));
+        }
+        return false;
+    }
+
+    private boolean existInAnd(final List<Constraints> constraints, final Constraint actualConst) {
+        return constraints.stream().anyMatch(constr -> isValidConstraint(constr.getAnd(), actualConst));
+    }
+
+    private boolean existInOr(final List<Constraints> constraints, final Constraint actualConst) {
+        return constraints.stream().anyMatch(constr -> isValidConstraint(constr.getOr(), actualConst));
+    }
+
+    private boolean isValidConstraint(final List<org.eclipse.tractusx.irs.edc.client.policy.model.Constraint> acceptedConstraintList,
+            final Constraint actualConst) {
+        return acceptedConstraintList.stream().anyMatch(acceptedConstraint -> isSame(acceptedConstraint, actualConst));
+    }
+
+    private boolean isSame(final org.eclipse.tractusx.irs.edc.client.policy.model.Constraint acceptedConstraint, final Constraint actualConst) {
+        if (actualConst instanceof AtomicConstraint atomicConstraint) {
+            acceptedConstraint.getLeftOperand().equals(atomicConstraint.getLeftExpression().toString())
+        }
+    }
+
+    private boolean validateAtomicConstraint(final org.eclipse.tractusx.irs.edc.client.policy.model.Constraint acceptedConstraint,
+            final AtomicConstraint atomicConstraint) {
+        return AtomicConstraintValidator.builder()
+                                        .atomicConstraint(atomicConstraint)
+                                        .leftExpressionValue(acceptedConstraint.getLeftOperand())
+                                        .rightExpressionValue(acceptedConstraint.getRightOperand().stream().findFirst().orElseThrow())
+                                        .expectedOperator(Operator.valueOf(acceptedConstraint.getOperator().name()))
+                                        .build()
+                                        .isValid();
+    }
+
+    private boolean existIn(final List<Constraints> constraints, final AtomicConstraint atomicConstraint) {
+
     }
 
     private List<PolicyDefinition> getAllowedPolicies() {
-        final List<String> policyIds = getValidStoredPolicyIds();
+        final List<String> policyIds = new ArrayList<>();
         final List<PolicyDefinition> allowedPolicies = new ArrayList<>();
         acceptedRightOperands.forEach(rightOperand -> allowedPolicies.addAll(
                 policyIds.stream().map(policy -> createPolicy(policy, rightOperand)).toList()));
@@ -77,12 +136,10 @@ public class PolicyCheckerService {
         return allowedPolicies;
     }
 
-    private List<String> getValidStoredPolicyIds() {
+    private List<AcceptedPolicy> getValidStoredPolicyIds() {
         return policyStore.getAcceptedPolicies()
                           .stream()
                           .filter(p -> p.validUntil().isAfter(OffsetDateTime.now()))
-                          .map(AcceptedPolicy::policyId)
-                          .flatMap(this::addEncodedVersion)
                           .toList();
     }
 

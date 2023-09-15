@@ -27,6 +27,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import java.time.OffsetDateTime;
 import java.util.List;
 
+import org.eclipse.tractusx.irs.edc.client.policy.model.Policy;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Test;
 
@@ -61,6 +62,6 @@ class AcceptedPoliciesProviderTest {
     }
     @NotNull
     private static AcceptedPolicy policy() {
-        return new AcceptedPolicy("", OffsetDateTime.now());
+        return new AcceptedPolicy(new Policy(), OffsetDateTime.now());
     }
 }

@@ -20,7 +20,7 @@
  *
  * SPDX-License-Identifier: Apache-2.0
  ********************************************************************************/
-package org.eclipse.tractusx.irs.policystore.models;
+package org.eclipse.tractusx.irs.edc.client.policy.model;
 
 import java.util.List;
 
@@ -29,15 +29,14 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 /**
- * A Permission object gather PolicyType with list of Constraints and its relation
+ * A Constraints object use in Permission
  */
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-public class Permission {
+public class Constraints {
 
-    private PolicyType action;
-    private List<Constraints> constraints;
-
+    private List<Constraint> and;
+    private List<Constraint> or;
 
 }

@@ -20,17 +20,13 @@
  *
  * SPDX-License-Identifier: Apache-2.0
  ********************************************************************************/
-package org.eclipse.tractusx.irs.edc.client.policy;
-
-import java.time.OffsetDateTime;
-
-import org.eclipse.tractusx.irs.edc.client.policy.model.Policy;
+package org.eclipse.tractusx.irs.edc.client.policy.model;
 
 /**
- * A policy accepted for negotiation.
- *
- * @param policy policy with permissions
- * @param validUntil the timestamp after which the policy will no longer be accepted
+ * A PolicyType object use in Permission
  */
-public record AcceptedPolicy(Policy policy, OffsetDateTime validUntil) {
+public enum PolicyType {
+
+    ACCESS, USE
+
 }

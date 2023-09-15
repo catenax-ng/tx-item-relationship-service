@@ -28,6 +28,7 @@ import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.eclipse.tractusx.irs.edc.client.policy.model.Permission;
 
 /**
  * A stored policy object.

@@ -30,13 +30,13 @@ import java.time.OffsetDateTime;
 import java.util.Collections;
 import java.util.List;
 
-import org.eclipse.tractusx.irs.policystore.models.Constraint;
-import org.eclipse.tractusx.irs.policystore.models.Constraints;
+import org.eclipse.tractusx.irs.edc.client.policy.model.Constraint;
+import org.eclipse.tractusx.irs.edc.client.policy.model.Constraints;
+import org.eclipse.tractusx.irs.edc.client.policy.model.OperatorType;
+import org.eclipse.tractusx.irs.edc.client.policy.model.Permission;
+import org.eclipse.tractusx.irs.edc.client.policy.model.PolicyType;
 import org.eclipse.tractusx.irs.policystore.models.CreatePolicyRequest;
-import org.eclipse.tractusx.irs.policystore.models.OperatorType;
-import org.eclipse.tractusx.irs.policystore.models.Permission;
 import org.eclipse.tractusx.irs.policystore.models.Policy;
-import org.eclipse.tractusx.irs.policystore.models.PolicyType;
 import org.eclipse.tractusx.irs.policystore.models.UpdatePolicyRequest;
 import org.eclipse.tractusx.irs.policystore.services.PolicyStoreService;
 import org.junit.jupiter.api.BeforeEach;
