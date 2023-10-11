@@ -296,6 +296,12 @@ ess:
     mockRecursiveEdcAsset: # Mocked BPN Recursive Investigation results
 
 apiAllowedBpn: ${API_ALLOWED_BPN:BPNL00000001CRHK} # BPN value that is allowed to access IRS API
+
+# OAuth2 JWT token parse config. This configures the structure IRS expects when parsing the IRS role of an access token.
+oauth:
+  resourceClaim: "resource_access" # Name of the JWT claim for roles
+  irsNamespace: "Cl20-CX-IRS" # Namespace for the IRS roles
+  roles: "roles" # Name of the list of roles within the IRS namespace
 ```
 
 ### Helm configuration IRS (values.yaml)
@@ -405,6 +411,11 @@ ess:
   mockRecursiveEdcAsset:  # List of BPNs for which the special, mocked notification asset should be used
   managementPath: "/management/v2"  # EDC management API path - used for notification asset creation
 
+oauth:
+  resourceClaim: "resource_access"  # Name of the JWT claim for roles
+  irsNamespace: "Cl20-CX-IRS"  # Namespace for the IRS roles
+  roles: "roles"  # Name of the list of roles within the IRS namespace
+
 config:
   # If true, the config provided below will completely replace the configmap.
   # In this case, you need to provide all required config values defined above yourself!
@@ -480,11 +491,6 @@ prometheus:
 
 
 #########################
-# Grafana Configuration #
-#########################
-grafana:
-  enabled: false  # ①
-  rbac:
 ```
 
 1. Use this to enable or disable the monitoring components
