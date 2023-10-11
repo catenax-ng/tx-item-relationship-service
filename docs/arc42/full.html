@@ -1874,7 +1874,7 @@ A job is processed in this order:</p>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">SubmodelFacade</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">The SubmodelFacade calls the EDC to retrieve data from the submodel server and transforms the response to internal data models.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The SubmodelFacade handles EDC contract negotiations and is responsible for the EDC dataplane requests to retrieve data from the submodel servers.</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">BlobStore</p></td>
@@ -2682,6 +2682,18 @@ In the future, another approach or an additional way to to index the data might 
 </div>
 </div>
 <div class="sect3">
+<h4 id="_digital_twin_edc_requirements">Digital Twin / EDC requirements</h4>
+<div class="paragraph">
+<p>In order to work with the decentral network approach, IRS requires the Digital Twin to contain a <code>"subprotocolBody"</code> in each of the submodelDescriptor endpoints. This <code>"subprotocolBody"</code> has to contain the <code>"id"</code> of the EDC asset, as well as the <code>"dspEndpoint"</code> of the EDC, separated by a semicolon (e.g. <code>"subprotocolBody": "id=123;dspEndpoint=http://edc.control.plane/api/v1/dsp"</code>).</p>
+</div>
+<div class="paragraph">
+<p>The <code>"dspEndpoint"</code> is used to request the EDC catalog of the dataprovider and the <code>"id"</code> to filter for the exact asset inside this catalog.</p>
+</div>
+<div class="paragraph">
+<p>If the <code>"dspEndpoint"</code> is not present, every available EDC endpoint in DiscoveryService will be queried until a asset with the <code>"id"</code> can be found.</p>
+</div>
+</div>
+<div class="sect3">
 <h4 id="_caching">Caching</h4>
 <div class="paragraph">
 <p>The IRS caches data provided externally to avoid unnecessary requests and reduce execution time.</p>
@@ -3028,7 +3040,7 @@ A number of Grafana dashboards are deployed automatically, to display data about
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2023-10-11 09:05:22 UTC
+Last updated 2023-10-11 09:40:03 UTC
 </div>
 </div>
 </body>

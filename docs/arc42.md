@@ -351,7 +351,7 @@ The TransferProcessManager creates executions and provides them to the executor 
 | --- | --- |
 | TransferProcessManager | The TransferProcessManager manages the requests to the EDC and DigitalTwinRegistry. |
 | DigitalTwinRegistryFacade | The DigitalTwinRegistryFacade calls the DigitalTwinRegistry to retrieve data form the AAS registry and transforms the response to internal data models. |
-| SubmodelFacade | The SubmodelFacade calls the EDC to retrieve data from the submodel server and transforms the response to internal data models. |
+| SubmodelFacade | The SubmodelFacade handles EDC contract negotiations and is responsible for the EDC dataplane requests to retrieve data from the submodel servers. |
 | BlobStore | The BlobStore is the database where the relationships and tombstones are stored for a requested item. |
 | DigitalTwinRegistry | The DigitalTwinRegistry is the central database of registered assets. In a decentralized network, the registry is no longer central, but every provider has its own registry. |
 | ExecutorService | The ExecutorService enables the simultaneous execution of requests of transfer processes. |
@@ -893,6 +893,14 @@ Data validation happens at two points:
 The IRS gives its users the ability to manage, create and delete complex policies containing permissions and constraints in order to obtain the most precise control over access and use of data received from the edc provider. Policies stored in Policy Store will serve as input with allowed restriction and will be checked against every item from EDC Catalog.
 
 The structure of a Policy that can be stored in storage can be easily viewed by using Policy Store endpoints in the published API documentation. Each policy may contain more than one permission, which in turn consists of constraints linked together by AND or OR relationships. This model provides full flexibility and control over stored access and use policies.
+
+### Digital Twin / EDC requirements
+
+In order to work with the decentral network approach, IRS requires the Digital Twin to contain a `"subprotocolBody"` in each of the submodelDescriptor endpoints. This `"subprotocolBody"` has to contain the `"id"` of the EDC asset, as well as the `"dspEndpoint"` of the EDC, separated by a semicolon (e.g. `"subprotocolBody": "id=123;dspEndpoint=http://edc.control.plane/api/v1/dsp"`).
+
+The `"dspEndpoint"` is used to request the EDC catalog of the dataprovider and the `"id"` to filter for the exact asset inside this catalog.
+
+If the `"dspEndpoint"` is not present, every available EDC endpoint in DiscoveryService will be queried until a asset with the `"id"` can be found.
 
 ### Caching
 
