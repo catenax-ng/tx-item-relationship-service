@@ -37,7 +37,7 @@ import lombok.Builder;
 import org.apache.commons.lang3.StringUtils;
 
 /**
- * Wrapper class for asynchrous execution of polling jobs.
+ * Wrapper class for asynchronous execution of polling jobs.
  *
  * @param <T> the result type of the polling action
  */
