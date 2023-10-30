@@ -108,7 +108,7 @@ class InvestigationJobProcessingEventListener {
                 final Jobs completedJob = irsItemGraphQueryService.getJobForJobId(job, false);
 
                 final InvestigationResult investigationResult = IncidentValidation.getResult(investigationJob, completedJob,
-                        completedJobId, 0, null);
+                        completedJobId);
 
                 //todo przekazać id joba startującego
                 final BpnInvestigationJob investigationJobUpdate = investigationJob.update(
