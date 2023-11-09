@@ -50,7 +50,6 @@ jobs:
         with:
           comment-id: ${{ steps.find-comment.outputs.comment-id }}
           issue-number: ${{ github.event.pull_request.number }}
-          token: ${{ secrets.GITHUB_TOKEN }}
           body: |
             CHANGELOG file was not updated! Make sure to include important changes.
           edit-mode: replace
