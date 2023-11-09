@@ -22,35 +22,36 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Get changed files
+      - name: Check if CHANGELOG file was changed
         id: changelog-changed
         uses: tj-actions/changed-files@v40
         with:
           files: |
             CHANGELOG.md
 
-      - name: List all changed files
+      - name: Echo result if CHANGELOG file was changed
         if: steps.changelog-changed.outputs.any_changed == 'true'
         run: |
-          for file in ${{ steps.changed-files.outputs.all_changed_files }}; do
+          for file in ${{ steps.changelog-changed.outputs.all_changed_files }}; do
             echo "$file was changed"
           done
 
-      - name: Find comment
+      - name: Find previous comment in PR
         if: steps.changelog-changed.outputs.any_changed == 'true'
         uses: peter-evans/find-comment@v2
-        id: fc
+        id: find-comment
         with:
           issue-number: ${{ github.event.pull_request.number }}
           comment-author: 'github-actions[bot]'
           body-includes: CHANGELOG file was not updated!
 
-      - name: Create or update comment
+      - name: Create or update comment in PR
         if: steps.changelog-changed.outputs.any_changed == 'true'
         uses: peter-evans/create-or-update-comment@v3
         with:
-          comment-id: ${{ steps.fc.outputs.comment-id }}
+          comment-id: ${{ steps.find-comment.outputs.comment-id }}
           issue-number: ${{ github.event.pull_request.number }}
+          token: ${{ secrets.GITHUB_TOKEN }}
           body: |
-            CHANGELOG file was not updated!
+            CHANGELOG file was not updated! Make sure to include important changes.
           edit-mode: replace
