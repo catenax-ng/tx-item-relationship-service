@@ -12,7 +12,8 @@ on:
 jobs:
   analyze:
     runs-on: ubuntu-latest
-    permissions: write-all
+    permissions:
+      pull-requests: write
 
     name: changelog-check
     steps:
