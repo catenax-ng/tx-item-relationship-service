@@ -39,7 +39,7 @@ import org.eclipse.tractusx.irs.component.enums.BomLifecycle;
 import org.eclipse.tractusx.irs.component.enums.Direction;
 
 /**
- * Job parameter of job processing
+ * Job parameter of job processinxxxg
  */
 @Schema(description = "Job parameter of job processing.")
 @Value
