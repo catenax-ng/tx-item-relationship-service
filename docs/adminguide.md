@@ -110,6 +110,9 @@ management: # Spring management API config, see https://spring.io/guides/gs/cent
       enabled: true
     readinessstate:
       enabled: true
+    dependencies:
+      enabled: false
+      urls: { }
   metrics:
     distribution:
       percentiles-histogram:
@@ -235,6 +238,8 @@ irs-edc-client:
       - leftOperand: "Membership"
         operator: "eq"
         rightOperand: "active"
+  connectorEndpointService:
+    cacheTTL: 86400000
 
 digitalTwinRegistry:
   type: ${DIGITALTWINREGISTRY_TYPE:decentral} # The type of DTR. This can be either "central" or "decentral". If "decentral", descriptorEndpoint, shellLookupEndpoint and oAuthClientId is not required.
@@ -314,6 +319,12 @@ irsUrl:  # "https://<irs-url>"
 bpn:  # BPN for this IRS instance; only users with this BPN are allowed to access the API
 ingress:
   enabled: false
+
+management:
+  health:
+    dependencies:
+      enabled: false  # Flag to determine if external service healthcheck endpoints should be checked
+      urls: {}  # Map of services with corresponding healthcheck endpoint url's, example service_name: http://service_name_host.com/health
 
 digitalTwinRegistry:
   type: decentral  # The type of DTR. This can be either "central" or "decentral". If "decentral", descriptorEndpoint, shellLookupEndpoint and oAuthClientId is not required.
@@ -402,7 +413,8 @@ edc:
       - leftOperand: "Membership"
         operator: "eq"
         rightOperand: "active"
-
+  connectorEndpointService:
+    cacheTTL: 86400000
 discovery:
   oAuthClientId: portal  # ID of the OAuth2 client registration to use, see config spring.security.oauth2.client
 
@@ -484,13 +496,6 @@ prometheus:
       static_configs:
         - targets: [ '{{ .Release.Name }}-irs-helm:4004' ]
 
-    - job_name: 'minio-actuator'
-      metrics_path: /minio/v2/metrics/cluster
-      static_configs:
-        - targets: [ '{{ .Release.Name }}-minio:9000' ]
-
-
-#########################
 ```
 
 1. Use this to enable or disable the monitoring components

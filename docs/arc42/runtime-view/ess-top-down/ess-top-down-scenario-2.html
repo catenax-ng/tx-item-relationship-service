@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="generator" content="Asciidoctor 2.0.18">
-<title>Overall</title>
+<title>Scenario 1: Register an Ess-Investigation-Job</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
 <style>
 /*! Asciidoctor default stylesheet | MIT License | https://asciidoctor.org */
@@ -439,14 +439,11 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </head>
 <body class="article toc2 toc-left">
 <div id="header">
-<h1>Overall</h1>
+<h1>Scenario 1: Register an Ess-Investigation-Job</h1>
 <div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
 <ul class="sectlevel1">
-<li><a href="#_submodel">Submodel</a></li>
-<li><a href="#_job_orchestration_flow">Job orchestration flow</a></li>
-<li><a href="#_policy_store_flow">Policy store flow</a></li>
-<li><a href="#_policy_check_procedure">Policy check procedure</a></li>
+<li><a href="#_register_an_ess_investigation_job">Register an Ess-Investigation Job</a></li>
 </ul>
 </div>
 </div>
@@ -454,71 +451,150 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div id="preamble">
 <div class="sectionbody">
 <div class="paragraph">
-<p>This section describes the overall flow of the IRS</p>
-</div>
-<div class="imageblock">
-<div class="content">
-<img src="overall.svg" alt="overall" width="1347" height="1005">
-</div>
+<p>This section describes what happens when user creates an ess job.</p>
 </div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="_submodel">Submodel</h2>
+<h2 id="_register_an_ess_investigation_job">Register an Ess-Investigation Job</h2>
 <div class="sectionbody">
-<div class="paragraph">
-<p>This section describes how the IRS fetches submodel payload.</p>
-</div>
 <div class="imageblock">
 <div class="content">
-<img src="submodel-processing.svg" alt="submodel processing" width="1365" height="721">
+<img src="submodel-processing.svg" alt="submodel processing" width="2978" height="1414">
 </div>
 </div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="_job_orchestration_flow">Job orchestration flow</h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>This section describes the job orchestration in IRS.</p>
-</div>
-<div class="imageblock">
-<div class="content">
-<img src="job-orchestration.svg" alt="job orchestration" width="2804" height="1441">
-</div>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="_policy_store_flow">Policy store flow</h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>This section describes the policy store in IRS.</p>
-</div>
-<div class="imageblock">
-<div class="content">
-<img src="policy-store.svg" alt="policy store" width="664" height="233">
-</div>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="_policy_check_procedure">Policy check procedure</h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>This section describes the way IRS is validating policies found in assets.</p>
-</div>
-<div class="imageblock">
-<div class="content">
-<img src="policy-check.svg" alt="policy check" width="854" height="312">
-</div>
-</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 25%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Step</th>
+<th class="tableblock halign-left valign-top">Actor</th>
+<th class="tableblock halign-left valign-top">Action</th>
+<th class="tableblock halign-left valign-top">Details</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">[000]</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Requestor</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Sends a POST request to <code>/ess/bpn/investigations</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Includes JSON payload with parameters such as "bomLifecycle," "callbackUrl," "incidentBpns," and "key" containing "bpn" and "globalAssetId."</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">[001]</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">IRS</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Registers an IRS ess incident job</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Initiates the registration of an IRS ess incident job based on the received request.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">[002]</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">IRS, DiscoveryFinder, EDCDiscoveryService, EDC, dDTR</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Look up shells for the given globalAssetId</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Conducts a lookup and retrieves AAS (Asset Administration Shell) for the specified globalAssetId.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">[003]</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">IRS &#8594; SubmodelServer</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Sends a GET request for SingleLevelBomAsPlanned</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Initiates a request to the SubmodelServer for the SingleLevelBomAsPlanned.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">[004]</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">SubmodelServer &#8594; IRS</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Receives SingleLevelBomAsPlanned</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Sends back the SingleLevelBomAsPlanned data to the IRS.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">[005]</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">IRS</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Extracts childCXIds from SingleLevelBomAsPlanned</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Processes and extracts childCXIds from the received SingleLevelBomAsPlanned.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">[006]</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Loop (for each childCXId)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">IRS, DiscoveryFinder, EDCDiscoveryService</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Get EDC endpoint for Tier1, Retrieves the EDC endpoint for Tier1 based on the childCXId.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">[007]</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">IRS, EDCTier1, dDTRTier1</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Look up shells for the given globalAssetId</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Conducts a lookup and retrieves AAS for the specified globalAssetId in Tier1.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">[008]</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">IRS &#8594; SubmodelServer</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Sends a request to get PartAsPlanned</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Initiates a request to the SubmodelServer to get PartAsPlanned.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">[009]</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">SubmodelServer &#8592; IRS</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Receives PartAsPlanned</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Gets PartAsPlanned data from the SubmodelServer.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">[010]</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">IRS</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Validity Check on PartAsPlanned validityPeriod</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Checks the validity period of PartAsPlanned.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">[011]</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">IRS &#8594; SubmodelServer</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Sends a GET request for PartSiteInformationAsPlanned</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Requests PartSiteInformationAsPlanned from the SubmodelServer.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">[012]</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">IRS &#8594; IRS</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Extracts catenaXsiteId from PartSiteInformationAsPlanned</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Processes and extracts catenaXsiteId from PartSiteInformationAsPlanned.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">[013]</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">IRS</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Matches "incidentBpns" and catenaXsiteId</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Checks for a match between "incidentBpns" and catenaXsiteId.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">[014]</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">IRS</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Detects the supplyChainImpacted on the first tier level</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Identifies the supply chain impacted on the first tier level and provides information.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">[015]</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Requestor &#8592; IRS</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Responds part-chain infected</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Receives the response indicating the part-chain infection.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">[016]</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">IRS</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Continues the loop</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Continues the loop for the remaining childCXIds.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">[017]</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Loop (end)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">IRS</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Loop completion</p></td>
+</tr>
+</tbody>
+</table>
 </div>
 </div>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2023-10-27 14:03:07 UTC
+Last updated 2023-11-15 08:24:55 UTC
 </div>
 </div>
 </body>

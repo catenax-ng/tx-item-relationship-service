@@ -708,6 +708,9 @@ pre.rouge {
       <span class="na">enabled</span><span class="pi">:</span> <span class="no">true</span>
     <span class="na">readinessstate</span><span class="pi">:</span>
       <span class="na">enabled</span><span class="pi">:</span> <span class="no">true</span>
+    <span class="na">dependencies</span><span class="pi">:</span>
+      <span class="na">enabled</span><span class="pi">:</span> <span class="no">false</span>
+      <span class="na">urls</span><span class="pi">:</span> <span class="pi">{</span> <span class="pi">}</span>
   <span class="na">metrics</span><span class="pi">:</span>
     <span class="na">distribution</span><span class="pi">:</span>
       <span class="na">percentiles-histogram</span><span class="pi">:</span>
@@ -833,6 +836,8 @@ pre.rouge {
       <span class="pi">-</span> <span class="na">leftOperand</span><span class="pi">:</span> <span class="s2">"</span><span class="s">Membership"</span>
         <span class="na">operator</span><span class="pi">:</span> <span class="s2">"</span><span class="s">eq"</span>
         <span class="na">rightOperand</span><span class="pi">:</span> <span class="s2">"</span><span class="s">active"</span>
+  <span class="na">connectorEndpointService</span><span class="pi">:</span>
+    <span class="na">cacheTTL</span><span class="pi">:</span> <span class="m">86400000</span>
 
 <span class="na">digitalTwinRegistry</span><span class="pi">:</span>
   <span class="na">type</span><span class="pi">:</span> <span class="s">${DIGITALTWINREGISTRY_TYPE:decentral}</span> <span class="c1"># The type of DTR. This can be either "central" or "decentral". If "decentral", descriptorEndpoint, shellLookupEndpoint and oAuthClientId is not required.</span>
@@ -905,7 +910,7 @@ pre.rouge {
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2023-10-27 14:03:07 UTC
+Last updated 2023-11-15 08:24:55 UTC
 </div>
 </div>
 </body>
