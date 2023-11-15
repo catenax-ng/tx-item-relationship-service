@@ -968,7 +968,8 @@ You can define the URLs as well as most of the secrets yourself.</p>
   <span class="na">health</span><span class="pi">:</span>
     <span class="na">dependencies</span><span class="pi">:</span>
       <span class="na">enabled</span><span class="pi">:</span> <span class="no">false</span>  <span class="c1"># Flag to determine if external service healthcheck endpoints should be checked</span>
-      <span class="na">urls</span><span class="pi">:</span> <span class="pi">{}</span>  <span class="c1"># Map of services with corresponding healthcheck endpoint url's, example service_name: http://service_name_host.com/health</span>
+      <span class="na">urls</span><span class="pi">:</span> <span class="pi">{}</span>  <span class="c1"># Map of services with corresponding healthcheck endpoint url's. Example:</span>
+        <span class="c1"># service_name: http://service_name_host.com/health</span>
 
 <span class="na">digitalTwinRegistry</span><span class="pi">:</span>
   <span class="na">type</span><span class="pi">:</span> <span class="s">decentral</span>  <span class="c1"># The type of DTR. This can be either "central" or "decentral". If "decentral", descriptorEndpoint, shellLookupEndpoint and oAuthClientId is not required.</span>
@@ -1137,9 +1138,7 @@ You can define the URLs as well as most of the secrets yourself.</p>
       <span class="s">metrics_path: '/actuator/prometheus'</span>
       <span class="s">scrape_interval: 5s</span>
       <span class="s">static_configs:</span>
-        <span class="s">- targets: [ '{{ .Release.Name }}-irs-helm:4004' ]</span>
-
-    <span class="s">- job_name: 'minio-actuator'</span></code></pre>
+        <span class="s">- targets: [ '{{ .Release.Name }}-irs-helm:4004' ]</span></code></pre>
 </div>
 </div>
 <div class="colist arabic">
@@ -1395,7 +1394,7 @@ Keep the values for these settings safe and do not publish them!
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2023-11-15 14:08:32 UTC
+Last updated 2023-11-15 15:47:36 UTC
 </div>
 </div>
 </body>

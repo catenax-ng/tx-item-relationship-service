@@ -324,7 +324,8 @@ management:
   health:
     dependencies:
       enabled: false  # Flag to determine if external service healthcheck endpoints should be checked
-      urls: {}  # Map of services with corresponding healthcheck endpoint url's, example service_name: http://service_name_host.com/health
+      urls: {}  # Map of services with corresponding healthcheck endpoint url's. Example:
+        # service_name: http://service_name_host.com/health
 
 digitalTwinRegistry:
   type: decentral  # The type of DTR. This can be either "central" or "decentral". If "decentral", descriptorEndpoint, shellLookupEndpoint and oAuthClientId is not required.
@@ -495,7 +496,6 @@ prometheus:
       static_configs:
         - targets: [ '{{ .Release.Name }}-irs-helm:4004' ]
 
-    - job_name: 'minio-actuator'
 ```
 
 1. Use this to enable or disable the monitoring components
