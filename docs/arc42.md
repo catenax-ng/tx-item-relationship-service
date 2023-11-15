@@ -119,9 +119,9 @@ As of now, the IRS uses its own IAM credentials to gather the required data. Thi
 
 #### IRS-API
 
-We provide a REST API that can be consumed by any system registered in the Catena-X Keycloak, e.g. the Dismantler Dashboard. The development of such a consumer service is not part of the IRS application. Each system that acts as a client to the Restful application IRS can be used instead, if it supports any REST call of the designed REST endpoints in the REST Controller of the IRS application. For communication, the transport protocol HTTP(S) should be established.
+We provide a REST API that can be consumed by any system registered in the Catena-X OAuth2 protocol provider, e.g. the Dismantler Dashboard. The development of such a consumer service is not part of the IRS application. Each system that acts as a client to the Restful application IRS can be used instead, if it supports any REST call of the designed REST endpoints in the REST Controller of the IRS application. For communication, the transport protocol HTTP(S) should be established.
 
-In order to consume the Restful application IRS, the security aspect should be taken in consideration. IRS is a Spring Boot based application and is secured with the OpenID connector provider Keycloak and the OAuth2. This means for the consumers (users) that they need to authenticate themselves in order to be authorized to get access to the IRS. They generate a bearer token that they get from Keycloak and attach it to the HTTP header parameter Authorization. Certainly, both a consumer and the IRS should use the same configured Keycloak Realm.
+In order to consume the Restful application IRS, the security aspect should be taken in consideration. IRS is a Spring Boot based application and is secured with the OpenID connector provider with OAuth2 protocol. This means for the consumers (users) that they need to authenticate themselves in order to be authorized to get access to the IRS. They generate a bearer token that they get from OAuth2 provider and attach it to the HTTP header parameter Authorization.
 
 #### Registry API
 
@@ -1039,7 +1039,7 @@ There is no session handling in the IRS, access is solely based on bearer tokens
 
 ### Communication and integration
 
-All interfaces to other systems are using RESTful calls over HTTP(S). Where central authentication is required, a common Keycloak instance is used.
+All interfaces to other systems are using RESTful calls over HTTP(S). Where central authentication is required, a common OAuth2 provider is used.
 
 For outgoing calls, the Spring RestTemplate mechanism is used and separate RestTemplates are created for the different ways of authentication.
 

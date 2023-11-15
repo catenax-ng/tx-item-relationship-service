@@ -1137,10 +1137,10 @@ The following table entries define overall IRS quality goals. The order of the t
 <div class="sect4">
 <h5 id="_irs_api">IRS-API</h5>
 <div class="paragraph">
-<p>We provide a REST API that can be consumed by any system registered in the Catena-X Keycloak, e.g. the Dismantler Dashboard. The development of such a consumer service is not part of the IRS application. Each system that acts as a client to the Restful application IRS can be used instead, if it supports any REST call of the designed REST endpoints in the REST Controller of the IRS application. For communication, the transport protocol HTTP(S) should be established.</p>
+<p>We provide a REST API that can be consumed by any system registered in the Catena-X OAuth2 protocol provider, e.g. the Dismantler Dashboard. The development of such a consumer service is not part of the IRS application. Each system that acts as a client to the Restful application IRS can be used instead, if it supports any REST call of the designed REST endpoints in the REST Controller of the IRS application. For communication, the transport protocol HTTP(S) should be established.</p>
 </div>
 <div class="paragraph">
-<p>In order to consume the Restful application IRS, the security aspect should be taken in consideration. IRS is a Spring Boot based application and is secured with the OpenID connector provider Keycloak and the OAuth2. This means for the consumers (users) that they need to authenticate themselves in order to be authorized to get access to the IRS. They generate a bearer token that they get from Keycloak and attach it to the HTTP header parameter Authorization. Certainly, both a consumer and the IRS should use the same configured Keycloak Realm.</p>
+<p>In order to consume the Restful application IRS, the security aspect should be taken in consideration. IRS is a Spring Boot based application and is secured with the OpenID connector provider with OAuth2 protocol. This means for the consumers (users) that they need to authenticate themselves in order to be authorized to get access to the IRS. They generate a bearer token that they get from OAuth2 provider and attach it to the HTTP header parameter Authorization.</p>
 </div>
 </div>
 <div class="sect4">
@@ -2754,7 +2754,7 @@ The IRS Helm charts can be found here: <a href="https://github.com/eclipse-tract
 </div>
 <div class="imageblock">
 <div class="content">
-<img src="architecture-constraints/development.svg" alt="development" width="649" height="323">
+<img src="architecture-constraints/development.svg" alt="development" width="642" height="323">
 </div>
 </div>
 </div>
@@ -2765,7 +2765,7 @@ The IRS Helm charts can be found here: <a href="https://github.com/eclipse-tract
 </div>
 <div class="imageblock">
 <div class="content">
-<img src="architecture-constraints/integrated.svg" alt="integrated" width="717" height="310">
+<img src="architecture-constraints/integrated.svg" alt="integrated" width="710" height="310">
 </div>
 </div>
 </div>
@@ -3206,7 +3206,7 @@ In the future, another approach or an additional way to to index the data might 
 <div class="sect3">
 <h4 id="_communication_and_integration">Communication and integration</h4>
 <div class="paragraph">
-<p>All interfaces to other systems are using RESTful calls over HTTP(S). Where central authentication is required, a common Keycloak instance is used.</p>
+<p>All interfaces to other systems are using RESTful calls over HTTP(S). Where central authentication is required, a common OAuth2 provider is used.</p>
 </div>
 <div class="paragraph">
 <p>For outgoing calls, the Spring RestTemplate mechanism is used and separate RestTemplates are created for the different ways of authentication.</p>
@@ -3665,7 +3665,7 @@ A number of Grafana dashboards are deployed automatically, to display data about
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2023-11-15 08:24:55 UTC
+Last updated 2023-11-15 09:01:40 UTC
 </div>
 </div>
 </body>
