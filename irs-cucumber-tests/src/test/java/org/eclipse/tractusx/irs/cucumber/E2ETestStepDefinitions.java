@@ -112,7 +112,7 @@ public class E2ETestStepDefinitions {
         }
     }
 
-    @And("the OAuth2 token url {string}")
+    @And("the OAuth token url {string}")
     public void theOAuth2TokenUrl(String tokenUrl) {
         authenticationPropertiesBuilder.oauth2Url(tokenUrl);
     }
