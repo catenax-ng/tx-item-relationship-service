@@ -239,7 +239,7 @@ irs-edc-client:
         operator: "eq"
         rightOperand: "active"
   connectorEndpointService:
-    cacheTTL: 86400000
+    cacheTTL: PT24H  # Time to live for ConnectorEndpointService for fetchConnectorEndpoints method cache
 
 digitalTwinRegistry:
   type: ${DIGITALTWINREGISTRY_TYPE:decentral} # The type of DTR. This can be either "central" or "decentral". If "decentral", descriptorEndpoint, shellLookupEndpoint and oAuthClientId is not required.
@@ -414,7 +414,7 @@ edc:
         operator: "eq"
         rightOperand: "active"
   connectorEndpointService:
-    cacheTTL: 86400000
+    cacheTTL: PT24H  # Time to live for ConnectorEndpointService for fetchConnectorEndpoints method cache
 discovery:
   oAuthClientId: portal  # ID of the OAuth2 client registration to use, see config spring.security.oauth2.client
 
