@@ -84,7 +84,7 @@ Description of the main property 'SingleLevelBomAsBuild' was adapted to the new 
 2. Traversal Aspect: SingleLevelBomAsBuilt
 3. Semantic Aspects: Provisioning of bomLifeCycle asBuilt related semantic models (SerialPart, JustInSequence) according to job params "aspects":"[  ]"
 
-````mermaid
+```mermaid
 ---
 title: SingleLevelBomAsBuilt childItems contains asBuilt aspects hasAlternatives=false 
 ---
@@ -104,7 +104,7 @@ flowchart LR
         hasAlternatives=false))
     s5 --> SerialPart2(SerialPart)
 
-````
+```
 
 ## SingleLevelBomAsBuilt childItems contains asPlanned aspects hasAlternatives=false
 
@@ -140,7 +140,7 @@ flowchart LR
 }
 ````
 
-````mermaid
+```mermaid
 ---
 title:  SingleLevelBomAsBuilt2 childItems contains asPlanned aspects hasAlternatives=false  
 ---
@@ -174,7 +174,7 @@ class s2,s3 asPlanned
 classDef stop1, stop2 fill: #fff, stroke: #333, stroke-width: 2px;
 
 
-````
+```
 
 == SingleLevelBomAsBuilt childItems contains combination of asBuilt parts with mixture of hasAlternatives=false &=true
 
@@ -186,7 +186,7 @@ Case: Plastic granulate is used for the part. The "plastic granulate" batch cann
    Provisioning of bomLifeCycle asBuilt related semantic models (SerialPart, JustInSequence) according to job params "aspects":[]
 4. The traversing of the parts is carried out according to the traversing over the SingleLevelBomAsBuilt
 
-````mermaid
+```mermaid
 ---
 title:  SingleLevelBomAsBuilt2 childItems contains combination of hasAlternatives=false &=true  
 ---
@@ -217,7 +217,7 @@ flowchart LR
    SingleLevelBomAsBuilt3 --> AAS5((AAS))
    SingleLevelBomAsBuilt4 --> AAS6((AAS))
    SingleLevelBomAsBuilt5 --> AAS7((AAS))
-````
+```
 
 # LOP
 
