@@ -67,7 +67,7 @@ The commit messages have to match a pattern in the form of:
 ``< type >(optional scope):[<Ticket_ID>] < description >``
 
 Example:  
-``chore(api):[TRI-123] some text``
+``chore(api):[#123] some text``
 
 Detailed pattern can be found here: [commit-msg](local/development/commit-msg)
 
