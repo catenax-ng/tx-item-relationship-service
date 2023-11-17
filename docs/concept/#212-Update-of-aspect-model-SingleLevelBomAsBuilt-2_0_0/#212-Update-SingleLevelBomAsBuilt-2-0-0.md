@@ -84,7 +84,7 @@ Description of the main property 'SingleLevelBomAsBuild' was adapted to the new 
 2. Traversal Aspect: SingleLevelBomAsBuilt
 3. Semantic Aspects: Provisioning of bomLifeCycle asBuilt related semantic models (SerialPart, JustInSequence) according to job params "aspects":"[  ]"
 
-````mermaid
+```mermaid
 %%{init: { 'fontFamily': 'Architects daughter', 'theme': 'dark' , 'curve' : 'linear'} }%%
 flowchart LR
     s1((AAS C-X 1 
@@ -100,8 +100,7 @@ flowchart LR
     SingleLevelBomAsBuilt2 --> s5((AAS C-X 3
         hasAlternatives=false))
     s5 --> SerialPart2(SerialPart)
-
-````
+```
 
 ## SingleLevelBomAsBuilt childItems contains asPlanned aspects hasAlternatives=false
 
