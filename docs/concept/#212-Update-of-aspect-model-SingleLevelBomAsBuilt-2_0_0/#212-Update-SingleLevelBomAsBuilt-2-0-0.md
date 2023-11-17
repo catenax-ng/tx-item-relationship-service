@@ -85,9 +85,6 @@ Description of the main property 'SingleLevelBomAsBuild' was adapted to the new 
 3. Semantic Aspects: Provisioning of bomLifeCycle asBuilt related semantic models (SerialPart, JustInSequence) according to job params "aspects":"[  ]"
 
 ````mermaid
----
-title: SingleLevelBomAsBuilt childItems contains asBuilt aspects hasAlternatives=false 
----
 %%{init: { 'fontFamily': 'Architects daughter', 'theme': 'dark' , 'curve' : 'linear'} }%%
 flowchart LR
     s1((AAS C-X 1 
