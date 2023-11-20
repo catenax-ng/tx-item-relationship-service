@@ -86,18 +86,15 @@ Description of the main property 'SingleLevelBomAsBuild' was adapted to the new 
 
 ```mermaid
 flowchart LR
-    s1((AAS C-X 1 
-        hasAlternatives=false))
+    s1((AAS C-X 1 hasAlternatives=false))
     SingleLevelBomAsBuilt[SingleLevelBomAsBuilt2.0.0]
     aas((AAS OEM)) --> 
     SingleLevelBomAsBuilt --> s1
     s1 --> SerialPart
     s1 --> SingleLevelBomAsBuilt2
-    SingleLevelBomAsBuilt2(SingleLevelBomAsBuilt) --> s4((AAS C-X 2
-        hasAlternatives=false))
+    SingleLevelBomAsBuilt2(SingleLevelBomAsBuilt) --> s4((AAS C-X 2  hasAlternatives=false))
     s4 --> SerialPart3(SerialPart)
-    SingleLevelBomAsBuilt2 --> s5((AAS C-X 3
-        hasAlternatives=false))
+    SingleLevelBomAsBuilt2 --> s5((AAS C-X 3 hasAlternatives=false))
     s5 --> SerialPart2(SerialPart)
 ```
 
@@ -137,12 +134,9 @@ flowchart LR
 
 ````mermaid
 flowchart LR
-    s1((AAS C-X 1
-        hasAlternatives=true))
-    s2((AAS C-X 2
-        hasAlternatives=true))
-    s3((AAS C-X 3
-        hasAlternatives=true))
+    s1((AAS C-X 1 hasAlternatives=true))
+    s2((AAS C-X 2 hasAlternatives=true))
+    s3((AAS C-X 3 hasAlternatives=true))
     SingleLevelBomAsBuilt[SingleLevelBomAsBuilt2.0.0]
 
     aas((AAS OEM)) -->
@@ -176,14 +170,9 @@ Case: Plastic granulate is used for the part. The "plastic granulate" batch cann
 
 ````mermaid
 flowchart LR
-    s1((AAS C-X 1
-        hasAlternatives=false))
-    s2((AAS C-X 2
-        hasAlternatives=true
-        Batch #1))
-    s3((AAS C-X 3
-        hasAlternatives=true
-        Batch #2))
+    s1((AAS C-X 1 hasAlternatives=false))
+    s2((AAS C-X 2 hasAlternatives=true Batch #1))
+    s3((AAS C-X 3 hasAlternatives=true Batch #2))
     SingleLevelBomAsBuilt[SingleLevelBomAsBuilt2.0.0]
 
    aas((AAS OEM)) -->
