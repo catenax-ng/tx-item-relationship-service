@@ -1234,6 +1234,13 @@ You can do this by adding this to ingress:</p>
 If left empty, this defaults to the internal endpoint of the controlplane provided by the irs-edc-consumer Helm chart.</p>
 </div>
 </div>
+<div class="sect3">
+<h4 id="_connectorendpointservice_cachettl">&lt;connectorEndpointService.cacheTTL&gt;</h4>
+<div class="paragraph">
+<p>When IRS calls EDC Discovery Service to fetch endpoints for BPNL&#8217;s there is a cache mechanism between them, to improve performance.
+This parameter define how long cache is maintained before it is cleared. Data is in ISO 8601.</p>
+</div>
+</div>
 </div>
 <div class="sect2">
 <h3 id="_semantic_model_provisioning">Semantic Model Provisioning</h3>
@@ -1394,7 +1401,7 @@ Keep the values for these settings safe and do not publish them!
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2023-11-17 15:28:57 UTC
+Last updated 2023-11-20 10:50:14 UTC
 </div>
 </div>
 </body>
