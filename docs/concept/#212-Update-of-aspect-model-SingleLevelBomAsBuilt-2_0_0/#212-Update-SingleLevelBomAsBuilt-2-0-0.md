@@ -85,7 +85,6 @@ Description of the main property 'SingleLevelBomAsBuild' was adapted to the new 
 3. Semantic Aspects: Provisioning of bomLifeCycle asBuilt related semantic models (SerialPart, JustInSequence) according to job params "aspects":"[  ]"
 
 ```mermaid
-%%{init: { 'fontFamily': 'Architects daughter', 'theme': 'dark' , 'curve' : 'linear'} }%%
 flowchart LR
     s1((AAS C-X 1 
         hasAlternatives=false))
@@ -137,40 +136,35 @@ flowchart LR
 ````
 
 ````mermaid
----
-title:  SingleLevelBomAsBuilt2 childItems contains asPlanned aspects hasAlternatives=false  
----
-%%{init: { 'fontFamily': 'Architects daughter', 'theme': 'dark' , 'curve' : 'linear'} }%%
 flowchart LR
     s1((AAS C-X 1
-    hasAlternatives=true))
-s2((AAS C-X 2
-hasAlternatives=true))
-s3((AAS C-X 3
-hasAlternatives=true))
-SingleLevelBomAsBuilt[SingleLevelBomAsBuilt2.0.0]
+        hasAlternatives=true))
+    s2((AAS C-X 2
+        hasAlternatives=true))
+    s3((AAS C-X 3
+        hasAlternatives=true))
+    SingleLevelBomAsBuilt[SingleLevelBomAsBuilt2.0.0]
 
-
-aas((AAS OEM)) -->
-SingleLevelBomAsBuilt --> s1
-SingleLevelBomAsBuilt --> s2
-SingleLevelBomAsBuilt --> s3
-
-s2 --> p1(PartAsPlanned)
-s3 --> p2(PartAsPlanned)
-s2 --> stop1((stop))
-s3 --> stop2((stop))
-
-s1 --> SingleLevelBomAsBuilt3[SingleLevelBomAsBuilt]
-SingleLevelBomAsBuilt3 --> s4((AAS C-X 4))
-
-classDef asPlanned fill: #9f6,stroke: #333, stroke-width: 2px;
-class s2,s3 asPlanned
-
-classDef stop1, stop2 fill: #fff, stroke: #333, stroke-width: 2px;
+    aas((AAS OEM)) -->
+    SingleLevelBomAsBuilt --> s1
+    SingleLevelBomAsBuilt --> s2
+    SingleLevelBomAsBuilt --> s3
+    
+    s2 --> p1(PartAsPlanned)
+    s3 --> p2(PartAsPlanned)
+    s2 --> stop1((stop))
+    s3 --> stop2((stop))
+    
+    s1 --> SingleLevelBomAsBuilt3[SingleLevelBomAsBuilt]
+    SingleLevelBomAsBuilt3 --> s4((AAS C-X 4))
+    
+    classDef asPlanned fill: #9f6,stroke: #333, stroke-width: 2px;
+    class s2,s3 asPlanned
+    
+    classDef stop1, stop2 fill: #fff, stroke: #333, stroke-width: 2px;
 ````
 
-== SingleLevelBomAsBuilt childItems contains combination of asBuilt parts with mixture of hasAlternatives=false &=true
+## SingleLevelBomAsBuilt childItems contains combination of asBuilt parts with mixture of hasAlternatives=false &=true
 
 Case: Plastic granulate is used for the part. The "plastic granulate" batch cannot be assigned directly to the part, so several batches are assigned to the part.
 
@@ -181,10 +175,6 @@ Case: Plastic granulate is used for the part. The "plastic granulate" batch cann
 4. The traversing of the parts is carried out according to the traversing over the SingleLevelBomAsBuilt
 
 ````mermaid
----
-title:  SingleLevelBomAsBuilt2 childItems contains combination of hasAlternatives=false &=true  
----
-%%{init: { 'fontFamily': 'Architects daughter', 'theme': 'dark' , 'curve' : 'linear'} }%%
 flowchart LR
     s1((AAS C-X 1
         hasAlternatives=false))
