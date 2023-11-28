@@ -128,7 +128,7 @@ class EdcSubmodelClientTest extends LocalTestDataConfigurationAware {
         // arrange
         when(catalogFacade.fetchCatalogByFilter(any(), any(), any())).thenReturn(
                 List.of(CatalogItem.builder().itemId("itemId").build()));
-        when(contractNegotiationService.negotiate(any(), any())).thenReturn(
+        when(contractNegotiationService.negotiate(any(), any(), cachedEndpointDataReference)).thenReturn(
                 NegotiationResponse.builder().contractAgreementId("agreementId").build());
         final EndpointDataReference ref = mock(EndpointDataReference.class);
         endpointDataReferenceStorage.put("agreementId", ref);
@@ -149,7 +149,7 @@ class EdcSubmodelClientTest extends LocalTestDataConfigurationAware {
         final EdcNotification<NotificationContent> notification = EdcNotification.builder().build();
         when(catalogFacade.fetchCatalogByFilter(any(), any(), any())).thenReturn(
                 List.of(CatalogItem.builder().itemId("itemId").build()));
-        when(contractNegotiationService.negotiate(any(), any())).thenReturn(
+        when(contractNegotiationService.negotiate(any(), any(), cachedEndpointDataReference)).thenReturn(
                 NegotiationResponse.builder().contractAgreementId("agreementId").build());
         final EndpointDataReference ref = mock(EndpointDataReference.class);
         endpointDataReferenceStorage.put("agreementId", ref);
@@ -161,7 +161,8 @@ class EdcSubmodelClientTest extends LocalTestDataConfigurationAware {
 
         // assert
         assertThat(response.deliveredSuccessfully()).isTrue();
-        verify(contractNegotiationService, times(1)).negotiate(eq(CONNECTOR_ENDPOINT + PROVIDER_SUFFIX), any());
+        verify(contractNegotiationService, times(1)).negotiate(eq(CONNECTOR_ENDPOINT + PROVIDER_SUFFIX), any(),
+                cachedEndpointDataReference);
     }
 
     @Test
@@ -169,7 +170,7 @@ class EdcSubmodelClientTest extends LocalTestDataConfigurationAware {
         // arrange
         when(catalogFacade.fetchCatalogByFilter(any(), any(), any())).thenReturn(
                 List.of(CatalogItem.builder().itemId("itemId").build()));
-        when(contractNegotiationService.negotiate(any(), any())).thenReturn(
+        when(contractNegotiationService.negotiate(any(), any(), cachedEndpointDataReference)).thenReturn(
                 NegotiationResponse.builder().contractAgreementId("agreementId").build());
 
         // act
@@ -334,13 +335,14 @@ class EdcSubmodelClientTest extends LocalTestDataConfigurationAware {
         final String filterValue = "filter-value";
         when(catalogFacade.fetchCatalogByFilter(any(), any(), any())).thenReturn(
                 List.of(CatalogItem.builder().itemId("asset-id").build()));
-        when(contractNegotiationService.negotiate(any(), any())).thenReturn(
+        when(contractNegotiationService.negotiate(any(), any(), cachedEndpointDataReference)).thenReturn(
                 NegotiationResponse.builder().contractAgreementId("agreementId").build());
         final EndpointDataReference expected = mock(EndpointDataReference.class);
         endpointDataReferenceStorage.put("agreementId", expected);
 
         // act
-        final var result = testee.getEndpointReferenceForAsset(ENDPOINT_ADDRESS, filterKey, filterValue);
+        final var result = testee.getEndpointReferenceForAsset(ENDPOINT_ADDRESS, filterKey, filterValue,
+                cachedEndpointDataReference);
         final EndpointDataReference actual = result.get(5, TimeUnit.SECONDS);
 
         // assert
@@ -350,7 +352,7 @@ class EdcSubmodelClientTest extends LocalTestDataConfigurationAware {
     private void prepareTestdata(final String catenaXId, final String submodelDataSuffix)
             throws ContractNegotiationException, IOException, UsagePolicyException, TransferProcessException {
 
-        when(contractNegotiationService.negotiate(any(), any())).thenReturn(
+        when(contractNegotiationService.negotiate(any(), any(), cachedEndpointDataReference)).thenReturn(
                 NegotiationResponse.builder().contractAgreementId("agreementId").build());
         final EndpointDataReference ref = mock(EndpointDataReference.class);
         endpointDataReferenceStorage.put("agreementId", ref);

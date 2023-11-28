@@ -146,7 +146,7 @@ class EdcSubmodelFacadeTest {
     void shouldThrowEdcClientExceptionForEndpointReference() throws EdcClientException {
         // arrange
         final EdcClientException e = new EdcClientException("test");
-        when(client.getEndpointReferenceForAsset(any(), any(), any())).thenThrow(e);
+        when(client.getEndpointReferenceForAsset(any(), any(), any(), cachedEndpointDataReference)).thenThrow(e);
 
         // act
         ThrowableAssert.ThrowingCallable action = () -> testee.getEndpointReferenceForAsset("", "", "");
@@ -160,7 +160,7 @@ class EdcSubmodelFacadeTest {
         // arrange
         final ExecutionException e = new ExecutionException(new EdcClientException("test"));
         final CompletableFuture<EndpointDataReference> future = CompletableFuture.failedFuture(e);
-        when(client.getEndpointReferenceForAsset(any(), any(), any())).thenReturn(future);
+        when(client.getEndpointReferenceForAsset(any(), any(), any(), cachedEndpointDataReference)).thenReturn(future);
 
         // act
         ThrowableAssert.ThrowingCallable action = () -> testee.getEndpointReferenceForAsset("", "", "");
@@ -176,7 +176,7 @@ class EdcSubmodelFacadeTest {
         final CompletableFuture<EndpointDataReference> future = mock(CompletableFuture.class);
         final InterruptedException e = new InterruptedException();
         when(future.get()).thenThrow(e);
-        when(client.getEndpointReferenceForAsset(any(), any(), any())).thenReturn(future);
+        when(client.getEndpointReferenceForAsset(any(), any(), any(), cachedEndpointDataReference)).thenReturn(future);
 
         // act
         testee.getEndpointReferenceForAsset("", "", "");

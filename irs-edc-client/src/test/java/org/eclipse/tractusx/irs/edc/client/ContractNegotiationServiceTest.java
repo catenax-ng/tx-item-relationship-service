@@ -92,7 +92,7 @@ class ContractNegotiationServiceTest {
                 CompletableFuture.completedFuture(TransferProcessResponse.builder().build()));
 
         // act
-        NegotiationResponse result = testee.negotiate(CONNECTOR_URL, catalogItem);
+        NegotiationResponse result = testee.negotiate(CONNECTOR_URL, catalogItem, cachedEndpointDataReference);
 
         // assert
         assertThat(result).isNotNull();
@@ -113,7 +113,7 @@ class ContractNegotiationServiceTest {
         when(edcControlPlaneClient.getNegotiationResult(any())).thenReturn(response);
 
         // act & assert
-        assertThatThrownBy(() -> testee.negotiate(CONNECTOR_URL, catalogItem)).isInstanceOf(EdcClientException.class);
+        assertThatThrownBy(() -> testee.negotiate(CONNECTOR_URL, catalogItem, cachedEndpointDataReference)).isInstanceOf(EdcClientException.class);
     }
 
     @Test
@@ -137,7 +137,7 @@ class ContractNegotiationServiceTest {
         when(edcControlPlaneClient.getTransferProcess(any())).thenReturn(transferError);
 
         // act & assert
-        assertThatThrownBy(() -> testee.negotiate(CONNECTOR_URL, catalogItem)).isInstanceOf(EdcClientException.class);
+        assertThatThrownBy(() -> testee.negotiate(CONNECTOR_URL, catalogItem, cachedEndpointDataReference)).isInstanceOf(EdcClientException.class);
     }
 
     @Test
@@ -152,7 +152,7 @@ class ContractNegotiationServiceTest {
         when(policyCheckerService.isValid(any())).thenReturn(Boolean.FALSE);
 
         // act & assert
-        assertThatThrownBy(() -> testee.negotiate(CONNECTOR_URL, catalogItem)).isInstanceOf(EdcClientException.class);
+        assertThatThrownBy(() -> testee.negotiate(CONNECTOR_URL, catalogItem, cachedEndpointDataReference)).isInstanceOf(EdcClientException.class);
     }
 
 }
