@@ -24,6 +24,7 @@ The IRS is a:
 * federated IRS service
 * 'asBuild' BoM of serialized components
 * provides endpoints for submodel-descriptors
+* start recursive Environmental and Social Standard investigations throughout the network based on the "asPlanned" lifecycle
 
 ## Quality goals
 
@@ -275,6 +276,7 @@ The interfaces show how the components interact with each other and which interf
 | 14 | **EDC** is connected to **Managed Identity Wallet** for access policy check for data offers |
 | 15 | **IRS** accessing to **SubmodelServer** on Tier Level using the **EDC** |
 | 16 | **IRS** accessing the **decentral DigitalTwinRegistry** on Tier Level using the **EDC** |
+| 17 | In case of the use-case Environmental and Social Standards, **IRS** sends notifications to the **IRS-ESS** instance running at the data provider using the **EDC**. |
 
 ## Level 1
 
@@ -323,7 +325,7 @@ The IRS REST controller is used to provide a RESTful web service.
 
 ### RecursiveJobHandler
 
-The **RecursiveJobHandler** component provide the logic to build jobs with recursive logic to retrieve items over the complete C-X network and assembles the partial results into a single item graph result.
+The **RecursiveJobHandler** component provide the logic to build jobs recursively to retrieve items over the complete C-X network and assembles the partial results into a single item graph result.
 
 #### Component diagram
 
@@ -394,11 +396,7 @@ Since we cannot rely on synchronous responses regarding the requests of submodel
 
 ### IRS Iterative
 
-This section covers the main processes of the IRS and explains how data is transferred and processed when a job is executed.
-
-## IRS iterative
-
-This section describes the iterative flow of the IRS
+This section describes the iterative flow, the main processes of the IRS, and explains how data is transferred and processed when a job is executed.
 
 ![arc42_010](https://catenax-ng.github.io/tx-item-relationship-service/docs/assets/arc42/arc42_010.png)
 
@@ -500,6 +498,8 @@ The BoM as planned aspect models consists of three aspect models:
 
 ### Overall flow
 
+![arc42_019](https://catenax-ng.github.io/tx-item-relationship-service/docs/assets/arc42/arc42_019.png)
+
 | Step | Actor | Action | Details |
 | --- | --- | --- | --- |
 | **[000]** | IncidentManager | Request ESS Incident investigation | - |
@@ -521,6 +521,8 @@ The BoM as planned aspect models consists of three aspect models:
 Note: ESS supplier responses are involved in each step of the process.
 
 ### Flow on company level
+
+![arc42_020](https://catenax-ng.github.io/tx-item-relationship-service/docs/assets/arc42/arc42_020.png)
 
 #### Step 0: Process initiation
 
@@ -560,9 +562,30 @@ The response of each direct supplier may contain the following results;
 
 In case at least one "YES" is received, the process step 3 ends
 
+|     |     |     |     |
+| --- | --- | --- | --- |
+| Case | YES | NO | UNKNOWN |
+| All assets on all nodes does not contain assets with incidentBPNs | x |  |  |
+| At least one node contains assets with  incidentBPNs |  | x |  |
+| At least one node does not contain PartSiteInformationAsPlanned aspect OR for at least one node PartSiteInformationAsPlanned  aspect  is not accessible |  |  | x |
+| At least one node contains PartSiteInformationAsPlanned  with missing BPNS |  |  | x |
+| At least one child node does not exist or is not accessible |  |  | x |
+
+|     |     |     |     |     |
+| --- | --- | --- | --- | --- |
+| State 1 | State 2 | State n | Result State | Description |
+| YES | NO | UNKOWN | YES | If any part is impacted then whole Supply is impactes |
+| YES | NO | NO | YES | Yes if any BPN is impacted even if all are not impacted. |
+| NO | UNKNOW | NO | UNKNOW | Unknown if no Yes and at leat one bpn is unknown state. |
+| NO | NO | NO | NO | No if complete SupplyChain is not impacted |
+
+![arc42_021](https://catenax-ng.github.io/tx-item-relationship-service/docs/assets/arc42/arc42_021.png)
+
 ### Application Functionality Overview
 
 #### Register an Ess-Investigation-Order
+
+![arc42_022](https://catenax-ng.github.io/tx-item-relationship-service/docs/assets/arc42/arc42_022.png)
 
 ##### 1. Client Request
 
@@ -606,6 +629,8 @@ This section describes what happens when user creates an ess order.
 
 ### Register an Ess-Investigation-Order
 
+![arc42_023](https://catenax-ng.github.io/tx-item-relationship-service/docs/assets/arc42/arc42_023.png)
+
 | Step | Actor | Action | Details |
 | --- | --- | --- | --- |
 | [000] | Client | Sends a POST request to `/ess/bpn/investigation/orders` | Includes JSON payload with parameters like "bomLifecycle," "batchSize," "callbackUrl," "incidentBPNSs," "keys," and "timeout." |
@@ -619,11 +644,13 @@ This section describes what happens when user creates an ess order.
 | [008] | Client | Sends a POST request to `/irs/orders/{orderId}/batches/'{batchId}'` | Initiates batch processing for a specific orderId and batchId. |
 | [009] | IRS | Sends BatchShell with jobs | Returns details of the batch with associated jobs. |
 
-## Scenario 1: Register an Ess-Investigation-Job
+## Scenario 2: Register an Ess-Investigation-Job
 
 This section describes what happens when user creates an ess job.
 
 ### Register an Ess-Investigation Job
+
+![arc42_024](https://catenax-ng.github.io/tx-item-relationship-service/docs/assets/arc42/arc42_024.png)
 
 | Step | Actor | Action | Details |
 | --- | --- | --- | --- |
@@ -646,13 +673,11 @@ This section describes what happens when user creates an ess job.
 | [016] | IRS | Continues the loop | Continues the loop for the remaining childCXIds. |
 | [017] | Loop (end) | IRS | Loop completion |
 
-Unresolved directive in runtime-view/full.adoc - include::ess-top-down/ess-top-down-scenario-3.adoc[leveloffset=+1]
-
 ## Deployment view
 
 The deployment view shows the IRS application on ArgoCD, which is a continuous delivery tool for Kubernetes. Kubernetes manifests are specified using Helm charts. Helm is a package manager for Kubernetes. IRS is developed in a cloud-agnostic manner, so the application could be installed in any cloud infrastructure (on-premises, hybrid, or public cloud infrastructure).
 
-![arc42_019](https://catenax-ng.github.io/tx-item-relationship-service/docs/assets/arc42/arc42_019.png)
+![arc42_025](https://catenax-ng.github.io/tx-item-relationship-service/docs/assets/arc42/arc42_025.png)
 
 ### Operator
 
@@ -694,25 +719,25 @@ For information on how to run the application locally, please check the README d
 
 The isolated environment contains the IRS as well as all surrounding services.
 
-![arc42_020](https://catenax-ng.github.io/tx-item-relationship-service/docs/assets/arc42/arc42_020.png)
+![arc42_026](https://catenax-ng.github.io/tx-item-relationship-service/docs/assets/arc42/arc42_026.png)
 
 ### Development environment
 
 The development environment contains the IRS as well as the essential surrounding services, excluding the external IAM.
 
-![arc42_021](https://catenax-ng.github.io/tx-item-relationship-service/docs/assets/arc42/arc42_021.png)
+![arc42_027](https://catenax-ng.github.io/tx-item-relationship-service/docs/assets/arc42/arc42_027.png)
 
 ### Integrated environment
 
 The integrated environment contains the IRS and is integrated with the rest of the Catena-X network.
 
-![arc42_022](https://catenax-ng.github.io/tx-item-relationship-service/docs/assets/arc42/arc42_022.png)
+![arc42_028](https://catenax-ng.github.io/tx-item-relationship-service/docs/assets/arc42/arc42_028.png)
 
 ## Level 1 - IRS application
 
 This section focuses only on the IRS itself, detached from its neighbors. It shows the resources deployed in Kubernetes for the IRS.
 
-![arc42_023](https://catenax-ng.github.io/tx-item-relationship-service/docs/assets/arc42/arc42_023.png)
+![arc42_029](https://catenax-ng.github.io/tx-item-relationship-service/docs/assets/arc42/arc42_029.png)
 
 ### Pod
 
@@ -736,11 +761,11 @@ The ingress uses a reverse proxy to provide specified Service ports to the inter
 
 ### Domain entity model
 
-![arc42_024](https://catenax-ng.github.io/tx-item-relationship-service/docs/assets/arc42/arc42_024.png)
+![arc42_030](https://catenax-ng.github.io/tx-item-relationship-service/docs/assets/arc42/arc42_030.png)
 
 ### Domain model
 
-![arc42_025](https://catenax-ng.github.io/tx-item-relationship-service/docs/assets/arc42/arc42_025.png)
+![arc42_031](https://catenax-ng.github.io/tx-item-relationship-service/docs/assets/arc42/arc42_031.png)
 
 ### API Model
 
@@ -759,15 +784,15 @@ A job can be in one of the following states:
 | COMPLETED | The job has completed. See the job response for details on the data. |
 | ERROR | The job could not be processed correctly by the IRS due to a technical problem. |
 
-![arc42_026](https://catenax-ng.github.io/tx-item-relationship-service/docs/assets/arc42/arc42_026.png)
+![arc42_032](https://catenax-ng.github.io/tx-item-relationship-service/docs/assets/arc42/arc42_032.png)
 
 ### Job Store Datamodel
 
-![arc42_027](https://catenax-ng.github.io/tx-item-relationship-service/docs/assets/arc42/arc42_027.png)
+![arc42_033](https://catenax-ng.github.io/tx-item-relationship-service/docs/assets/arc42/arc42_033.png)
 
 ### Job Response Datamodel
 
-![arc42_028](https://catenax-ng.github.io/tx-item-relationship-service/docs/assets/arc42/arc42_028.png)
+![arc42_034](https://catenax-ng.github.io/tx-item-relationship-service/docs/assets/arc42/arc42_034.png)
 
 ```json
 {
@@ -1009,7 +1034,7 @@ The hexagonal architecture divides a system into several loosely-coupled interch
 
 For the IRS, this means decoupling the application logic from components like the BLOB store, the REST API controllers or the AAS client connection. With an interface between the parts (so-called port), it is easy to switch to other implementations, e.g. if you want to change the persistence implementation. No changes to the application logic will be necessary.
 
-![arc42_029](https://catenax-ng.github.io/tx-item-relationship-service/docs/assets/arc42/arc42_029.png)
+![arc42_035](https://catenax-ng.github.io/tx-item-relationship-service/docs/assets/arc42/arc42_035.png)
 
 ## "Under-the-hood" concepts
 
