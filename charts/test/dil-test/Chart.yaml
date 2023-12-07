@@ -1,0 +1,65 @@
+apiVersion: v2
+name: dil-test
+description: A Helm chart for Kubernetes
+
+# A chart can be either an 'application' or a 'library' chart.
+#
+# Application charts are a collection of templates that can be packaged into versioned archives
+# to be deployed.
+#
+# Library charts provide useful utilities or functions for the chart developer. They're included as
+# a dependency of application charts to inject those utilities and functions into the rendering
+# pipeline. Library charts do not define any templates and therefore cannot be deployed.
+type: application
+
+# This is the chart version. This version number should be incremented each time you make changes
+# to the chart and its templates, including the app version.
+# Versions are expected to follow Semantic Versioning (https://semver.org/)
+version: 0.1.0
+
+# This is the version number of the application being deployed. This version number should be
+# incremented each time you make changes to the application. Versions are not expected to
+# follow Semantic Versioning. They should reflect the version the application is using.
+# It is recommended to use it with quotes.
+appVersion: &edcVersion 0.5.3
+
+dependencies:
+  - name: irs-helm
+    repository: https://eclipse-tractusx.github.io/item-relationship-service
+    version: 6.11.0
+#  - name: irs-helm
+#    repository: file://../../irs-helm
+#    version: 6.11.0
+  - name: tractusx-connector
+    alias: edc-consumer
+    repository: https://eclipse-tractusx.github.io/tractusx-edc
+    version: *edcVersion
+  - condition: postgresql.enabled
+    alias: edc-consumer-postgresql
+    name: postgresql
+    repository: https://charts.bitnami.com/bitnami
+    version: 12.1.6
+  - name: tractusx-connector
+    alias: edc-provider
+    repository: https://eclipse-tractusx.github.io/tractusx-edc
+    version: *edcVersion
+  - condition: postgresql.enabled
+    alias: edc-provider-postgresql
+    name: postgresql
+    repository: https://charts.bitnami.com/bitnami
+    version: 12.1.6
+  - name: tractusx-connector
+    alias: edc-provider2
+    repository: https://eclipse-tractusx.github.io/tractusx-edc
+    version: *edcVersion
+  - condition: postgresql.enabled
+    alias: edc-provider2-postgresql
+    name: postgresql
+    repository: https://charts.bitnami.com/bitnami
+    version: 12.1.6
+  - name: registry
+    version: 0.3.22
+    repository: https://eclipse-tractusx.github.io/sldt-digital-twin-registry
+#  - name: semantic-hub
+#    version: 0.1.22
+#    repository: https://eclipse-tractusx.github.io/sldt-semantic-hub

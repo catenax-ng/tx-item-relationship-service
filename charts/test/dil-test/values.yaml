@@ -1,0 +1,325 @@
+irs-helm:
+  image:
+    tag: local
+    pullPolicy: IfNotPresent
+  irsUrl: "http://dil-test-irs-helm"
+  bpn: BPNL00000001CRHK
+  ingress:
+    enabled: false
+  digitalTwinRegistry:
+    url: http://cx-dil-test-registry-svc:8080/semantics/registry/api/v3.0
+    discoveryFinderUrl: http://dil-test-discovery:8080/api/administration/connectors/discovery/search
+  semanticshub:
+    url: https://semantics.int.demo.catena-x.net/hub/api/v1/models
+    pageSize: "250"
+
+  bpdm:
+    url: https://partners-pool.int.demo.catena-x.net
+  minioUser: irsminio
+  minioPassword: irsminiotest
+  oauth2:
+    clientId:
+    clientSecret:
+    clientTokenUri: https://centralidp.int.demo.catena-x.net/auth/realms/CX-Central/protocol/openid-connect/token
+    jwkSetUri: https://centralidp.int.demo.catena-x.net/auth/realms/CX-Central/protocol/openid-connect/certs
+  edc:
+    provider:
+      host: http://dil-test-edc-consumer-controlplane:8081
+    controlplane:
+      endpoint:
+        data: http://dil-test-edc-consumer-controlplane:8081/management
+      apikey:
+        secret: "123456"
+
+  resources:
+    limits:
+      cpu: 1.5
+      memory: 1Gi
+    requests:
+      cpu: 200m
+      memory: 1Gi
+
+  minio:
+    rootUser: irsminio
+    rootPassword: irsminiotest
+    serviceAccount:
+      name: "irs-dev-minio-sa"
+
+edc-consumer:
+  install:
+    postgresql: false
+    vault: false
+  participant:
+    id: BPNL00000001CRHK
+
+  controlplane:
+    ssi:
+      miw:
+        url: https://managed-identity-wallets-new.int.demo.catena-x.net
+        authorityId: BPNL00000003CRHK
+      oauth:
+        tokenurl: https://centralidp.int.demo.catena-x.net/auth/realms/CX-Central/protocol/openid-connect/token
+        client:
+          id:
+          secretAlias: edc-test-miw-keycloak-secret
+    endpoints:
+      management:
+        authKey: 123456
+    resources:
+      limits:
+        cpu: 1
+        memory: 1Gi
+      requests:
+        cpu: 100m
+        memory: 1Gi
+  dataplane:
+    resources:
+      limits:
+        cpu: 500m
+        memory: 512Mi
+      requests:
+        cpu: 100m
+        memory: 512Mi
+  backendService:
+    httpProxyTokenReceiverUrl: "http://dil-test-irs-helm:8181/internal/endpoint-data-reference"
+  vault:
+    hashicorp:
+      url: "https://vault.demo.catena-x.net"
+      token: ""
+      timeout: 30
+      healthCheck:
+        enabled: false
+        standbyOk: false
+      paths:
+        secret: /v1/traceability-irs
+        health: /v1/sys/health
+    secretNames:
+      transferProxyTokenSignerPrivateKey: irs-dev-daps-cert-consumer-key
+      transferProxyTokenSignerPublicKey: irs-dev-daps-cert-consumer
+      transferProxyTokenEncryptionAesKey: test-edc-encryption-key
+  postgresql:
+    enabled: true
+    auth:
+      username: "edc"
+      password: "databasepassword"
+    username: "edc"
+    password: "databasepassword"
+    jdbcUrl: "jdbc:postgresql://dil-test-edc-consumer-postgresql-hl:5432/edc"
+
+postgresql:
+  enabled: true
+edc-consumer-postgresql:
+  primary:
+    persistence:
+      enabled: false
+      size: 1Gi
+  auth:
+    database: edc
+    username: edc
+    postgresPassword: databasepassword
+    password: databasepassword
+
+edc-provider:
+  install:
+    postgresql: false
+    vault: false
+  participant:
+    id: BPNL00000001CRHK
+
+  controlplane:
+    ssi:
+      miw:
+        url: https://managed-identity-wallets-new.int.demo.catena-x.net
+        authorityId: BPNL00000003CRHK
+      oauth:
+        tokenurl: https://centralidp.int.demo.catena-x.net/auth/realms/CX-Central/protocol/openid-connect/token
+        client:
+          id:
+          secretAlias: edc-test-miw-keycloak-secret
+    endpoints:
+      management:
+        authKey: 123456
+    resources:
+      limits:
+        cpu: 1
+        memory: 1Gi
+      requests:
+        cpu: 100m
+        memory: 1Gi
+  dataplane:
+    resources:
+      limits:
+        cpu: 500m
+        memory: 512Mi
+      requests:
+        cpu: 100m
+        memory: 512Mi
+  # URL where the EndpointDataReference callback will be sent to
+  backendService:
+    httpProxyTokenReceiverUrl: "http://irs-dev-irs-helm:8181/internal/endpoint-data-reference"
+  vault:
+    hashicorp:
+      url: "https://vault.demo.catena-x.net"
+      token: 
+      timeout: 30
+      healthCheck:
+        enabled: false
+        standbyOk: false
+      paths:
+        secret: /v1/traceability-irs
+        health: /v1/sys/health
+    secretNames:
+      transferProxyTokenSignerPrivateKey: irs-dev-daps-cert-consumer-key
+      transferProxyTokenSignerPublicKey: irs-dev-daps-cert-consumer
+      transferProxyTokenEncryptionAesKey: test-edc-encryption-key
+  postgresql:
+    enabled: true
+    auth:
+      username: "edc"
+      password: "databasepassword"
+    username: "edc"
+    password: "databasepassword"
+    jdbcUrl: "jdbc:postgresql://dil-test-edc-provider-postgresql-hl:5432/edc"
+
+edc-provider-postgresql:
+  primary:
+    persistence:
+      enabled: false
+      size: 1Gi
+  auth:
+    database: edc
+    username: edc
+    postgresPassword: databasepassword
+    password: databasepassword
+
+digital-twin-registry:
+  enableKeycloak: false
+  postgresql:
+    primary:
+      persistence:
+        enabled: false
+        size: 1Gi
+      resources:
+        limits:
+          cpu: 1500m
+          memory: 1Gi
+        requests:
+          cpu: 200m
+          memory: 1Gi
+
+  registry:
+    authentication: false
+    ingress:
+      enabled: false
+
+    resources:
+      limits:
+        cpu: 1500m
+        memory: 1Gi
+      requests:
+        cpu: 200m
+        memory: 1Gi
+
+discovery:
+  wiremock:
+    host: "http://dil-test-discovery:8080"
+  edc:
+    connector: "http://dil-test-edc-provider-controlplane:8084"
+  resources:
+    limits:
+      cpu: 250m
+      memory: 512Mi
+    requests:
+      cpu: 50m
+      memory: 512Mi
+
+submodelservers:
+  resources:
+    limits:
+      cpu: 250m
+      memory: 512Mi
+    requests:
+      cpu: 50m
+      memory: 512Mi
+
+semantic-hub:
+  hub:
+    host: minikube
+    embeddedTripleStore: false
+  enableKeycloak: false
+  keycloak:
+    extraVolumes: []
+
+
+edc-provider2:
+  install:
+    postgresql: false
+    vault: false
+  participant:
+    id: BPNL00000001CRHK
+
+  controlplane:
+    ssi:
+      miw:
+        url: https://managed-identity-wallets-new.int.demo.catena-x.net
+        authorityId: BPNL00000003CRHK
+      oauth:
+        tokenurl: https://centralidp.int.demo.catena-x.net/auth/realms/CX-Central/protocol/openid-connect/token
+        client:
+          id:
+          secretAlias: edc-test-miw-keycloak-secret
+    endpoints:
+      management:
+        authKey: 123456
+    resources:
+      limits:
+        cpu: 1
+        memory: 1Gi
+      requests:
+        cpu: 100m
+        memory: 1Gi
+  dataplane:
+    resources:
+      limits:
+        cpu: 500m
+        memory: 512Mi
+      requests:
+        cpu: 100m
+        memory: 512Mi
+  # URL where the EndpointDataReference callback will be sent to
+  backendService:
+    httpProxyTokenReceiverUrl: "http://irs-dev-irs-helm:8181/internal/endpoint-data-reference"
+  vault:
+    hashicorp:
+      url: "https://vault.demo.catena-x.net"
+      token:
+      timeout: 30
+      healthCheck:
+        enabled: false
+        standbyOk: false
+      paths:
+        secret: /v1/traceability-irs
+        health: /v1/sys/health
+    secretNames:
+      transferProxyTokenSignerPrivateKey: irs-dev-daps-cert-consumer-key
+      transferProxyTokenSignerPublicKey: irs-dev-daps-cert-consumer
+      transferProxyTokenEncryptionAesKey: test-edc-encryption-key
+  postgresql:
+    enabled: true
+    auth:
+      username: "edc"
+      password: "databasepassword"
+    username: "edc"
+    password: "databasepassword"
+    jdbcUrl: "jdbc:postgresql://dil-test-edc-provider2-postgresql-hl:5432/edc"
+
+edc-provider2-postgresql:
+  primary:
+    persistence:
+      enabled: false
+      size: 1Gi
+  auth:
+    database: edc
+    username: edc
+    postgresPassword: databasepassword
+    password: databasepassword
