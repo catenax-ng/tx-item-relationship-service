@@ -98,6 +98,7 @@ public class ContractNegotiationService {
                 if (authKey == null) {
                     throw new IllegalStateException("Missing information about AuthKey.");
                 }
+                log.error("Authkey to be parsed: " + authKey);
                 contractAgreementId = EDRAuthCode.fromAuthCodeToken(authKey).getCid();
                 log.info(
                         "Cached endpoint data reference has expired token. Refreshing token without new contract negotiation for contractAgreementId: {}",
