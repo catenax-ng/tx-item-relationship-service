@@ -1269,6 +1269,51 @@ This URL is cached locally.</p>
 <p>Further information on Discovery Service can be found in the chapter "System scope and context".</p>
 </div>
 </div>
+<div class="sect3">
+<h4 id="_edc">EDC</h4>
+<div class="paragraph">
+<p>EndpointDataReferenceStorage is in-memory local storage that holds records (EndpointDataReferences) by either assetId or contractAgreementId.</p>
+</div>
+<div class="paragraph">
+<p>When EDC gets EndpointDataReference describing endpoint serving data it uses EndpointDataReferenceStorage and query it by assetId.
+This allows reuse of already existing EndpointDataReference if it is present, valid, and it&#8217;s token is not expired,
+rather than starting whole new contract negotiation process.</p>
+</div>
+<div class="paragraph">
+<p>In case token is expired the process is also shortened. We don&#8217;t have to start new contract negotiation process,
+since we can obtain required contractAgreementId from present authCode. This improves request processing time.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="rouge highlight"><code data-lang="mermaid">sequenceDiagram
+    autonumber
+    participant EdcSubmodelClient
+    participant ContractNegotiationService
+    participant EndpointDataReferenceStorage
+    participant EdcCallbackController
+    participant EdcDataPlaneClient
+    EdcSubmodelClient -&gt;&gt; EndpointDataReferenceStorage: Get EDR Token for EDC asset id
+    EndpointDataReferenceStorage -&gt;&gt; EdcSubmodelClient: Return Optional&lt;EDR Token&gt;
+    alt Token is present and not expired
+        EdcSubmodelClient -&gt;&gt; EdcSubmodelClient: Optional.get
+    else
+        alt Token is expired
+            EdcSubmodelClient -&gt;&gt; ContractNegotiationService: Renew EDR Token based on existing Token
+        else Token is not present
+            EdcSubmodelClient -&gt;&gt; ContractNegotiationService: Negotiate new EDR Token
+        end
+        ContractNegotiationService --&gt;&gt; EdcCallbackController: EDC flow
+        EdcCallbackController -&gt;&gt; EndpointDataReferenceStorage: Store EDR token by EDC asset id after EDC callback
+        loop While EDR Token is not present
+            EdcSubmodelClient -&gt;&gt; EndpointDataReferenceStorage: Poll for EDR Token
+        end
+        EndpointDataReferenceStorage -&gt;&gt; EdcSubmodelClient: Return EDR Token
+    end
+    EdcSubmodelClient -&gt;&gt; EdcDataPlaneClient: Get data(EDR Token, Dataplane URL)
+    EdcDataPlaneClient -&gt;&gt; EdcSubmodelClient: Return data</code></pre>
+</div>
+</div>
+</div>
 </div>
 </div>
 </div>
@@ -1432,7 +1477,7 @@ A number of Grafana dashboards are deployed automatically, to display data about
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2023-12-13 11:42:03 UTC
+Last updated 2024-01-11 11:49:00 UTC
 </div>
 </div>
 </body>

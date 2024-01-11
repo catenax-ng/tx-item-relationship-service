@@ -1156,6 +1156,46 @@ The time to live for both caches can be configured separately as described in th
 
 Further information on Discovery Service can be found in the chapter "System scope and context".
 
+#### EDC
+
+EndpointDataReferenceStorage is in-memory local storage that holds records (EndpointDataReferences) by either assetId or contractAgreementId.
+
+When EDC gets EndpointDataReference describing endpoint serving data it uses EndpointDataReferenceStorage and query it by assetId.
+This allows reuse of already existing EndpointDataReference if it is present, valid, and it’s token is not expired,
+rather than starting whole new contract negotiation process.
+
+In case token is expired the process is also shortened. We don’t have to start new contract negotiation process,
+since we can obtain required contractAgreementId from present authCode. This improves request processing time.
+
+```bash
+sequenceDiagram
+    autonumber
+    participant EdcSubmodelClient
+    participant ContractNegotiationService
+    participant EndpointDataReferenceStorage
+    participant EdcCallbackController
+    participant EdcDataPlaneClient
+    EdcSubmodelClient ->> EndpointDataReferenceStorage: Get EDR Token for EDC asset id
+    EndpointDataReferenceStorage ->> EdcSubmodelClient: Return Optional<EDR Token>
+    alt Token is present and not expired
+        EdcSubmodelClient ->> EdcSubmodelClient: Optional.get
+    else
+        alt Token is expired
+            EdcSubmodelClient ->> ContractNegotiationService: Renew EDR Token based on existing Token
+        else Token is not present
+            EdcSubmodelClient ->> ContractNegotiationService: Negotiate new EDR Token
+        end
+        ContractNegotiationService -->> EdcCallbackController: EDC flow
+        EdcCallbackController ->> EndpointDataReferenceStorage: Store EDR token by EDC asset id after EDC callback
+        loop While EDR Token is not present
+            EdcSubmodelClient ->> EndpointDataReferenceStorage: Poll for EDR Token
+        end
+        EndpointDataReferenceStorage ->> EdcSubmodelClient: Return EDR Token
+    end
+    EdcSubmodelClient ->> EdcDataPlaneClient: Get data(EDR Token, Dataplane URL)
+    EdcDataPlaneClient ->> EdcSubmodelClient: Return data
+```
+
 ## Development concepts
 
 ### Build, test, deploy
