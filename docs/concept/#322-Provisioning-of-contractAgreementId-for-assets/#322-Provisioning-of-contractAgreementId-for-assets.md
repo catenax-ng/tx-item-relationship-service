@@ -287,7 +287,11 @@ in request POST /irs/jobs. This collects the submodel which include the required
 
 ### <ins>Add ContractAgreementId to submodels </ins>
 
+Decision: **Option 1 will be implemented.** Option 2 is too invasive change to JobResponse is required now.  
+
+
 #### Option 1: Provide contractAgreementId for each submodel: 
+
 Impact: 
 - Redundant information in case multiple submodels were received for the same contractAgreementId. 
 - JobReponse size is already critical and extends by ~100byte multiples with every submodel and aas shell stored in the JobReponse  
@@ -360,8 +364,8 @@ The requestor gets the insight which policy does not match and has the opportuni
          }
       },         
       "processingError": {
-          "processStep": "DigitalTwinRequest",
-          "errorDetail": "EndpointDataReference was not found. Requested connectorEndpoints: https://test1.doubleSlash.com, https://test2.doubleSlash.com",
+          "processStep": "UsagePolicyValidation",
+          "errorDetail": "Consumption of asset (itemId) is not permitted as the required catalog offer policies do not comply with defined IRS policies.",
           "lastAttempt": "2024-01-17T09:02:36.648055745Z",
           "retryCounter": 3
       }
