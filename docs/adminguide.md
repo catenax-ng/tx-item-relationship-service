@@ -75,25 +75,20 @@ spring:
     oauth2:
       client:
         registration:
-          semantics :
+          common:
             authorization-grant-type: client_credentials
-            client-id: ${SEMANTICS_OAUTH2_CLIENT_ID} # Semantic Hub OAuth2 client ID used to authenticate with the IAM
-            client-secret: ${SEMANTICS_OAUTH2_CLIENT_SECRET} # Semantic Hub OAuth2 client secret used to authenticate with the IAM
-          discovery:
+            client-id: ${OAUTH2_CLIENT_ID} # OAuth2 client ID used to authenticate with the IAM
+            client-secret: ${OAUTH2_CLIENT_SECRET} # OAuth2 client secret used to authenticate with the IAM
+          portal:
             authorization-grant-type: client_credentials
-            client-id: ${DISCOVERY_OAUTH2_CLIENT_ID} # Dataspace Discovery OAuth2 client ID used to authenticate with the IAM
-            client-secret: ${DISCOVERY_OAUTH2_CLIENT_SECRET} # Dataspace Discovery OAuth2 client secret used to authenticate with the IAM
-          bpdm:
-            authorization-grant-type: client_credentials
-            client-id: ${BPDM_OAUTH2_CLIENT_ID} # BPDM Pool OAuth2 client ID used to authenticate with the IAM
-            client-secret: ${BPDM_OAUTH2_CLIENT_SECRET} # BPDM Pool OAuth2 client secret used to authenticate with the IAM
+            client-id: ${PORTAL_OAUTH2_CLIENT_ID} # OAuth2 client ID used to authenticate with the IAM
+            client-secret: ${PORTAL_OAUTH2_CLIENT_SECRET} # OAuth2 client secret used to authenticate with the IAM
         provider:
-          semantics:
-            token-uri: ${SEMANTICS_OAUTH2_CLIENT_TOKEN_URI:https://default} # OAuth2 endpoint to request tokens using the client credentials
-          discovery:
-            token-uri: ${DISCOVERY_OAUTH2_CLIENT_TOKEN_URI:https://default} # OAuth2 endpoint to request tokens using the client credentials
-          bpdm:
-            token-uri: ${BPDM_OAUTH2_CLIENT_TOKEN_URI:https://default} # OAuth2 endpoint to request tokens using the client credentials
+          common:
+            token-uri: ${OAUTH2_CLIENT_TOKEN_URI:https://default} # OAuth2 endpoint to request tokens using the client credentials
+          portal:
+            token-uri: ${PORTAL_OAUTH2_CLIENT_TOKEN_URI:https://default} # OAuth2 endpoint to request tokens using the client credentials
+
 
 management: # Spring management API config, see https://spring.io/guides/gs/centralized-configuration/
   endpoints:
@@ -282,7 +277,7 @@ semanticshub:
     #          │ │ │  │ │ │
     scheduler: 0 0 23 * * * # How often to clear the semantic model cache
   defaultUrns: "${SEMANTICSHUB_DEFAULT_URNS:urn:bamm:io.catenax.serial_part:1.0.0#SerialPart}" # IDs of models to cache at IRS startup
-  oAuthClientId: semantics # ID of the OAuth2 client registration to use, see config spring.security.oauth2.client
+  oAuthClientId: common # ID of the OAuth2 client registration to use, see config spring.security.oauth2.client
   timeout:
     read: PT90S # HTTP read timeout for the semantic hub client
     connect: PT90S # HTTP connect timeout for the semantic hub client
@@ -290,7 +285,7 @@ semanticshub:
 
 bpdm:
   bpnEndpoint: "${BPDM_URL:}" # Endpoint to resolve BPNs, must contain the placeholders {partnerId} and {idType}
-  oAuthClientId: bpdm # ID of the OAuth2 client registration to use, see config spring.security.oauth2.client
+  oAuthClientId: common # ID of the OAuth2 client registration to use, see config spring.security.oauth2.client
   timeout:
     read: PT90S # HTTP read timeout for the bpdm client
     connect: PT90S # HTTP connect timeout for the bpdm client
@@ -305,7 +300,7 @@ ess:
   irs:
     url: "${IRS_URL:}" # IRS Url to connect with
   discovery:
-    oAuthClientId: discovery # ID of the OAuth2 client registration to use, see config spring.security.oauth2.client
+    oAuthClientId: portal # ID of the OAuth2 client registration to use, see config spring.security.oauth2.client
     timeout:
       read: PT90S # HTTP read timeout for the discovery client
       connect: PT90S # HTTP connect timeout for the discovery client
@@ -369,16 +364,13 @@ minioUser: "minio"  # <minio-username>
 minioPassword:  # <minio-password>
 minioUrl: "http://{{ .Release.Name }}-minio:9000"
 oauth2:
+  clientId:  # <oauth2-client-id>
+  clientSecret:  # <oauth2-client-secret>
   clientTokenUri:  # <oauth2-token-uri>
-  semantics:
-    clientId:  # <semantics-client-id>
-    clientSecret:  # <semantics-client-secret>
-  discovery:
-    clientId:  # <discovery-client-id>
-    clientSecret:  # <discovery-client-secret>
-  bpdm:
-    clientId:  # <bpdm-client-id>
-    clientSecret:  # <bpdm-client-secret>
+portal:
+  oauth2:
+    clientId:  # <portal-client-id>
+    clientSecret:  # <portal-client-secret>
 edc:
   controlplane:
     endpoint:
@@ -427,7 +419,7 @@ edc:
     cacheTTL: PT24H  # Time to live for ConnectorEndpointService for fetchConnectorEndpoints method cache
 
 discovery:
-  oAuthClientId: discovery  # ID of the OAuth2 client registration to use, see config spring.security.oauth2.client
+  oAuthClientId: portal  # ID of the OAuth2 client registration to use, see config spring.security.oauth2.client
 
 ess:
   edc:
@@ -517,6 +509,9 @@ prometheus:
 #########################
 grafana:
   enabled: false  # ①
+  rbac:
+    create: false
+  persistence:
 ```
 
 1. Use this to enable or disable the monitoring components
@@ -673,29 +668,13 @@ This is a list of all secrets used in the deployment.
 **⚠️ WARNING**\
 Keep the values for these settings safe and do not publish them!
 
-#### semantics-client-id
+#### common-client-id
 
-Semantic Hub client ID for OAuth2 provider. Request this from your OAuth2 operator.
+Client ID for OAuth2 provider. Request this from your OAuth2 operator.
 
-#### semantics-client-secret
+#### common-client-secret
 
-Semantic Hub client secret for OAuth2 provider. Request this from your OAuth2 operator.
-
-#### discovery-client-id
-
-Dataspace Discovery  client ID for OAuth2 provider. Request this from your OAuth2 operator.
-
-#### discovery-client-secret
-
-Dataspace Discovery  client secret for OAuth2 provider. Request this from your OAuth2 operator.
-
-#### bpdm-client-id
-
-BPDM client ID for OAuth2 provider. Request this from your OAuth2 operator.
-
-#### bpdm-client-secret
-
-BPDM client secret for OAuth2 provider. Request this from your OAuth2 operator.
+Client secret for OAuth2 provider. Request this from your OAuth2 operator.
 
 #### minio-username
 

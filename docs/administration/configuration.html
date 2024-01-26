@@ -675,12 +675,8 @@ pre.rouge {
 <li><a href="#_edc_consumer_configuration">EDC consumer configuration</a></li>
 <li><a href="#_secrets">Secrets</a>
 <ul class="sectlevel2">
-<li><a href="#_semantics_client_id">&lt;semantics-client-id&gt;</a></li>
-<li><a href="#_semantics_client_secret">&lt;semantics-client-secret&gt;</a></li>
-<li><a href="#_discovery_client_id">&lt;discovery-client-id&gt;</a></li>
-<li><a href="#_discovery_client_secret">&lt;discovery-client-secret&gt;</a></li>
-<li><a href="#_bpdm_client_id">&lt;bpdm-client-id&gt;</a></li>
-<li><a href="#_bpdm_client_secret">&lt;bpdm-client-secret&gt;</a></li>
+<li><a href="#_common_client_id">&lt;common-client-id&gt;</a></li>
+<li><a href="#_common_client_secret">&lt;common-client-secret&gt;</a></li>
 <li><a href="#_minio_username">&lt;minio-username&gt;</a></li>
 <li><a href="#_minio_password">&lt;minio-password&gt;</a></li>
 <li><a href="#_edc_api_key">&lt;edc-api-key&gt;</a></li>
@@ -723,25 +719,20 @@ You can define the URLs as well as most of the secrets yourself.</p>
     <span class="na">oauth2</span><span class="pi">:</span>
       <span class="na">client</span><span class="pi">:</span>
         <span class="na">registration</span><span class="pi">:</span>
-          <span class="na">semantics </span><span class="pi">:</span>
+          <span class="na">common</span><span class="pi">:</span>
             <span class="na">authorization-grant-type</span><span class="pi">:</span> <span class="s">client_credentials</span>
-            <span class="na">client-id</span><span class="pi">:</span> <span class="s">${SEMANTICS_OAUTH2_CLIENT_ID}</span> <span class="c1"># Semantic Hub OAuth2 client ID used to authenticate with the IAM</span>
-            <span class="na">client-secret</span><span class="pi">:</span> <span class="s">${SEMANTICS_OAUTH2_CLIENT_SECRET}</span> <span class="c1"># Semantic Hub OAuth2 client secret used to authenticate with the IAM</span>
-          <span class="na">discovery</span><span class="pi">:</span>
+            <span class="na">client-id</span><span class="pi">:</span> <span class="s">${OAUTH2_CLIENT_ID}</span> <span class="c1"># OAuth2 client ID used to authenticate with the IAM</span>
+            <span class="na">client-secret</span><span class="pi">:</span> <span class="s">${OAUTH2_CLIENT_SECRET}</span> <span class="c1"># OAuth2 client secret used to authenticate with the IAM</span>
+          <span class="na">portal</span><span class="pi">:</span>
             <span class="na">authorization-grant-type</span><span class="pi">:</span> <span class="s">client_credentials</span>
-            <span class="na">client-id</span><span class="pi">:</span> <span class="s">${DISCOVERY_OAUTH2_CLIENT_ID}</span> <span class="c1"># Dataspace Discovery OAuth2 client ID used to authenticate with the IAM</span>
-            <span class="na">client-secret</span><span class="pi">:</span> <span class="s">${DISCOVERY_OAUTH2_CLIENT_SECRET}</span> <span class="c1"># Dataspace Discovery OAuth2 client secret used to authenticate with the IAM</span>
-          <span class="na">bpdm</span><span class="pi">:</span>
-            <span class="na">authorization-grant-type</span><span class="pi">:</span> <span class="s">client_credentials</span>
-            <span class="na">client-id</span><span class="pi">:</span> <span class="s">${BPDM_OAUTH2_CLIENT_ID}</span> <span class="c1"># BPDM Pool OAuth2 client ID used to authenticate with the IAM</span>
-            <span class="na">client-secret</span><span class="pi">:</span> <span class="s">${BPDM_OAUTH2_CLIENT_SECRET}</span> <span class="c1"># BPDM Pool OAuth2 client secret used to authenticate with the IAM</span>
+            <span class="na">client-id</span><span class="pi">:</span> <span class="s">${PORTAL_OAUTH2_CLIENT_ID}</span> <span class="c1"># OAuth2 client ID used to authenticate with the IAM</span>
+            <span class="na">client-secret</span><span class="pi">:</span> <span class="s">${PORTAL_OAUTH2_CLIENT_SECRET}</span> <span class="c1"># OAuth2 client secret used to authenticate with the IAM</span>
         <span class="na">provider</span><span class="pi">:</span>
-          <span class="na">semantics</span><span class="pi">:</span>
-            <span class="na">token-uri</span><span class="pi">:</span> <span class="s">${SEMANTICS_OAUTH2_CLIENT_TOKEN_URI:https://default}</span> <span class="c1"># OAuth2 endpoint to request tokens using the client credentials</span>
-          <span class="na">discovery</span><span class="pi">:</span>
-            <span class="na">token-uri</span><span class="pi">:</span> <span class="s">${DISCOVERY_OAUTH2_CLIENT_TOKEN_URI:https://default}</span> <span class="c1"># OAuth2 endpoint to request tokens using the client credentials</span>
-          <span class="na">bpdm</span><span class="pi">:</span>
-            <span class="na">token-uri</span><span class="pi">:</span> <span class="s">${BPDM_OAUTH2_CLIENT_TOKEN_URI:https://default}</span> <span class="c1"># OAuth2 endpoint to request tokens using the client credentials</span>
+          <span class="na">common</span><span class="pi">:</span>
+            <span class="na">token-uri</span><span class="pi">:</span> <span class="s">${OAUTH2_CLIENT_TOKEN_URI:https://default}</span> <span class="c1"># OAuth2 endpoint to request tokens using the client credentials</span>
+          <span class="na">portal</span><span class="pi">:</span>
+            <span class="na">token-uri</span><span class="pi">:</span> <span class="s">${PORTAL_OAUTH2_CLIENT_TOKEN_URI:https://default}</span> <span class="c1"># OAuth2 endpoint to request tokens using the client credentials</span>
+
 
 <span class="na">management</span><span class="pi">:</span> <span class="c1"># Spring management API config, see https://spring.io/guides/gs/centralized-configuration/</span>
   <span class="na">endpoints</span><span class="pi">:</span>
@@ -930,7 +921,7 @@ You can define the URLs as well as most of the secrets yourself.</p>
     <span class="c1">#          │ │ │  │ │ │</span>
     <span class="na">scheduler</span><span class="pi">:</span> <span class="s">0 0 23 * * *</span> <span class="c1"># How often to clear the semantic model cache</span>
   <span class="na">defaultUrns</span><span class="pi">:</span> <span class="s2">"</span><span class="s">${SEMANTICSHUB_DEFAULT_URNS:urn:bamm:io.catenax.serial_part:1.0.0#SerialPart}"</span> <span class="c1"># IDs of models to cache at IRS startup</span>
-  <span class="na">oAuthClientId</span><span class="pi">:</span> <span class="s">semantics</span> <span class="c1"># ID of the OAuth2 client registration to use, see config spring.security.oauth2.client</span>
+  <span class="na">oAuthClientId</span><span class="pi">:</span> <span class="s">common</span> <span class="c1"># ID of the OAuth2 client registration to use, see config spring.security.oauth2.client</span>
   <span class="na">timeout</span><span class="pi">:</span>
     <span class="na">read</span><span class="pi">:</span> <span class="s">PT90S</span> <span class="c1"># HTTP read timeout for the semantic hub client</span>
     <span class="na">connect</span><span class="pi">:</span> <span class="s">PT90S</span> <span class="c1"># HTTP connect timeout for the semantic hub client</span>
@@ -938,7 +929,7 @@ You can define the URLs as well as most of the secrets yourself.</p>
 
 <span class="na">bpdm</span><span class="pi">:</span>
   <span class="na">bpnEndpoint</span><span class="pi">:</span> <span class="s2">"</span><span class="s">${BPDM_URL:}"</span> <span class="c1"># Endpoint to resolve BPNs, must contain the placeholders {partnerId} and {idType}</span>
-  <span class="na">oAuthClientId</span><span class="pi">:</span> <span class="s">bpdm</span> <span class="c1"># ID of the OAuth2 client registration to use, see config spring.security.oauth2.client</span>
+  <span class="na">oAuthClientId</span><span class="pi">:</span> <span class="s">common</span> <span class="c1"># ID of the OAuth2 client registration to use, see config spring.security.oauth2.client</span>
   <span class="na">timeout</span><span class="pi">:</span>
     <span class="na">read</span><span class="pi">:</span> <span class="s">PT90S</span> <span class="c1"># HTTP read timeout for the bpdm client</span>
     <span class="na">connect</span><span class="pi">:</span> <span class="s">PT90S</span> <span class="c1"># HTTP connect timeout for the bpdm client</span>
@@ -953,7 +944,7 @@ You can define the URLs as well as most of the secrets yourself.</p>
   <span class="na">irs</span><span class="pi">:</span>
     <span class="na">url</span><span class="pi">:</span> <span class="s2">"</span><span class="s">${IRS_URL:}"</span> <span class="c1"># IRS Url to connect with</span>
   <span class="na">discovery</span><span class="pi">:</span>
-    <span class="na">oAuthClientId</span><span class="pi">:</span> <span class="s">discovery</span> <span class="c1"># ID of the OAuth2 client registration to use, see config spring.security.oauth2.client</span>
+    <span class="na">oAuthClientId</span><span class="pi">:</span> <span class="s">portal</span> <span class="c1"># ID of the OAuth2 client registration to use, see config spring.security.oauth2.client</span>
     <span class="na">timeout</span><span class="pi">:</span>
       <span class="na">read</span><span class="pi">:</span> <span class="s">PT90S</span> <span class="c1"># HTTP read timeout for the discovery client</span>
       <span class="na">connect</span><span class="pi">:</span> <span class="s">PT90S</span> <span class="c1"># HTTP connect timeout for the discovery client</span>
@@ -1021,16 +1012,13 @@ You can define the URLs as well as most of the secrets yourself.</p>
 <span class="na">minioPassword</span><span class="pi">:</span>  <span class="c1"># &lt;minio-password&gt;</span>
 <span class="na">minioUrl</span><span class="pi">:</span> <span class="s2">"</span><span class="s">http://{{</span><span class="nv"> </span><span class="s">.Release.Name</span><span class="nv"> </span><span class="s">}}-minio:9000"</span>
 <span class="na">oauth2</span><span class="pi">:</span>
+  <span class="na">clientId</span><span class="pi">:</span>  <span class="c1"># &lt;oauth2-client-id&gt;</span>
+  <span class="na">clientSecret</span><span class="pi">:</span>  <span class="c1"># &lt;oauth2-client-secret&gt;</span>
   <span class="na">clientTokenUri</span><span class="pi">:</span>  <span class="c1"># &lt;oauth2-token-uri&gt;</span>
-  <span class="na">semantics</span><span class="pi">:</span>
-    <span class="na">clientId</span><span class="pi">:</span>  <span class="c1"># &lt;semantics-client-id&gt;</span>
-    <span class="na">clientSecret</span><span class="pi">:</span>  <span class="c1"># &lt;semantics-client-secret&gt;</span>
-  <span class="na">discovery</span><span class="pi">:</span>
-    <span class="na">clientId</span><span class="pi">:</span>  <span class="c1"># &lt;discovery-client-id&gt;</span>
-    <span class="na">clientSecret</span><span class="pi">:</span>  <span class="c1"># &lt;discovery-client-secret&gt;</span>
-  <span class="na">bpdm</span><span class="pi">:</span>
-    <span class="na">clientId</span><span class="pi">:</span>  <span class="c1"># &lt;bpdm-client-id&gt;</span>
-    <span class="na">clientSecret</span><span class="pi">:</span>  <span class="c1"># &lt;bpdm-client-secret&gt;</span>
+<span class="na">portal</span><span class="pi">:</span>
+  <span class="na">oauth2</span><span class="pi">:</span>
+    <span class="na">clientId</span><span class="pi">:</span>  <span class="c1"># &lt;portal-client-id&gt;</span>
+    <span class="na">clientSecret</span><span class="pi">:</span>  <span class="c1"># &lt;portal-client-secret&gt;</span>
 <span class="na">edc</span><span class="pi">:</span>
   <span class="na">controlplane</span><span class="pi">:</span>
     <span class="na">endpoint</span><span class="pi">:</span>
@@ -1079,7 +1067,7 @@ You can define the URLs as well as most of the secrets yourself.</p>
     <span class="na">cacheTTL</span><span class="pi">:</span> <span class="s">PT24H</span>  <span class="c1"># Time to live for ConnectorEndpointService for fetchConnectorEndpoints method cache</span>
 
 <span class="na">discovery</span><span class="pi">:</span>
-  <span class="na">oAuthClientId</span><span class="pi">:</span> <span class="s">discovery</span>  <span class="c1"># ID of the OAuth2 client registration to use, see config spring.security.oauth2.client</span>
+  <span class="na">oAuthClientId</span><span class="pi">:</span> <span class="s">portal</span>  <span class="c1"># ID of the OAuth2 client registration to use, see config spring.security.oauth2.client</span>
 
 <span class="na">ess</span><span class="pi">:</span>
   <span class="na">edc</span><span class="pi">:</span>
@@ -1168,7 +1156,10 @@ You can define the URLs as well as most of the secrets yourself.</p>
 <span class="c1"># Grafana Configuration #</span>
 <span class="c1">#########################</span>
 <span class="na">grafana</span><span class="pi">:</span>
-  <span class="na">enabled</span><span class="pi">:</span> <span class="no">false</span>  <i class="conum" data-value="1"></i><b>(1)</b></code></pre>
+  <span class="na">enabled</span><span class="pi">:</span> <span class="no">false</span>  <i class="conum" data-value="1"></i><b>(1)</b>
+  <span class="na">rbac</span><span class="pi">:</span>
+    <span class="na">create</span><span class="pi">:</span> <span class="no">false</span>
+  <span class="na">persistence</span><span class="pi">:</span></code></pre>
 </div>
 </div>
 <div class="colist arabic">
@@ -1401,39 +1392,15 @@ Keep the values for these settings safe and do not publish them!
 </table>
 </div>
 <div class="sect2">
-<h3 id="_semantics_client_id">&lt;semantics-client-id&gt;</h3>
+<h3 id="_common_client_id">&lt;common-client-id&gt;</h3>
 <div class="paragraph">
-<p>Semantic Hub client ID for OAuth2 provider. Request this from your OAuth2 operator.</p>
+<p>Client ID for OAuth2 provider. Request this from your OAuth2 operator.</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_semantics_client_secret">&lt;semantics-client-secret&gt;</h3>
+<h3 id="_common_client_secret">&lt;common-client-secret&gt;</h3>
 <div class="paragraph">
-<p>Semantic Hub client secret for OAuth2 provider. Request this from your OAuth2 operator.</p>
-</div>
-</div>
-<div class="sect2">
-<h3 id="_discovery_client_id">&lt;discovery-client-id&gt;</h3>
-<div class="paragraph">
-<p>Dataspace Discovery  client ID for OAuth2 provider. Request this from your OAuth2 operator.</p>
-</div>
-</div>
-<div class="sect2">
-<h3 id="_discovery_client_secret">&lt;discovery-client-secret&gt;</h3>
-<div class="paragraph">
-<p>Dataspace Discovery  client secret for OAuth2 provider. Request this from your OAuth2 operator.</p>
-</div>
-</div>
-<div class="sect2">
-<h3 id="_bpdm_client_id">&lt;bpdm-client-id&gt;</h3>
-<div class="paragraph">
-<p>BPDM client ID for OAuth2 provider. Request this from your OAuth2 operator.</p>
-</div>
-</div>
-<div class="sect2">
-<h3 id="_bpdm_client_secret">&lt;bpdm-client-secret&gt;</h3>
-<div class="paragraph">
-<p>BPDM client secret for OAuth2 provider. Request this from your OAuth2 operator.</p>
+<p>Client secret for OAuth2 provider. Request this from your OAuth2 operator.</p>
 </div>
 </div>
 <div class="sect2">
@@ -1477,7 +1444,7 @@ Keep the values for these settings safe and do not publish them!
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2024-01-26 00:10:44 UTC
+Last updated 2024-01-26 15:12:00 UTC
 </div>
 </div>
 </body>
