@@ -21,7 +21,32 @@
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
+            <artifactId>irs-common</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>irs-policy-store</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
             <artifactId>irs-models</artifactId>
+            <version>${irs-registry-client.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>irs-registry-client</artifactId>
+            <version>${irs-registry-client.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>irs-edc-client</artifactId>
+            <version>${irs-registry-client.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>irs-testing</artifactId>
             <version>${irs-registry-client.version}</version>
         </dependency>
     </dependencies>
