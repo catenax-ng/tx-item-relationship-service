@@ -101,6 +101,29 @@ readinessProbe:
   successThreshold: 1
   timeoutSeconds: 1
 
+# Logging Configuration
+logging:
+  levels: |-
+    rootLogger.level=ERROR
+    logging.level.org.eclipse.tractusx.irs=ERROR
+    logging.level.org.eclipse.tractusx.edc=ERROR
+    logging.level.org.eclipse.tractusx.ess=ERROR
+    logging.level.org.springframework.boot.actuate.endpoint.jmx=ERROR
+    logging.level.org.springframework.web=ERROR
+    logging.level.org.springframework.web.client.RestTemplate=ERROR
+    logging.level.org.springframework.security.authentication=ERROR
+    logging.level.org.springframework.security.oauth2=ERROR
+    logging.level.org.apache.catalina.startup.DigesterFactory=ERROR
+    logging.level.org.apache.catalina.util.LifecycleBase=ERROR
+    logging.level.org.apache.coyote.http11.Http11NioProtocol=WARN
+    logging.level.org.apache.sshd.common.util.SecurityUtils=WARN
+    logging.level.org.apache.tomcat.util.net.NioSelectorPool=WARN
+
+  config:
+    override: false
+    content:
+
+
 #####################
 # IRS Configuration #
 #####################

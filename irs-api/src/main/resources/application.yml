@@ -1,5 +1,5 @@
 server:
-  port: 8080 # The port the main application API listens on
+  port: 8181 # The port the main application API listens on
   trustedPort: ${SERVER_TRUSTED_PORT:} # The port used for the unsecured, internal API - if empty, the main port is used
 
 spring:
@@ -58,14 +58,6 @@ management: # Spring management API config, see https://spring.io/guides/gs/cent
       application: ${spring.application.name}
   server:
     port: 4004
-
-logging:
-  pattern:
-    console: "%d %-5level %logger : %msg%n"
-  level:
-    root: WARN
-    org.springframework: INFO
-    org.eclipse.tractusx.irs: INFO
 
 springdoc: # API docs configuration
   api-docs:

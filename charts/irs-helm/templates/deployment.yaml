@@ -41,6 +41,7 @@ spec:
       annotations:
         checksum/config: {{ include (print $.Template.BasePath "/configmap-spring-app-config.yaml") . | sha256sum }}
         checksum/semanticmodels: {{ include (print $.Template.BasePath "/configmap-semantic-models.yaml") . | sha256sum }}
+        checksum/loggingconfig: {{ include (print $.Template.BasePath "/configmap-logging.yaml") . | sha256sum }}
       {{- with .Values.podAnnotations }}
         {{- toYaml . | nindent 8 }}
       {{- end }}
@@ -61,15 +62,21 @@ spec:
             {{- toYaml .Values.securityContext | nindent 12 }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
+          command: ["java", "-Djava.util.logging.config.file=./log4j2.properties", "-jar", "app.jar"]
           volumeMounts:
             - name: tmp
               mountPath: /tmp
             - name: application-config
-              mountPath: /app/config
+              mountPath: /app/config/application.yaml
+              subPath: application.yaml
+            - name: logging-config
+              mountPath: /app/config/log4j2.properties
+              subPath: log4j2.properties
             {{- if .Values.semanticshub.localModels }}
             - name: semantic-models
               mountPath: /app/semantic-models
             {{- end }}
+
           env:
             - name: MINIO_ACCESS_KEY
               valueFrom:
@@ -162,6 +169,12 @@ spec:
             items:
               - key: application.yaml
                 path: application.yaml
+        - name: logging-config
+          configMap:
+            name: {{ include "irs.fullname" . }}-configmap-logging
+            items:
+              - key: log4j2.properties
+                path: log4j2.properties
         {{- if .Values.semanticshub.localModels }}
         - name: semantic-models
           configMap:
