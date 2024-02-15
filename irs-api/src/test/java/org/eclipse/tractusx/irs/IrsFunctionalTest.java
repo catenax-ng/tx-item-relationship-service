@@ -40,6 +40,8 @@ import org.eclipse.tractusx.irs.component.JobHandle;
 import org.eclipse.tractusx.irs.component.Jobs;
 import org.eclipse.tractusx.irs.component.RegisterJob;
 import org.eclipse.tractusx.irs.component.enums.JobState;
+import org.eclipse.tractusx.irs.configuration.security.ApiKeyAuthentication;
+import org.eclipse.tractusx.irs.configuration.security.ApiKeyAuthority;
 import org.eclipse.tractusx.irs.controllers.IrsController;
 import org.eclipse.tractusx.irs.registryclient.discovery.ConnectorEndpointsService;
 import org.eclipse.tractusx.irs.testing.containers.MinioContainer;
@@ -58,7 +60,6 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.jwt.Jwt;
-import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.support.TestPropertySourceUtils;
@@ -178,8 +179,7 @@ class IrsFunctionalTest {
     }
 
     private void thereIsJwtAuthentication() {
-        final JwtAuthenticationToken jwtAuthenticationToken = new JwtAuthenticationToken(jwt(),
-                List.of(new SimpleGrantedAuthority(IrsRoles.VIEW_IRS)));
+        final ApiKeyAuthentication jwtAuthenticationToken = new ApiKeyAuthentication(new ApiKeyAuthority("apiKey", List.of(new SimpleGrantedAuthority(IrsRoles.VIEW_IRS))));
         jwtAuthenticationToken.setAuthenticated(true);
         SecurityContext securityContext = Mockito.mock(SecurityContext.class);
         when(securityContext.getAuthentication()).thenReturn(jwtAuthenticationToken);

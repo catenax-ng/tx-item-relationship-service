@@ -55,7 +55,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.http.HttpStatus;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT, classes = { SmokeTestConfiguration.class })
 class ItemGraphSmokeTest {
@@ -113,7 +112,7 @@ class ItemGraphSmokeTest {
                                                     .when()
                                                     .post("/irs/jobs")
                                                     .then()
-                                                    .statusCode(HttpStatus.CREATED.value())
+                                                    .statusCode(201)
                                                     .extract()
                                                     .as(JobHandle.class);
 
@@ -129,7 +128,7 @@ class ItemGraphSmokeTest {
                                            .get("/irs/jobs/" + createdJobId)
                                            .then()
                                            .assertThat()
-                                           .statusCode(HttpStatus.OK.value())
+                                           .statusCode(200)
                                            .extract()
                                            .as(Jobs.class);
 
@@ -166,7 +165,7 @@ class ItemGraphSmokeTest {
 
         final Jobs completedJobs = pollResponse.then()
                                                .assertThat()
-                                               .statusCode(HttpStatus.OK.value())
+                                               .statusCode(200)
                                                .extract()
                                                .as(Jobs.class);
 

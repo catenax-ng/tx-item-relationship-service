@@ -66,8 +66,6 @@ import org.eclipse.tractusx.irs.component.enums.BatchStrategy;
 import org.eclipse.tractusx.irs.component.enums.BomLifecycle;
 import org.eclipse.tractusx.irs.component.enums.Direction;
 import org.eclipse.tractusx.irs.component.enums.JobState;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 
 public class E2ETestStepDefinitions {
     private RegisterJob.RegisterJobBuilder registerJobBuilder;
@@ -222,7 +220,7 @@ public class E2ETestStepDefinitions {
                                                     .when()
                                                     .post("/irs/jobs")
                                                     .then()
-                                                    .statusCode(HttpStatus.CREATED.value())
+                                                    .statusCode(201)
                                                     .extract()
                                                     .as(JobHandle.class);
 
@@ -242,7 +240,7 @@ public class E2ETestStepDefinitions {
                                                               .when()
                                                               .post("/irs/orders")
                                                               .then()
-                                                              .statusCode(HttpStatus.CREATED.value())
+                                                              .statusCode(201)
                                                               .extract()
                                                               .as(BatchOrderCreated.class);
 
@@ -499,7 +497,7 @@ public class E2ETestStepDefinitions {
 
     @After("@INTEGRATION_TEST")
     public void addJobIdToResult(Scenario scenario) {
-        scenario.attach(jobId.toString(), MediaType.TEXT_PLAIN_VALUE, "jobId");
+        scenario.attach(jobId.toString(), "text/plain", "jobId");
     }
 
     private static class PropertyNotFoundException extends Exception {
