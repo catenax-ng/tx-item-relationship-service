@@ -51,7 +51,8 @@ RUN --mount=type=cache,target=/root/.m2 mvn -B clean package -pl :$BUILD_TARGET 
 # Copy the jar and build image
 FROM eclipse-temurin:17-jre-alpine AS irs-api
 
-#RUN apk add --upgrade --no-cache expat
+# Manually update of expat - can be removed when eclipse-temurin will update this
+RUN apk add --upgrade --no-cache expat
 
 ARG UID=10000
 ARG GID=3000
