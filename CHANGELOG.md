@@ -5,7 +5,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
-
+- Update dependency com.jayway.jsonpath/json-path to 2.9.0 to fix CVE-2023-51074
 
 ## [4.5.0] - 2024-02-07
 ### Added
