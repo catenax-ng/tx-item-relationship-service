@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Release.Name }}-postinstall-configmap
+data:
+  requirements.txt: |-
+{{ .Files.Get "requirements.txt" | indent 4}}
+  upload.py: |-
+{{ .Files.Get "transform-and-upload.py" | indent 4}}
+  testdata.json: |-
+{{ .Files.Get "Testdata_AsBuilt-combustion.json" | indent 4}}
+  upload-data.sh: |-
+{{ .Files.Get "upload-data.sh" | indent 4}}
