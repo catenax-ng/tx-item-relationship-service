@@ -29,7 +29,8 @@ spec:
           command:
             - "/bin/sh"
             - "-c"
-            - "/opt/scripts/upload-data.sh"
+          args:
+            - "{{- cat "/opt/scripts/upload-data.sh" (include "submodelservers.host" .) (include "registry.url" .) (include "edc.controlplane.host" .) (include "edc.dataplane.host" .) (include "edc.key" .) (include "edc.bpn" .) }}"
           volumeMounts:
             - name: config-volume
               mountPath: /opt/scripts

@@ -20,7 +20,7 @@ edc-provider:
             secretAlias:
       ingresses:
         - enabled: true
-          hostname: "provider-controlplane.test"
+          hostname: "controlplane.test"
           annotations:
             nginx.ingress.kubernetes.io/ssl-passthrough: "false"
             nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
@@ -38,7 +38,7 @@ edc-provider:
     dataplane:
       ingresses:
         - enabled: true
-          hostname: "provider-dataplane.test"
+          hostname: "dataplane.test"
           annotations:
             nginx.ingress.kubernetes.io/ssl-passthrough: "false"
             nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
@@ -94,7 +94,7 @@ edc-provider:
       password: *postgrespass
 
 digital-twin-registry:
-  fullnameOverride: digital-twin-registry
+  nameOverride: digital-twin-registry
   enablePostgres: true
   registry:
     host: digital-twin-registry.test
@@ -110,6 +110,15 @@ digital-twin-registry:
         nginx.ingress.kubernetes.io/cors-allow-credentials: "true"
         nginx.ingress.kubernetes.io/x-forwarded-prefix: /semantics/registry
     authentication: false
+    livenessProbe:
+      failureThreshold: 6
+      initialDelaySeconds: 30
+      periodSeconds: 10
+    readinessProbe:
+      failureThreshold: 6
+      initialDelaySeconds: 30
+      periodSeconds: 10
+
   postgresql:
     primary:
       persistence:

@@ -214,7 +214,7 @@ def print_response(response_):
     print(response_)
     if response_.status_code > 205:
         print(response_.text)
-    if response_.status_code in [500, 404, 401]:
+    if response_.status_code in [404, 401] or response_.status_code >= 500:
         raise Exception("Failed to call service")
 
 
