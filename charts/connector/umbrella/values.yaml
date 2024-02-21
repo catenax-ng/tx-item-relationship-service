@@ -1,0 +1,126 @@
+dataconsumer:
+  fullnameOverride: dataconsumer
+  tractusx-connector:
+    fullnameOverride: dataconsumer-edc
+    participant:
+      id: BPNL00000001CRHK
+    controlplane:
+      ingresses:
+        - enabled: true
+          hostname: "dataconsumer-controlplane.test"
+          annotations:
+            nginx.ingress.kubernetes.io/ssl-passthrough: "false"
+            nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
+            nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
+          endpoints:
+            - protocol
+            - management
+          tls:
+            enabled: true
+            secretName: tls-secret
+    dataplane:
+      ingresses:
+        - enabled: true
+          hostname: "dataconsumer-dataplane.test"
+          annotations:
+            nginx.ingress.kubernetes.io/ssl-passthrough: "false"
+            nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
+            nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
+          endpoints:
+            - public
+          className: "nginx"
+          tls:
+            enabled: true
+            secretName: tls-secret
+    postgresql:
+      #      jdbcUrl: "jdbc:postgresql://dataconsumer-db-hl:5432/edc"
+      #      jdbcUrl: "jdbc:postgresql://dataconsumer-db:5432/edc"
+
+      #      jdbcUrl: "jdbc:postgresql://umbrella-postgresql-hl:5432/edc"
+      jdbcUrl: "jdbc:postgresql://umbrella-postgresql:5432/edc"
+
+  edc-postgresql:
+    fullnameOverride: dataconsumer-db
+
+  digital-twin-registry:
+    fullnameOverride: dataconsumer-digital-twin-registry
+    postgresql:
+      fullnameOverride: dataconsumer-digital-twin-registry-db
+    registry:
+      host: dataconsumer-digital-twin-registry.test
+
+  submodelservers:
+    fullnameOverride: dataconsumer-submodelserver
+    ingress:
+      enabled: true
+      hosts:
+        - host: dataconsumer-submodelserver.test
+          paths:
+            - path: /
+              pathType: ImplementationSpecific
+      tls:
+        - hosts:
+            - dataconsumer-submodelserver.test
+          secretName: tls-secret
+
+dataprovider:
+  fullnameOverride: dataprovider
+  tractusx-connector:
+    fullnameOverride: dataprovider-edc
+    participant:
+      id: BPNL00000001CRHK
+    controlplane:
+      ingresses:
+        - enabled: true
+          hostname: "dataprovider-controlplane.test"
+          annotations:
+            nginx.ingress.kubernetes.io/ssl-passthrough: "false"
+            nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
+            nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
+          endpoints:
+            - protocol
+            - management
+          tls:
+            enabled: true
+            secretName: tls-secret
+    dataplane:
+      ingresses:
+        - enabled: true
+          hostname: "dataprovider-dataplane.test"
+          annotations:
+            nginx.ingress.kubernetes.io/ssl-passthrough: "false"
+            nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
+            nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
+          endpoints:
+            - public
+          className: "nginx"
+          tls:
+            enabled: true
+            secretName: tls-secret
+    postgresql:
+      #      jdbcUrl: "jdbc:postgresql://dataprovider-db-hl:5432/edc"
+      jdbcUrl: "jdbc:postgresql://dataprovider-db:5432/edc"
+
+  edc-postgresql:
+    fullnameOverride: dataprovider-db
+
+  digital-twin-registry:
+    fullnameOverride: dataprovider-digital-twin-registry
+    postgresql:
+      fullnameOverride: dataprovider-digital-twin-registry-db
+    registry:
+      host: dataprovider-digital-twin-registry.test
+
+  submodelservers:
+    fullnameOverride: dataprovider-submodelserver
+    ingress:
+      enabled: true
+      hosts:
+        - host: dataprovider-submodelserver.test
+          paths:
+            - path: /
+              pathType: ImplementationSpecific
+      tls:
+        - hosts:
+            - dataprovider-submodelserver.test
+          secretName: tls-secret
