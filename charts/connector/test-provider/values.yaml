@@ -4,104 +4,148 @@ configuration:
   authorityBPN: &authorityBPN BPNL000000000000
   edcKey: &edcKey TEST
 
-edc-provider:
-  tractusx-connector:
-    participant:
-      id:
-    controlplane:
-      ssi:
-        miw:
-          url:
-          authorityId:
-        oauth:
-          tokenurl:
-          client:
-            id:
-            secretAlias:
-      ingresses:
-        - enabled: true
-          hostname: "controlplane.test"
-          annotations:
-            nginx.ingress.kubernetes.io/ssl-passthrough: "false"
-            nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
-            nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
-          endpoints:
-            - protocol
-            - management
-          tls:
-            enabled: true
-            secretName: tls-secret
-      endpoints:
-        management:
-          authKey: *edcKey
+# TODO DTR: add possibility to template hostname for dataSource.url SPRING_DATASOURCE_URL
+# TODO DTR: add possibility to configure external database
 
-    dataplane:
-      ingresses:
-        - enabled: true
-          hostname: "dataplane.test"
-          annotations:
-            nginx.ingress.kubernetes.io/ssl-passthrough: "false"
-            nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
-            nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
-          endpoints:
-            - public
-          className: "nginx"
-          tls:
-            enabled: true
-            secretName: tls-secret
+nameOverride: ""
+fullnameOverride: ""
 
-    backendService:
-      httpProxyTokenReceiverUrl: "https://submodelserver.test/data/endpoint-data-reference-provider1"
-
-    vault:
-      hashicorp:
+tractusx-connector:
+  install:
+    postgresql: false
+    vault: false
+  participant:
+    id:
+  controlplane:
+    ssi:
+      miw:
         url:
-        token:
-        timeout: 30
-        healthCheck:
+        authorityId:
+      oauth:
+        tokenurl:
+        client:
+          id:
+          secretAlias:
+    ingresses:
+      - enabled: true
+        hostname: "controlplane.test"
+        annotations:
+          nginx.ingress.kubernetes.io/ssl-passthrough: "false"
+          nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
+          nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
+        endpoints:
+          - protocol
+          - management
+        tls:
           enabled: true
-          standbyOk: true
-        paths:
-          secret:
-          health:
-      secretNames:
-        transferProxyTokenSignerPrivateKey:
-        transferProxyTokenSignerPublicKey:
-        transferProxyTokenEncryptionAesKey:
+          secretName: tls-secret
+    endpoints:
+      management:
+        authKey: *edcKey
+    securityContext:
+      readOnlyRootFilesystem: false
+    resources:
+      limits:
+        cpu: 500m
+        memory: 750Mi
+      requests:
+        cpu: 300m
+        memory: 750Mi
 
-    postgresql:
-      jdbcUrl: "jdbc:postgresql://{{ .Release.Name }}-edc-postgresql-hl:5432/edc"
-      auth:
-        username: *postgresuser
-        password: *postgrespass
+  dataplane:
+    ingresses:
+      - enabled: true
+        hostname: "dataplane.test"
+        annotations:
+          nginx.ingress.kubernetes.io/ssl-passthrough: "false"
+          nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
+          nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
+        endpoints:
+          - public
+        className: "nginx"
+        tls:
+          enabled: true
+          secretName: tls-secret
+    resources:
+      limits:
+        cpu: 500m
+        memory: 512Mi
+      requests:
+        cpu: 200m
+        memory: 512Mi
+
+  backendService:
+    httpProxyTokenReceiverUrl: "https://submodelserver.test/data/endpoint-data-reference-provider1"
+  vault:
+    hashicorp:
+      url:
+      token:
+      timeout: 30
+      healthCheck:
+        enabled: true
+        standbyOk: true
+      paths:
+        secret:
+        health:
+    secretNames:
+      transferProxyTokenSignerPrivateKey:
+      transferProxyTokenSignerPublicKey:
+      transferProxyTokenEncryptionAesKey:
+
+  postgresql:
+    enabled: true
+    auth:
+      database: "edc"
       username: *postgresuser
       password: *postgrespass
-  edc-postgresql:
+    username: *postgresuser
+    password: *postgrespass
+    jdbcUrl: "jdbc:postgresql://{{ .Release.Name }}-edc-postgresql-hl:5432/edc"
+
+edc-postgresql:
+  primary:
+    persistence:
+      enabled: false
+      size: 1Gi
+  readReplicas:
+    persistence:
+      enabled: false
+    resources:
+      limits:
+        cpu: 500m
+        memory: 750Mi
+      requests:
+        cpu: 250m
+        memory: 750Mi
+  auth:
+    database: edc
+    username: *postgresuser
+    postgresPassword: *postgrespass
+    password: *postgrespass
+
+digital-twin-registry:
+  enableKeycloak: false
+
+  postgresql:
     primary:
       persistence:
         enabled: false
+        size: 1Gi
       resources:
-        requests:
-          memory: 1Gi
-          cpu: 250m
         limits:
-          memory: 1Gi
-          cpu: 1
-    auth:
-      database: edc
-      username: *postgresuser
-      postgresPassword: *postgrespass
-      password: *postgrespass
+          cpu: 500m
+          memory: 750Mi
+        requests:
+          cpu: 200m
+          memory: 750Mi
 
-digital-twin-registry:
-  nameOverride: digital-twin-registry
-  enablePostgres: true
   registry:
     host: digital-twin-registry.test
     ingress:
       enabled: true
       urlPrefix: /semantics/registry
       className: nginx
+      tls: true
       annotations:
         cert-manager.io/cluster-issuer: selfsigned-cluster-issuer
         nginx.ingress.kubernetes.io/rewrite-target: /$2
@@ -118,17 +162,13 @@ digital-twin-registry:
       failureThreshold: 6
       initialDelaySeconds: 30
       periodSeconds: 10
-
-  postgresql:
-    primary:
-      persistence:
-        enabled: false
-        size: 1Gi
-    auth:
-      username: *postgresuser
-      password: *postgrespass
-
-  enableKeycloak: false
+    resources:
+      limits:
+        cpu: 500m
+        memory: 750Mi
+      requests:
+        cpu: 250m
+        memory: 750Mi
 
 submodelservers:
   ingress:
@@ -147,112 +187,10 @@ submodelservers:
       - hosts:
           - submodelserver.test
         secretName: tls-secret
-
-tractusx-connector:
-  fullnameOverride: edc-provider
-  install:
-    postgresql: false
-    vault: true
-  participant:
-    id: DATAPROVIDER_1
-
-  controlplane:
-    # SSI configuration
-    ssi:
-      miw:
-        url: http://provider-managed-identity-wallet:8080
-        authorityId: *authorityBPN
-      oauth:
-        tokenurl: <path:traceability-irs/data/dev/controlplane#ssi.oauth.tokenurl>
-        client:
-          id: admin
-          secretAlias: edc-test-miw-keycloak-secret
-    ingresses:
-      - enabled: true
-        hostname: "edc-control.test"
-        annotations:
-          nginx.ingress.kubernetes.io/ssl-passthrough: "false"
-          nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
-          nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
-        endpoints:
-          - protocol
-          - management
-        tls:
-          enabled: true
-          secretName: tls-secret
-
-    endpoints:
-      management:
-        # -- authentication key, must be attached to each 'X-Api-Key' request header
-        authKey: TEST
-  dataplane:
-    ingresses:
-      - enabled: true
-        hostname: "edc-data.test"
-        annotations:
-          nginx.ingress.kubernetes.io/ssl-passthrough: "false"
-          nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
-          nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
-        endpoints:
-          - public
-        tls:
-          enabled: true
-          secretName: tls-secret
-
-  backendService:
-    httpProxyTokenReceiverUrl: "http://test"
-
-    # Files system has to be set to writeable for now since controlplane relies on temporary files to write SSI related things to
-    securityContext:
-      readOnlyRootFilesystem: false
-  vault:
-    server:
-      ingress:
-        enabled: true
-        annotations:
-          kubernetes.io/ingress.class: nginx
-          kubernetes.io/tls-acme: "true"
-        ingressClassName: nginx
-        hosts:
-          - host: edc.vault.test
-    hashicorp:
-      token: "root"
-    secretNames:
-      transferProxyTokenSignerPrivateKey:
-      transferProxyTokenSignerPublicKey:
-      transferProxyTokenEncryptionAesKey:
-
-  postgresql:
-    enabled: false
-    auth:
-      username: *postgresuser
-      password: *postgrespass
-    username: *postgresuser
-    password: *postgrespass
-    jdbcUrl: "jdbc:postgresql://{{ .Release.Name }}-edc-postgresql:5432/edc"
-
-edc-postgresql:
-  auth:
-    database: "edc"
-    username: *postgresuser
-    password: *postgrespass
-  username: *postgresuser
-  password: *postgrespass
-  primary:
-    persistence:
-      enabled: false
-
-managed-identity-wallet:
-  miw:
-    authorityWallet:
-      name: "AuthorityWallet"
-      bpn: *authorityBPN
-  keycloak:
-    enabled: false
-    auth:
-      adminUser: admin
-      adminPassword: admin
-  postgresql:
-    auth:
-      password: ""
-      database: "miw_app"
+  resources:
+    limits:
+      cpu: 250m
+      memory: 512Mi
+    requests:
+      cpu: 50m
+      memory: 512Mi
