@@ -15,25 +15,10 @@ dependencies:
   - name: submodelservers
     repository: file://../submodelservers
     version: 0.1.0
-  - name: edc-provider
-    version: 2.0.0
-    repository: file://../edc-provider
-
-#  - name: tractusx-connector
-#    repository: https://eclipse-tractusx.github.io/tractusx-edc
-#    version: 0.5.3
-#  - name: aasx-submodel-server
-#    repository: file://../aasx-submodel-server
-#    version: 0.1.0
-#  - name: postgresql
-#    alias: edc-postgresql
-#    condition: postgresql.enabled
-#    repository: https://charts.bitnami.com/bitnami
-#    version: 14.0.1
-#  - name: managed-identity-wallet
-#    version: 0.3.0
-#    repository: https://eclipse-tractusx.github.io/charts/dev
-
-#  - name: managed-service-orchestrator
-#    repository: https://eclipse-tractusx.github.io/charts/dev
-#    version: 1.5.3
+  - name: tractusx-connector
+    repository: https://eclipse-tractusx.github.io/tractusx-edc
+    version: 0.5.3
+  - name: postgresql
+    alias: edc-postgresql
+    repository: https://charts.bitnami.com/bitnami
+    version: 12.12.10

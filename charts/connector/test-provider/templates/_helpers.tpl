@@ -1,4 +1,22 @@
 {{/*
+Create a default fully qualified app name.
+We truncate at 63 chars because some Kubernetes name fields are limited to this (by the DNS naming spec).
+If release name contains chart name it will be used as a full name.
+*/}}
+{{- define "dataprovider.fullname" -}}
+    {{- if .Values.fullnameOverride }}
+        {{- .Values.fullnameOverride | trunc 63 | trimSuffix "-" }}
+    {{- else }}
+        {{- $name := default .Chart.Name .Values.nameOverride }}
+        {{- if contains $name .Release.Name }}
+            {{- .Release.Name | trunc 63 | trimSuffix "-" }}
+        {{- else }}
+            {{- printf "%s-%s" .Release.Name $name | trunc 63 | trimSuffix "-" }}
+        {{- end }}
+    {{- end }}
+{{- end }}
+
+{{/*
 Submodel URL helpers
 */}}
 {{- define "submodelservers.host" -}}
@@ -28,19 +46,19 @@ Registry URL helpers
 EDC URL helpers
 */}}
 {{- define "edc.controlplane.host" -}}
-    {{- with (first (index .Values "edc-provider" "tractusx-connector" "controlplane" "ingresses")) }}
+    {{- with (first (index .Values "tractusx-connector" "controlplane" "ingresses")) }}
         {{- printf "https://%s" .hostname }}
     {{- end }}
 {{- end }}
 {{- define "edc.dataplane.host" -}}
-    {{- with (first (index .Values "edc-provider" "tractusx-connector" "dataplane" "ingresses")) }}
+    {{- with (first (index .Values "tractusx-connector" "dataplane" "ingresses")) }}
         {{- printf "https://%s" .hostname }}
     {{- end }}
 {{- end }}
 {{- define "edc.key" -}}
-    {{- index .Values "edc-provider" "tractusx-connector" "controlplane" "endpoints" "management" "authKey" }}
+    {{- index .Values "tractusx-connector" "controlplane" "endpoints" "management" "authKey" }}
 {{- end }}
 {{- define "edc.bpn" -}}
-    {{- index .Values "edc-provider" "tractusx-connector" "participant" "id" }}
+    {{- index .Values "tractusx-connector" "participant" "id" }}
 {{- end }}
 

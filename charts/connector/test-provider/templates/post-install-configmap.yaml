@@ -1,7 +1,8 @@
+{{- $fullName := include "dataprovider.fullname" . -}}
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: {{ .Release.Name }}-postinstall-configmap
+  name: {{ $fullName }}-postinstall-configmap
 data:
   requirements.txt: |-
 {{ .Files.Get "requirements.txt" | indent 4}}
