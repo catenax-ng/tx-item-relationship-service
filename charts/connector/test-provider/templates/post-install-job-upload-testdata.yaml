@@ -1,4 +1,5 @@
 {{- $fullName := include "dataprovider.fullname" . -}}
+{{- if .Values.seedTestdata }}
 apiVersion: batch/v1
 kind: Job
 metadata:
@@ -40,3 +41,4 @@ spec:
           configMap:
             name: {{ $fullName }}-postinstall-configmap
             defaultMode: 0777
+{{- end }}
