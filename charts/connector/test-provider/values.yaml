@@ -4,13 +4,11 @@ configuration:
   authorityBPN: &authorityBPN BPNL000000000000
   edcKey: &edcKey TEST
 
-# TODO DTR: add possibility to template hostname for dataSource.url SPRING_DATASOURCE_URL
-# TODO DTR: add possibility to configure external database
-
 nameOverride: ""
 fullnameOverride: ""
 
 tractusx-connector:
+  enabled: true
   install:
     postgresql: false
     vault: false
@@ -100,9 +98,10 @@ tractusx-connector:
       password: *postgrespass
     username: *postgresuser
     password: *postgrespass
-    jdbcUrl: "jdbc:postgresql://{{ .Release.Name }}-edc-postgresql-hl:5432/edc"
+    jdbcUrl: "jdbc:postgresql://{{ .Release.Name }}-postgresql:5432/edc"
 
-edc-postgresql:
+postgresql:
+  enabled: true
   primary:
     persistence:
       enabled: false
@@ -124,9 +123,12 @@ edc-postgresql:
     password: *postgrespass
 
 digital-twin-registry:
+  enabled: true
   enableKeycloak: false
 
   postgresql:
+    auth:
+      existingSecret: registry-db-postresinit
     primary:
       persistence:
         enabled: false
@@ -156,11 +158,11 @@ digital-twin-registry:
     authentication: false
     livenessProbe:
       failureThreshold: 6
-      initialDelaySeconds: 30
+      initialDelaySeconds: 90
       periodSeconds: 10
     readinessProbe:
       failureThreshold: 6
-      initialDelaySeconds: 30
+      initialDelaySeconds: 90
       periodSeconds: 10
     resources:
       limits:
@@ -171,6 +173,7 @@ digital-twin-registry:
         memory: 750Mi
 
 submodelservers:
+  enabled: true
   ingress:
     enabled: true
     className: "nginx"

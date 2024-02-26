@@ -25,10 +25,17 @@ appVersion: "1.16.0"
 
 dependencies:
   - name: tx-data-provider
-    alias: dataprovider
-    version: 0.0.1
-    repository: file://../test-provider
-  - name: tx-data-provider
     alias: dataconsumer
     version: 0.0.1
     repository: file://../test-provider
+    condition: dataconsumer.enabled
+  - name: tx-data-provider
+    alias: dataprovider
+    version: 0.0.1
+    repository: file://../test-provider
+    condition: dataprovider.enabled
+  - name: tx-data-provider
+    alias: dataprovider2
+    version: 0.0.1
+    repository: file://../test-provider
+    condition: dataprovider2.enabled
