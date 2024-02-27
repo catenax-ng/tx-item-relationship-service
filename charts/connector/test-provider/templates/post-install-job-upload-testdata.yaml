@@ -17,7 +17,7 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 # #############################################################################
-
+---
 {{- $fullName := include "dataprovider.fullname" . -}}
 {{- if .Values.seedTestdata }}
 apiVersion: batch/v1
