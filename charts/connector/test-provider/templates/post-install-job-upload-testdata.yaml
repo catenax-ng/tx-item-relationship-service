@@ -38,7 +38,13 @@ spec:
               mountPath: /opt/scripts
       volumes:
         - name: config-volume
+          {{- if .Values.testdataConfigMap }}
+          configMap:
+            name: {{ .Values.testdataConfigMap }}
+            defaultMode: 0777
+          {{- else }}
           configMap:
             name: {{ $fullName }}-postinstall-configmap
             defaultMode: 0777
+          {{- end }}
 {{- end }}

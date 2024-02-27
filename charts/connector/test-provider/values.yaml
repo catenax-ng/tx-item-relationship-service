@@ -1,12 +1,12 @@
 configuration:
   postgresuser: &postgresuser testuser
   postgrespass: &postgrespass testpass
-  authorityBPN: &authorityBPN BPNL000000000000
   edcKey: &edcKey TEST
 
 nameOverride: ""
 fullnameOverride: ""
-seedTestdata: true
+seedTestdata: true  # Toggle seeding of testdata. Can be disabled when e.g. only edc is used as consumer. Default true.
+testdataConfigMap: ""  # Provide a custom configmap for post-install-job-upload-testdata.yaml.
 
 tractusx-connector:
   enabled: true
@@ -99,9 +99,11 @@ tractusx-connector:
       password: *postgrespass
     username: *postgresuser
     password: *postgrespass
-    jdbcUrl: "jdbc:postgresql://{{ .Release.Name }}-postgresql:5432/edc"
+    jdbcUrl: "jdbc:postgresql://edc-postgresql:5432/edc"
 
 postgresql:
+  fullnameOverride: edc-postgresql
+  nameOverride: edc-postgresql
   enabled: true
   primary:
     persistence:
