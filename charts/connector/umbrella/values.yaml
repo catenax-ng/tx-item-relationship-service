@@ -1,13 +1,22 @@
 dataconsumer:
-  enabled: false
+  enabled: true
   seedTestdata: false
   fullnameOverride: dataconsumer
   tractusx-connector:
     fullnameOverride: dataconsumer-edc
     nameOverride: dataconsumer-edc
     participant:
-      id: BPNL00000001CRHK
+      id:
     controlplane:
+      ssi:
+        miw:
+          url:
+          authorityId:
+        oauth:
+          tokenurl:
+          client:
+            id:
+            secretAlias:
       endpoints:
         management:
           authKey: TEST1
@@ -40,6 +49,17 @@ dataconsumer:
             secretName: tls-secret
     postgresql:
       jdbcUrl: "jdbc:postgresql://dataconsumer-db:5432/edc"
+    vault:
+      hashicorp:
+        url:
+        token:
+        paths:
+          secret:
+          health:
+      secretNames:
+        transferProxyTokenSignerPrivateKey:
+        transferProxyTokenSignerPublicKey:
+        transferProxyTokenEncryptionAesKey:
 
   postgresql:
     fullnameOverride: dataconsumer-db
@@ -80,8 +100,17 @@ dataprovider:
     fullnameOverride: dataprovider-edc
     nameOverride: dataprovider-edc
     participant:
-      id: BPNL00000001CRHK
+      id:
     controlplane:
+      ssi:
+        miw:
+          url:
+          authorityId:
+        oauth:
+          tokenurl:
+          client:
+            id:
+            secretAlias:
       endpoints:
         management:
           authKey: TEST2
@@ -114,7 +143,17 @@ dataprovider:
             secretName: tls-secret
     postgresql:
       jdbcUrl: "jdbc:postgresql://dataprovider-db:5432/edc"
-
+    vault:
+      hashicorp:
+        url:
+        token:
+        paths:
+          secret:
+          health:
+      secretNames:
+        transferProxyTokenSignerPrivateKey:
+        transferProxyTokenSignerPublicKey:
+        transferProxyTokenEncryptionAesKey:
   postgresql:
     fullnameOverride: dataprovider-db
     nameOverride: dataprovider-db
@@ -152,8 +191,17 @@ dataprovider2:
     fullnameOverride: dataprovider2-edc
     nameOverride: dataprovider2-edc
     participant:
-      id: BPNL00000001CRHK
+      id:
     controlplane:
+      ssi:
+        miw:
+          url:
+          authorityId:
+        oauth:
+          tokenurl:
+          client:
+            id:
+            secretAlias:
       endpoints:
         management:
           authKey: TEST3
@@ -186,6 +234,17 @@ dataprovider2:
             secretName: tls-secret
     postgresql:
       jdbcUrl: "jdbc:postgresql://dataprovider2-db:5432/edc"
+    vault:
+      hashicorp:
+        url:
+        token:
+        paths:
+          secret:
+          health:
+      secretNames:
+        transferProxyTokenSignerPrivateKey:
+        transferProxyTokenSignerPublicKey:
+        transferProxyTokenEncryptionAesKey:
 
   postgresql:
     fullnameOverride: dataprovider2-db
