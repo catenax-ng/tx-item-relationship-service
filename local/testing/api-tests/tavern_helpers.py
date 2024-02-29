@@ -385,3 +385,15 @@ def contractAgreementId_in_submodels_not_existing(response):
     assert len(submodels) >= 1
     for i in submodels:
         assert i.get("contractAgreementId") is None
+
+
+def businessPartnerNumber_exists_in_usagePolicyValidation_tombstone(response):
+    error_list = response.json().get("tombstones")
+    for i in error_list:
+        print("Given tombstone: ", i)
+        catenaXId = i.get("catenaXId")
+        businessPartnerNumber = i.get("businessPartnerNumber")
+        processingErrorStep = i.get("processingError").get("processStep")
+        assert 'BPNL00000003AYRE' in businessPartnerNumber
+        assert 'urn:uuid:b0cc2dc9-b011-4b21-9c58-f48bd06d439f' in catenaXId
+        assert 'UsagePolicyValidation' in processingErrorStep
