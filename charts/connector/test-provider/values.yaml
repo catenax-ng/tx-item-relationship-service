@@ -63,13 +63,6 @@ tractusx-connector:
         authKey: *edcKey
     securityContext:
       readOnlyRootFilesystem: false
-    resources:
-      limits:
-        cpu: 500m
-        memory: 750Mi
-      requests:
-        cpu: 300m
-        memory: 750Mi
 
   dataplane:
     ingresses:
@@ -85,13 +78,6 @@ tractusx-connector:
         tls:
           enabled: true
           secretName: tls-secret
-    resources:
-      limits:
-        cpu: 500m
-        memory: 512Mi
-      requests:
-        cpu: 200m
-        memory: 512Mi
 
   backendService:
     httpProxyTokenReceiverUrl: "https://submodelserver.test/data/endpoint-data-reference-provider1"
@@ -99,10 +85,6 @@ tractusx-connector:
     hashicorp:
       url:
       token:
-      timeout: 30
-      healthCheck:
-        enabled: true
-        standbyOk: true
       paths:
         secret:
         health:
@@ -132,13 +114,6 @@ postgresql:
   readReplicas:
     persistence:
       enabled: false
-    resources:
-      limits:
-        cpu: 500m
-        memory: 750Mi
-      requests:
-        cpu: 250m
-        memory: 750Mi
   auth:
     database: edc
     username: *postgresuser
@@ -156,13 +131,6 @@ digital-twin-registry:
       persistence:
         enabled: false
         size: 1Gi
-      resources:
-        limits:
-          cpu: 500m
-          memory: 750Mi
-        requests:
-          cpu: 200m
-          memory: 750Mi
 
   registry:
     host: digital-twin-registry.test
@@ -181,19 +149,12 @@ digital-twin-registry:
     authentication: false
     livenessProbe:
       failureThreshold: 6
-      initialDelaySeconds: 90
+      initialDelaySeconds: 200
       periodSeconds: 10
     readinessProbe:
       failureThreshold: 6
-      initialDelaySeconds: 90
+      initialDelaySeconds: 200
       periodSeconds: 10
-    resources:
-      limits:
-        cpu: 1000m
-        memory: 750Mi
-      requests:
-        cpu: 250m
-        memory: 750Mi
 
 submodelservers:
   enabled: true
@@ -213,10 +174,3 @@ submodelservers:
       - hosts:
           - submodelserver.test
         secretName: tls-secret
-  resources:
-    limits:
-      cpu: 250m
-      memory: 512Mi
-    requests:
-      cpu: 50m
-      memory: 512Mi

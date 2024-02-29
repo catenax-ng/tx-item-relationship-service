@@ -41,3 +41,7 @@
 .idea/
 *.tmproj
 .vscode/
+
+# Ignore ENV specific values at release
+values?*.yaml
+values?*.yml
