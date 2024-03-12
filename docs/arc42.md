@@ -899,7 +899,7 @@ A job can be in one of the following states:
                   "identification": "dae4d249-6d66-4818-b576-bf52f3b9ae90",
                   "semanticId": {
                     "value": [
-                        "urn:bamm:com.catenax.vehicle:0.1.1#PartDetails"
+                        "urn:bamm:io.catenax.vehicle:0.1.1#PartDetails"
                     ]
                   },
                   "endpoints": [
