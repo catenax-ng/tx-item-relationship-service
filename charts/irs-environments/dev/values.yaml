@@ -55,6 +55,8 @@ irs-helm:
       request:
         ttl: PT2M
     controlplane:
+      endpoint:
+        data: "http://irs-dev-tractusx-connector-controlplane:8081/management"
       request:
         ttl: PT2M
       apikey:
