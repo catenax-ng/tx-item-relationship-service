@@ -106,13 +106,14 @@ public class DecentralDigitalTwinRegistryService implements DigitalTwinRegistryS
                     // catching generic exception is intended here,
                     // otherwise Jobs stay in state RUNNING forever
                     log.warn(e.getMessage(), e);
-                    return Stream.empty();
+                    return Stream.empty(); // TODO return Either (Exception or Shell) for adding to tombstone
                 }
 
             }).toList();
 
             if (collectedShells.isEmpty()) {
                 log.info("No shells found");
+                // TODO we should have details why none were found here (if due to error)
                 throw new ShellNotFoundException("Unable to find any of the requested shells", calledEndpoints);
             } else {
                 log.info("Found {} shell(s) for {} key(s)", collectedShells.size(), keys.size());
@@ -137,10 +138,10 @@ public class DecentralDigitalTwinRegistryService implements DigitalTwinRegistryS
         } catch (InterruptedException e) {
             log.error(e.getMessage(), e);
             Thread.currentThread().interrupt();
-            return Stream.empty();
+            return Stream.empty(); // TODO return Either (Exception or Shell) for adding to tombstone
         } catch (ExecutionException e) {
             log.warn(e.getMessage(), e);
-            return Stream.empty();
+            return Stream.empty(); // TODO return Either (Exception or Shell) for adding to tombstone
         }
     }
 
