@@ -19,7 +19,6 @@
  ********************************************************************************/
 package org.eclipse.tractusx.irs;
 
-import static com.github.tomakehurst.wiremock.client.WireMock.containing;
 import static com.github.tomakehurst.wiremock.client.WireMock.equalTo;
 import static com.github.tomakehurst.wiremock.client.WireMock.postRequestedFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
@@ -288,8 +287,7 @@ class IrsWireMockIntegrationTest {
             final String batchFileName, final String sbomFileName) {
 
         final String edcAssetId = WiremockSupport.randomUUIDwithPrefix();
-        final String batch = WiremockSupport.submodelRequest(edcAssetId, "Batch",
-                batchAspectName, batchFileName);
+        final String batch = WiremockSupport.submodelRequest(edcAssetId, "Batch", batchAspectName, batchFileName);
 
         final String singleLevelBomAsBuilt = WiremockSupport.submodelRequest(edcAssetId, "SingleLevelBomAsBuilt",
                 singleLevelBomAsBuiltAspectName, sbomFileName);
