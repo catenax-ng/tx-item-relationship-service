@@ -243,7 +243,7 @@ class IrsWireMockIntegrationTest {
     }
 
     @Test
-    void shouldStartRecursiveProcesses() { // BOOKMARK run this for testing exception handling
+    void shouldStartRecursiveProcesses() { // TODO (#405) run this for testing exception handling
         // Arrange
         final String globalAssetIdLevel1 = "urn:uuid:334cce52-1f52-4bc9-9dd1-410bbe497bbc";
         final String globalAssetIdLevel2 = "urn:uuid:7e4541ea-bb0f-464c-8cb3-021abccbfaf5";

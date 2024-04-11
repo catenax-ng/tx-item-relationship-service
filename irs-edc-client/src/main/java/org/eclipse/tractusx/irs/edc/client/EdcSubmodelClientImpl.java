@@ -254,11 +254,11 @@ public class EdcSubmodelClientImpl implements EdcSubmodelClient {
 
                 final String storageId = getStorageId(endpointDataReferenceStatus, negotiationResponse);
 
-                // BOOKMARK comment in this for simulating negotiation failed
+                // TODO (#405) comment in this for simulating negotiation failed
                 //                if (true) {
                 //                    throw new EdcClientException("negotiation failed");
                 //                }
-                // TODO This should later be replaced with real test in IrsWireMockIntegrationTest returning
+                //  This should later be replaced with real test in IrsWireMockIntegrationTest returning
                 //     exception from negotiation.
                 //     Copy test shouldStartRecursiveProcesses and adjust setup respectively.
                 return pollingService.<EndpointDataReference>createJob()

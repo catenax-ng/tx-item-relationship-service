@@ -23,8 +23,12 @@
  ********************************************************************************/
 package org.eclipse.tractusx.irs.aaswrapper.job.delegate;
 
+import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
+import io.github.resilience4j.core.functions.Either;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.eclipse.tractusx.irs.aaswrapper.job.AASTransferProcess;
@@ -69,10 +73,21 @@ public class DigitalTwinDelegate extends AbstractDelegate {
 
         try {
             final var dtrKeys = List.of(new DigitalTwinRegistryKey(itemId.getGlobalAssetId(), itemId.getBpn()));
-            final Shell shell = digitalTwinRegistryService.fetchShells(dtrKeys).stream()
-                                                          // we use findFirst here,  because we query only for one
-                                                          // DigitalTwinRegistryKey here
-                                                          .findFirst().orElseThrow();
+            final Collection<Either<Exception, Shell>> eithers = digitalTwinRegistryService.fetchShells(dtrKeys);
+            final Shell shell = eithers.stream()
+                                       // we use findFirst here,  because we query only for one
+                                       // DigitalTwinRegistryKey here
+                                       .map(Either::getOrNull)
+                                       .filter(Objects::nonNull)
+                                       .findFirst()
+                                       .orElseThrow(() -> new RegistryServiceException(
+                                               // TODO (#405) better way than joining?
+                                               eithers.stream()
+                                                      .filter(Either::isLeft)
+                                                      .map(Either::getLeft)
+                                                      .filter(Objects::nonNull)
+                                                      .map(Throwable::getMessage)
+                                                      .collect(Collectors.joining(", "))));
 
             if (!expectedDepthOfTreeIsNotReached(jobData.getDepth(), aasTransferProcess.getDepth())) {
                 // filter submodel descriptors if next delegate will not be executed
