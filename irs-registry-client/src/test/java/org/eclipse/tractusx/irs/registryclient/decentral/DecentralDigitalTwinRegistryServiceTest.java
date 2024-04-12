@@ -146,7 +146,8 @@ class DecentralDigitalTwinRegistryServiceTest {
 
             // then
             assertThatThrownBy(call).isInstanceOf(ShellNotFoundException.class)
-                                    .hasMessageContaining("Unable to find any of the requested shells")
+                                    .hasMessage("Unable to find any of the requested shells")
+                                    .hasSuppressedException(new InterruptedException("interrupted"))
                                     .satisfies(e -> assertThat(
                                             ((ShellNotFoundException) e).getCalledEndpoints()).containsExactlyInAnyOrder(
                                             "address1", "address2"));

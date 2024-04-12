@@ -27,7 +27,6 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
@@ -41,6 +40,7 @@ import io.github.resilience4j.core.functions.Either;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.eclipse.edc.spi.types.domain.edr.EndpointDataReference;
+import org.eclipse.tractusx.irs.common.ExceptionUtils;
 import org.eclipse.tractusx.irs.common.util.concurrent.ResultFinder;
 import org.eclipse.tractusx.irs.component.Shell;
 import org.eclipse.tractusx.irs.component.assetadministrationshell.AssetAdministrationShellDescriptor;
@@ -115,15 +115,11 @@ public class DecentralDigitalTwinRegistryService implements DigitalTwinRegistryS
 
             if (collectedShells.stream().noneMatch(Either::isRight)) {
                 log.info("No shells found");
-                // TODO (#405) instead of joining messages we should add
-                final String causes = collectedShells.stream()
-                                                     .filter(Either::isLeft)
-                                                     .map(Either::getLeft)
-                                                     .filter(Objects::nonNull)
-                                                     .map(Throwable::getMessage)
-                                                     .collect(Collectors.joining(", "));
-                throw new ShellNotFoundException("Unable to find any of the requested shells: " + causes,
-                        calledEndpoints);
+
+                final ShellNotFoundException shellNotFoundException = new ShellNotFoundException(
+                        "Unable to find any of the requested shells", calledEndpoints);
+                ExceptionUtils.addSuppressedExceptions(collectedShells, shellNotFoundException);
+                throw shellNotFoundException;
             } else {
                 log.info("Found {} shell(s) for {} key(s)", collectedShells.size(), keys.size());
                 return collectedShells;
