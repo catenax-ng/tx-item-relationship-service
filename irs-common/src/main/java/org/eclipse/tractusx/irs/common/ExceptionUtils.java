@@ -26,7 +26,11 @@ import io.github.resilience4j.core.functions.Either;
 /**
  * Utilities for exception handling
  */
-public class ExceptionUtils {
+public final class ExceptionUtils {
+
+    private ExceptionUtils() {
+        // private constructor, utility class
+    }
 
     /**
      * Adds all exceptions from left side of the given Eithers to the exception.
@@ -38,7 +42,7 @@ public class ExceptionUtils {
      */
     public static <E extends Exception, T> void addSuppressedExceptions(final Collection<Either<E, T>> eithers,
             final Exception exception) {
-        for (Either<E, T> either : eithers) {
+        for (final Either<E, T> either : eithers) {
             if (either.isLeft() && either.getLeft() != null) {
                 exception.addSuppressed(either.getLeft());
             }

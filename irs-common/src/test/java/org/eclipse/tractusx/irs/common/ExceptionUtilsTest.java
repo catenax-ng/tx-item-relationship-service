@@ -48,7 +48,7 @@ class ExceptionUtilsTest {
         ExceptionUtils.addSuppressedExceptions(eithers, mainException);
 
         // ASSERT
-        Throwable[] suppressedExceptions = mainException.getSuppressed();
+        final Throwable[] suppressedExceptions = mainException.getSuppressed();
         assertEquals(2, suppressedExceptions.length); // Expecting two suppressed exceptions
         assertEquals("Some runtime exception", suppressedExceptions[0].getMessage());
         assertEquals("Another exception", suppressedExceptions[1].getMessage());
