@@ -14,6 +14,11 @@ _**For better traceability add the corresponding GitHub issue number in each cha
 
 ### Changed
 
+
+### Fixed
+
+- Propagates exceptions to have more detail in tombstone. #405
+
 ## [4.9.0] - 2024-04-03
 ### Added
 - Extended EdcPolicyDefinitionService to check if a policy in the edc exists
