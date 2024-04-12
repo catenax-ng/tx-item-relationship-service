@@ -181,9 +181,7 @@ public class DecentralDigitalTwinRegistryService implements DigitalTwinRegistryS
         final var shellsFuture = service.createFindEndpointDataForConnectorsFutures(edcUrls, bpn)
                                         .stream()
                                         .map(edrFuture -> edrFuture.thenCompose(edr -> CompletableFuture.supplyAsync(
-                                                        () -> fetchShellDescriptorsForKey(keys, edr)))
-                                                // TODO (#405) exceptionally?
-                                        )
+                                                () -> fetchShellDescriptorsForKey(keys, edr))))
                                         .toList();
 
         log.debug("Created {} futures", shellsFuture.size());
