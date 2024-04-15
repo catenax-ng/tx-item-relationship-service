@@ -6,7 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [6.19.0] - 2024-04-15
+
 ### Changed
+- Update IRS version to 4.10.0
 
 - Renamed item relationship service Helm chart from "irs-helm" to "item-relationship-service". #489
 
