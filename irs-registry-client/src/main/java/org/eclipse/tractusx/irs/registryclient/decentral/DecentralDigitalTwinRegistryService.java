@@ -60,7 +60,9 @@ import org.springframework.util.StopWatch;
  */
 @RequiredArgsConstructor
 @Slf4j
-@SuppressWarnings("PMD.TooManyMethods")
+@SuppressWarnings({ "PMD.TooManyMethods",
+                    "PMD.ExcessiveImports"
+})
 public class DecentralDigitalTwinRegistryService implements DigitalTwinRegistryService {
 
     private static final String TOOK_MS = "{} took {} ms";
