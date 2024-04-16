@@ -38,6 +38,7 @@ import java.io.StringReader;
 import java.time.Clock;
 import java.time.OffsetDateTime;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -240,6 +241,55 @@ class PolicyStoreServiceTest {
                                                                            .hasMessageContaining("400 BAD_REQUEST")
                                                                            .hasMessageContaining(
                                                                                    "Missing: odrl:constraint");
+        }
+
+    }
+
+    @Nested
+    class GetAllStoredPoliciesTests {
+
+        @Test
+        void getAllStoredPolicies() {
+
+            // ARRANGE
+            final Map<String, List<Policy>> policies = new HashMap<>();
+            policies.put("BPNL00000003AAX1", List.of(createPolicy("test1"), createPolicy("test2")));
+            policies.put("BPNL00000003AAX2", List.of(createPolicy("test3")));
+            policies.put("BPNL00000003OLD1", Collections.emptyList());
+            policies.put("BPNL00000003OLD2", null);
+            when(persistenceMock.readAll()).thenReturn(policies);
+
+            // ACT
+            final var storedPolicies = testee.getAllStoredPolicies();
+
+            // ASSERT
+            assertThat(storedPolicies).hasSize(2);
+            assertThat(storedPolicies.keySet()).containsExactlyInAnyOrder("BPNL00000003AAX1", "BPNL00000003AAX2");
+        }
+
+        @Test
+        void getAllStoredPolicies_whenNoPoliciesAtAll_shouldReturnTheConfiguredDefaultPolicies() {
+            // TODO(#533) clarify if this is the expected behavior
+
+            // ARRANGE
+
+            // default policy configuration
+            final DefaultAcceptedPoliciesConfig.AcceptedPolicy acceptedPolicy1 = new DefaultAcceptedPoliciesConfig.AcceptedPolicy(
+                    EXAMPLE_ACCEPTED_LEFT_OPERAND, "eq", EXAMPLE_ALLOWED_NAME);
+            final DefaultAcceptedPoliciesConfig.AcceptedPolicy acceptedPolicy2 = new DefaultAcceptedPoliciesConfig.AcceptedPolicy(
+                    EXAMPLE_ACCEPTED_LEFT_OPERAND, "eq", EXAMPLE_ALLOWED_NAME);
+            final DefaultAcceptedPoliciesConfig defaultAcceptedPoliciesConfig = new DefaultAcceptedPoliciesConfig();
+            defaultAcceptedPoliciesConfig.setAcceptedPolicies(List.of(acceptedPolicy1, acceptedPolicy2));
+            testee = new PolicyStoreService(defaultAcceptedPoliciesConfig, persistenceMock, edcTransformer, clock);
+
+            // ACT
+            final Map<String, List<Policy>> result = testee.getAllStoredPolicies();
+
+            // ASSERT
+            assertThat(result).hasSize(1);
+
+            assertThat(result.keySet()).containsExactly("");
+            assertThat(result.get("").get(0).getPolicyId()).isEqualTo("default-policy");
         }
 
     }

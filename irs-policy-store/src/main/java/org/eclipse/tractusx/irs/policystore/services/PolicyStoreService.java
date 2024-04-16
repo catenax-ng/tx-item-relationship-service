@@ -41,6 +41,7 @@ import java.util.stream.Stream;
 
 import jakarta.json.JsonObject;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections.CollectionUtils;
 import org.eclipse.tractusx.irs.edc.client.policy.AcceptedPoliciesProvider;
 import org.eclipse.tractusx.irs.edc.client.policy.AcceptedPolicy;
 import org.eclipse.tractusx.irs.edc.client.policy.Constraint;
@@ -194,7 +195,13 @@ public class PolicyStoreService implements AcceptedPoliciesProvider {
     }
 
     public Map<String, List<Policy>> getAllStoredPolicies() {
-        final Map<String, List<Policy>> bpnToPolicies = persistence.readAll();
+        log.info("Reading all stored polices");
+        final var bpnToPolicies = persistence.readAll()
+                                             .entrySet()
+                                             .stream()
+                                             .filter(entry -> CollectionUtils.isNotEmpty(entry.getValue()))
+                                             .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+
         if (bpnToPolicies.isEmpty()) {
             return Map.of("", allowedPoliciesFromConfig);
         }
