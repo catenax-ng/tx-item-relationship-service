@@ -58,14 +58,6 @@ jobs:
           body: ${{ env.CHANGELOG }}
           tag_name: ${{ inputs.irs-version }}
 
-  trigger-jira:
-    needs:
-      - release
-    uses: ./.github/workflows/jira-publish-release.yaml
-    with:
-      version: ${{ inputs.irs-version }}
-    secrets: inherit
-
   publish-to-swaggerhub:
     name: "Publish OpenAPI spec to Swaggerhub"
     permissions:
