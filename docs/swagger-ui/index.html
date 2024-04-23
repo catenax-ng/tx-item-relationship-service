@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="generator" content="Asciidoctor 2.0.18">
-<title>Safety and security concepts</title>
+<title>Swagger-UI</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
 <style>
 /*! Asciidoctor default stylesheet | MIT License | https://asciidoctor.org */
@@ -439,205 +439,45 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </head>
 <body class="article toc2 toc-left">
 <div id="header">
-<h1>Safety and security concepts</h1>
+<h1>Swagger-UI</h1>
 <div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
 <ul class="sectlevel1">
-<li><a href="#_authentication_authorization">Authentication / Authorization</a>
-<ul class="sectlevel2">
-<li><a href="#_irs_api">IRS API</a></li>
-<li><a href="#_irs_as_dtr_client">IRS as DTR client</a></li>
-<li><a href="#_irs_as_decentralized_dtr_client">IRS as decentralized DTR client</a></li>
-<li><a href="#_irs_as_edc_client">IRS as EDC client</a></li>
-</ul>
-</li>
-<li><a href="#_credentials">Credentials</a></li>
+<li><a href="#_notice">NOTICE</a></li>
 </ul>
 </div>
 </div>
 <div id="content">
 <div class="sect1">
-<h2 id="_authentication_authorization">Authentication / Authorization</h2>
-<div class="sectionbody">
-<div class="sect2">
-<h3 id="_irs_api">IRS API</h3>
-<div class="paragraph">
-<p>The IRS API is secured using API Keys (tokens that a client provides when invoking API calls). IRS identifies API clients based on the provided token inside 'X-API-KEY' request header, and then checks the token with configuration. API Keys can be configured with helm configuration entries - check Administration Guide to know how to do this. Every request to the IRS API requires a valid 'X-API-KEY' header to be successfully authenticated.</p>
-</div>
-<div class="paragraph">
-<p>Currently, IRS API handles two roles: <strong>'admin_irs'</strong> and <strong>'view_irs'.</strong> A valid token with the <strong>'admin_irs'</strong> role can access any endpoint exposed by the IRS API, including Policies management API. A valid token with the <strong>'view_irs'</strong> role does not have access to policies endpoints.
-This behavior is shown in the table below.</p>
-</div>
-<div class="sect3">
-<h4 id="_rights_and_roles_matrix_of_irs">Rights and Roles Matrix of IRS</h4>
-<table class="tableblock frame-all grid-all stretch">
-<colgroup>
-<col style="width: 20%;">
-<col style="width: 20%;">
-<col style="width: 20%;">
-<col style="width: 20%;">
-<col style="width: 20%;">
-</colgroup>
-<tbody>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Category</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Action</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Endpoint</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">view_irs</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">admin_irs</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Policy Store</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Add policy</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">POST /irs/policies</p></td>
-<td class="tableblock halign-left valign-top"></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">x</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Get policies</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">GET /irs/policies</p></td>
-<td class="tableblock halign-left valign-top"></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">x</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Update policy</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">PUT /irs/policies/{policyId}</p></td>
-<td class="tableblock halign-left valign-top"></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">x</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Delete policy</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">DELETE /irs/policies/{policyId}</p></td>
-<td class="tableblock halign-left valign-top"></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">x</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Aspect models</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Get aspect models</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">GET /irs/aspectmodels</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">x</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">x</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Job processing</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Register job</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">POST /irs/jobs</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">x</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">x</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Get jobs</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">GET /irs/jobs</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">x</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">x</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Get job</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">GET /irs/jobs/{jobId}</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">x</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">x</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Cancel job</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">PUT /irs/jobs/{jobId}</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">x</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">x</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Batch processing</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Register order</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">POST /irs/orders</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">x</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">x</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Get order</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">GET /irs/orders/{orderId}</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">x</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">x</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Cancel order</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">PUT /irs/orders/{orderId}</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">x</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">x</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Get batch</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">GET /irs/orders/{orderId}/batches/{batchId}</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">x</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">x</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Environmental- and
-Social Standards</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Register investigation job</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">POST /ess/bpn/investigations</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">x</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">x</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Get investigation job</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">GET /ess/bpn/investigations{id}</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">x</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">x</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Accept notifications</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">POST /ess/notification/receive</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">x</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">x</p></td>
-</tr>
-</tbody>
-</table>
-<div class="paragraph">
-<p>Legend: x = full access to all resources</p>
-</div>
-</div>
-</div>
-<div class="sect2">
-<h3 id="_irs_as_dtr_client">IRS as DTR client</h3>
-<div class="paragraph">
-<p>The IRS acts as a client for the Digital Twin Registry (DTR), which is secured using OAuth2.0 / Open ID Connect.
-The IRS uses client credentials to authenticate requests to the DTR.
-Due to this, the IRS account needs to have access to every item in the DTR, unrelated to the permissions of the account calling the IRS API.</p>
-</div>
-</div>
-<div class="sect2">
-<h3 id="_irs_as_decentralized_dtr_client">IRS as decentralized DTR client</h3>
-<div class="paragraph">
-<p>In a decentralized network, IRS uses the EDC client to access the provider DTR.
-This way, no authentication, other than the EDC contract negotiation, is needed to access the DTR.</p>
-</div>
-</div>
-<div class="sect2">
-<h3 id="_irs_as_edc_client">IRS as EDC client</h3>
-<div class="paragraph">
-<p>The IRS accesses the Catena-X network via the EDC consumer connector.
-This component requires authentication via a Verifiable Credential (VC), which is provided to the EDC via the Managed Identity Wallet.</p>
-</div>
-<div class="paragraph">
-<p>The VC identifies and authenticates the EDC and is used to acquire access permissions for the data transferred via EDC.</p>
-</div>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="_credentials">Credentials</h2>
+<h2 id="_notice">NOTICE</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Credentials must never be stored in Git!</p>
+<p>This work is licensed under the <a href="https://www.apache.org/licenses/LICENSE-2.0">Apache-2.0</a>.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>SPDX-License-Identifier: Apache-2.0</p>
+</li>
+<li>
+<p>SPDX-FileCopyrightText: 2021, 2023 Bayerische Motoren Werke Aktiengesellschaft (BMW AG)</p>
+</li>
+<li>
+<p>SPDX-FileCopyrightText: 2022, 2023 BOSCH AG</p>
+</li>
+<li>
+<p>SPDX-FileCopyrightText: 2021, 2022 ZF Friedrichshafen AG</p>
+</li>
+<li>
+<p>SPDX-FileCopyrightText: 2022  ISTOS GmbH</p>
+</li>
+<li>
+<p>SPDX-FileCopyrightText: 2021, 2023 Contributors to the Eclipse Foundation</p>
+</li>
+<li>
+<p>Source URL: <a href="https://github.com/eclipse-tractusx/item-relationship-service" class="bare">https://github.com/eclipse-tractusx/item-relationship-service</a></p>
+</li>
+</ul>
 </div>
 </div>
 </div>
