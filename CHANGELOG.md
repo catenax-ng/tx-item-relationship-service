@@ -12,8 +12,11 @@ _**For better traceability add the corresponding GitHub issue number in each cha
 
 ### Changed
 
+-  Removed obsolete entries from acceptedPolicies configuration. #530
+
 ### Fixed
 
+- Update bouncycastle to 1.78 to fix CVE's.
 - Propagates exceptions to have more detail in tombstone. #538
 
 
