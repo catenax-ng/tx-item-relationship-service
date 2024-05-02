@@ -79,19 +79,19 @@
         <springboot.version>3.1.11</springboot.version>
         <springdoc.version>2.2.0</springdoc.version>
         <micrometer.version>1.11.4</micrometer.version>
-        <datafaker.version>1.9.0</datafaker.version>
+        <datafaker.version>2.1.0</datafaker.version>
         <json-unit-assertj.version>3.2.7</json-unit-assertj.version>
-        <gatling.version>3.9.5</gatling.version>
+        <gatling.version>3.10.5</gatling.version>
         <resilience4j.version>2.1.0</resilience4j.version>
         <minio.version>8.5.9</minio.version>
         <rest-assured.version>5.4.0</rest-assured.version>
-        <awaitility.version>4.2.0</awaitility.version>
+        <awaitility.version>4.2.1</awaitility.version>
         <jsonassert.version>1.5.1</jsonassert.version>
         <junit-bom.version>5.9.2</junit-bom.version>
         <cucumber-bom.version>7.11.1</cucumber-bom.version>
         <snakeyaml.version>2.0</snakeyaml.version>
         <commons-validator.version>1.8.0</commons-validator.version>
-        <swagger-annotations.version>2.2.18</swagger-annotations.version>
+        <swagger-annotations.version>2.2.21</swagger-annotations.version>
         <edc.version>0.2.1</edc.version>
         <okio-jvm.version>3.5.0</okio-jvm.version>
         <bc-jdk18on.version>1.78</bc-jdk18on.version>
@@ -99,7 +99,7 @@
         <jsoup.version>1.17.2</jsoup.version>
         <json-schema-validator.version>1.4.0</json-schema-validator.version>
         <commons-io.version>2.16.1</commons-io.version>
-        <commons-lang3.version>3.12.0</commons-lang3.version>
+        <commons-lang3.version>3.14.0</commons-lang3.version>
         <okhttp.version>4.12.0</okhttp.version>
         <jackson-databind.version>2.15.1</jackson-databind.version>
         <junit-jupiter-engine.version>5.9.2</junit-jupiter-engine.version>
