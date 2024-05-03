@@ -16,7 +16,7 @@
 #
 
 wiremock:
-  host: "irs-test-discovery-mock.int.demo.catena-x.net"
+  host: "irs-test-discovery-mock.dev.demo.catena-x.net"
   connectorEndpoints: [
     "https://irs-test2-cp.dev.demo.catena-x.net/api/v1/dsp"
   ]
@@ -29,11 +29,11 @@ ingress:
     nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
     nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
   hosts:
-    - host: "irs-test-discovery-mock.int.demo.catena-x.net"
+    - host: "irs-test-discovery-mock.dev.demo.catena-x.net"
       paths:
         - path: /
           pathType: ImplementationSpecific
   tls:
     - hosts:
-        - "irs-test-discovery-mock.int.demo.catena-x.net"
+        - "irs-test-discovery-mock.dev.demo.catena-x.net"
       secretName: tls-secret
