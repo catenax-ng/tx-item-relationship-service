@@ -26,16 +26,21 @@ package org.eclipse.tractusx.irs.aaswrapper.job;
 import static org.eclipse.tractusx.irs.configuration.JobConfiguration.JOB_BLOB_PERSISTENCE;
 
 import java.nio.charset.StandardCharsets;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Future;
 import java.util.function.Consumer;
 
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.eclipse.tractusx.irs.aaswrapper.job.delegate.AbstractDelegate;
 import org.eclipse.tractusx.irs.common.persistence.BlobPersistence;
 import org.eclipse.tractusx.irs.common.persistence.BlobPersistenceException;
 import org.eclipse.tractusx.irs.component.JobParameter;
 import org.eclipse.tractusx.irs.component.PartChainIdentificationKey;
+import org.eclipse.tractusx.irs.connector.job.JobException;
 import org.eclipse.tractusx.irs.connector.job.ResponseStatus;
 import org.eclipse.tractusx.irs.connector.job.TransferInitiateResponse;
 import org.eclipse.tractusx.irs.connector.job.TransferProcessManager;
@@ -55,6 +60,9 @@ public class AASTransferProcessManager implements TransferProcessManager<ItemDat
 
     private final AbstractDelegate abstractDelegate;
 
+    @Getter
+    private final Map<String, Future<?>> futures = new HashMap<>();
+
     public AASTransferProcessManager(final AbstractDelegate abstractDelegate, final ExecutorService executor,
             @Qualifier(JOB_BLOB_PERSISTENCE) final BlobPersistence blobStore) {
         this.abstractDelegate = abstractDelegate;
@@ -70,9 +78,29 @@ public class AASTransferProcessManager implements TransferProcessManager<ItemDat
         final String processId = UUID.randomUUID().toString();
         preExecutionHandler.accept(processId);
 
-        executor.execute(getRunnable(dataRequest, completionCallback, processId, jobData));
+        final Future<?> future = executor.submit(getRunnable(dataRequest, completionCallback, processId, jobData));
+        futures.put(processId, future);
 
         return new TransferInitiateResponse(processId, ResponseStatus.OK);
+    }
+
+    @Override
+    public void cancelRequest(final String processId) {
+        final Future<?> future = futures.get(processId);
+        if (future == null) {
+            throw new JobException(CANCELLATION_IMPOSSIBLE_FUTURE_NOT_FOUND, processId);
+        } else if (future.isDone()) {
+            throw new JobException(CANCELLATION_IMPOSSIBLE_TASK_DONE, processId);
+        }
+
+        future.cancel(true);
+
+        final boolean cancelled = future.isCancelled();
+        if (cancelled) {
+            futures.remove(processId);
+        } else {
+            throw new JobException(CANCELLATION_FAILED, processId);
+        }
     }
 
     private Runnable getRunnable(final ItemDataRequest dataRequest,
@@ -80,16 +108,29 @@ public class AASTransferProcessManager implements TransferProcessManager<ItemDat
             final JobParameter jobData) {
 
         return () -> {
-            final AASTransferProcess aasTransferProcess = new AASTransferProcess(processId, dataRequest.getDepth());
+            try {
+                final AASTransferProcess aasTransferProcess = new AASTransferProcess(processId, dataRequest.getDepth());
+                final PartChainIdentificationKey itemId = dataRequest.getItemId();
 
-            final PartChainIdentificationKey itemId = dataRequest.getItemId();
+                log.info("Starting processing Digital Twin Registry with itemId {}", itemId);
 
-            log.info("Starting processing Digital Twin Registry with itemId {}", itemId);
-            final ItemContainer itemContainer = abstractDelegate.process(ItemContainer.builder(), jobData,
-                    aasTransferProcess, itemId);
-            storeItemContainer(processId, itemContainer);
+                if(Thread.currentThread().isInterrupted()) {
+                    throw new InterruptedException();
+                }
 
-            transferProcessCompleted.accept(aasTransferProcess);
+                final ItemContainer itemContainer = abstractDelegate.process(ItemContainer.builder(), jobData,
+                        aasTransferProcess, itemId);
+
+                if (Thread.currentThread().isInterrupted()) {
+                    throw new InterruptedException();
+                }
+
+                storeItemContainer(processId, itemContainer);
+                transferProcessCompleted.accept(aasTransferProcess);
+                log.info("Exiting transfer process task");
+            } catch (InterruptedException e) { // no handling needed: only purpose is to return from this code elegantly
+                log.info("Exiting transfer process task due to cancellation");
+            }
         };
     }
 
