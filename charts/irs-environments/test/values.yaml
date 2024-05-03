@@ -31,7 +31,7 @@ item-relationship-service:
     shellDescriptorTemplate: /shell-descriptors/{aasIdentifier}
     lookupShellsTemplate: /lookup/shells?assetIds={assetIds}
   discovery:
-    discoveryFinderUrl: https://discovery-mock.dev.demo.catena-x.net/api/administration/connectors/discovery/search
+    discoveryFinderUrl: https://irs-test-discovery-mock.int.demo.catena-x.net/api/administration/connectors/discovery/search
 
   semanticshub:
     # url: https://semantics.int.demo.catena-x.net/hub/api/v1/models
