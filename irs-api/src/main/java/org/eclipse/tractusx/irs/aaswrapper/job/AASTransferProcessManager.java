@@ -74,8 +74,14 @@ public class AASTransferProcessManager implements TransferProcessManager<ItemDat
     public TransferInitiateResponse initiateRequest(final ItemDataRequest dataRequest,
             final Consumer<String> preExecutionHandler, final Consumer<AASTransferProcess> completionCallback,
             final JobParameter jobData) {
-
         final String processId = UUID.randomUUID().toString();
+        if (Thread.currentThread().isInterrupted()) {
+            log.info("{} returning from initiateRequest due to interrupt, didn't add new transfer",
+                    Thread.currentThread().getName().toUpperCase());
+
+            return new TransferInitiateResponse(processId, ResponseStatus.NOT_STARTED_JOB_CANCELLED);
+        }
+
         preExecutionHandler.accept(processId);
 
         final Future<?> future = executor.submit(getRunnable(dataRequest, completionCallback, processId, jobData));
@@ -88,18 +94,15 @@ public class AASTransferProcessManager implements TransferProcessManager<ItemDat
     public void cancelRequest(final String processId) {
         final Future<?> future = futures.get(processId);
         if (future == null) {
-            throw new JobException(CANCELLATION_IMPOSSIBLE_FUTURE_NOT_FOUND, processId);
-        } else if (future.isDone()) {
-            throw new JobException(CANCELLATION_IMPOSSIBLE_TASK_DONE, processId);
+            throw new JobException(CANCELLATION_IMPOSSIBLE_FUTURE_NOT_FOUND.formatted(processId), processId);
         }
 
         future.cancel(true);
 
-        final boolean cancelled = future.isCancelled();
-        if (cancelled) {
+        if (future.isDone()) {
             futures.remove(processId);
         } else {
-            throw new JobException(CANCELLATION_FAILED, processId);
+            throw new JobException(CANCELLATION_FAILED.formatted(processId), processId);
         }
     }
 
@@ -108,29 +111,16 @@ public class AASTransferProcessManager implements TransferProcessManager<ItemDat
             final JobParameter jobData) {
 
         return () -> {
-            try {
-                final AASTransferProcess aasTransferProcess = new AASTransferProcess(processId, dataRequest.getDepth());
-                final PartChainIdentificationKey itemId = dataRequest.getItemId();
+            final AASTransferProcess aasTransferProcess = new AASTransferProcess(processId, dataRequest.getDepth());
+            final PartChainIdentificationKey itemId = dataRequest.getItemId();
 
-                log.info("Starting processing Digital Twin Registry with itemId {}", itemId);
+            log.info("Starting processing Digital Twin Registry with itemId {} for process {}", itemId, processId);
 
-                if(Thread.currentThread().isInterrupted()) {
-                    throw new InterruptedException();
-                }
+            final ItemContainer itemContainer = abstractDelegate.process(ItemContainer.builder(), jobData,
+                    aasTransferProcess, itemId);
 
-                final ItemContainer itemContainer = abstractDelegate.process(ItemContainer.builder(), jobData,
-                        aasTransferProcess, itemId);
-
-                if (Thread.currentThread().isInterrupted()) {
-                    throw new InterruptedException();
-                }
-
-                storeItemContainer(processId, itemContainer);
-                transferProcessCompleted.accept(aasTransferProcess);
-                log.info("Exiting transfer process task");
-            } catch (InterruptedException e) { // no handling needed: only purpose is to return from this code elegantly
-                log.info("Exiting transfer process task due to cancellation");
-            }
+            storeItemContainer(processId, itemContainer);
+            transferProcessCompleted.accept(aasTransferProcess);
         };
     }
 

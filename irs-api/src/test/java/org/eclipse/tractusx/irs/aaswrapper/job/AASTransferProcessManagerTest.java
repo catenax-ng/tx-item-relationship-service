@@ -25,34 +25,50 @@ package org.eclipse.tractusx.irs.aaswrapper.job;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.eclipse.tractusx.irs.util.TestMother.jobParameter;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
+import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
+import lombok.extern.slf4j.Slf4j;
 import org.eclipse.tractusx.irs.InMemoryBlobStore;
 import org.eclipse.tractusx.irs.aaswrapper.job.delegate.DigitalTwinDelegate;
 import org.eclipse.tractusx.irs.component.PartChainIdentificationKey;
+import org.eclipse.tractusx.irs.configuration.JobConfiguration;
+import org.eclipse.tractusx.irs.connector.job.JobException;
 import org.eclipse.tractusx.irs.connector.job.ResponseStatus;
 import org.eclipse.tractusx.irs.connector.job.TransferInitiateResponse;
 import org.eclipse.tractusx.irs.util.TestMother;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.stubbing.Answer;
 
+@Slf4j
 @ExtendWith(MockitoExtension.class)
 class AASTransferProcessManagerTest {
 
     private final TestMother generate = new TestMother();
 
-    DigitalTwinDelegate digitalTwinProcessor = mock(DigitalTwinDelegate.class);
-    ExecutorService pool = mock(ExecutorService.class);
+    private final DigitalTwinDelegate digitalTwinProcessor = mock(DigitalTwinDelegate.class);
+    private final ExecutorService pool = mock(ExecutorService.class);
 
-    final AASTransferProcessManager manager = new AASTransferProcessManager(digitalTwinProcessor, pool,
+    private final AASTransferProcessManager manager = new AASTransferProcessManager(digitalTwinProcessor, pool,
             new InMemoryBlobStore());
+
+    private final ExecutorService executorService = Executors.newScheduledThreadPool(
+            JobConfiguration.EXECUTOR_CORE_POOL_SIZE);
+
+    private final AASTransferProcessManager realManager = new AASTransferProcessManager(digitalTwinProcessor,
+            executorService, new InMemoryBlobStore());
 
     @Test
     void shouldExecuteThreadForProcessing() {
@@ -66,7 +82,7 @@ class AASTransferProcessManagerTest {
         }, jobParameter());
 
         // then
-        verify(pool, times(1)).execute(any(Runnable.class));
+        verify(pool, times(1)).submit(any(Runnable.class));
     }
 
     @Test
@@ -83,6 +99,44 @@ class AASTransferProcessManagerTest {
         // then
         assertThat(initiateResponse.getTransferId()).isNotBlank();
         assertThat(initiateResponse.getStatus()).isEqualTo(ResponseStatus.OK);
+    }
+
+    @Test
+    void shouldThrowJobExceptionWhenNoFutureFound() {
+        assertThrows(JobException.class, () -> manager.cancelRequest("non-existent"));
+    }
+
+    @Test
+    void shouldCancelExecution() throws InterruptedException {
+        // given
+        final ItemDataRequest itemDataRequest = ItemDataRequest.rootNode(
+                PartChainIdentificationKey.builder().globalAssetId(UUID.randomUUID().toString()).bpn("bpn123").build());
+
+        // when
+        when(digitalTwinProcessor.process(any(), any(), any(), any())).thenAnswer((Answer<Void>) invocationOnMock -> {
+            for (int i = 0; i < 5; i++) {
+                log.info("WORKING - SECOND {}", i + 1);
+                Thread.sleep(1000);
+            }
+            return null;
+        }).thenReturn(ItemContainer.builder().build());
+
+        final TransferInitiateResponse initiateResponse = realManager.initiateRequest(itemDataRequest, s -> {
+        }, aasTransferProcess -> {
+        }, jobParameter());
+
+        final String transferId = initiateResponse.getTransferId();
+        final Map<String, Future<?>> futures = realManager.getFutures();
+        final Future<?> future = futures.get(transferId);
+
+        // then
+        Thread.sleep(2000);
+
+        log.info("Cancelling...");
+
+        realManager.cancelRequest(transferId);
+        assertThat(future).isCancelled();
+        assertThat(futures).doesNotContainKey(transferId);
     }
 
 }

@@ -220,8 +220,8 @@ public abstract class BaseJobStore implements JobStore {
             }
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
-            log.info("Write lock interrupted, most likely due to job cancellation", e);
+            log.info("{} returning from writeLock due to interrupt", Thread.currentThread().getName().toUpperCase());
+            return null;
         }
-        return null;
     }
 }

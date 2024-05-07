@@ -25,6 +25,7 @@
         <Logger name="org.apache.coyote.http11.Http11NioProtocol" level="warn" />
         <Logger name="org.apache.sshd.common.util.SecurityUtils" level="warn"/>
         <Logger name="org.apache.tomcat.util.net.NioSelectorPool" level="warn" />
+        <Logger name="okhttp3.OkHttpClient" level="trace" />
     </Loggers>
 
 </Configuration>

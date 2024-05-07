@@ -153,25 +153,25 @@ public class JobOrchestrator<T extends DataRequest, P extends TransferProcess> {
         final Collection<String> transferProcessIds = job.getTransferProcessIds();
 
         final ArrayList<String> futureNotFoundImpossibleCancellations = new ArrayList<>();
-        final ArrayList<String> taskDoneImpossibleCancellations = new ArrayList<>();
         final ArrayList<String> failedCancellations = new ArrayList<>();
 
         transferProcessIds.forEach(transferProcessId -> {
             try {
                 processManager.cancelRequest(transferProcessId);
             } catch (JobException e) {
-                if (e.getMessage().equals(TransferProcessManager.CANCELLATION_IMPOSSIBLE_FUTURE_NOT_FOUND)) {
+                if (e.getMessage()
+                     .equals(TransferProcessManager.CANCELLATION_IMPOSSIBLE_FUTURE_NOT_FOUND.formatted(
+                             transferProcessId))) {
                     futureNotFoundImpossibleCancellations.add(transferProcessId);
-                } else if (e.getMessage().equals(TransferProcessManager.CANCELLATION_IMPOSSIBLE_TASK_DONE)) {
-                    taskDoneImpossibleCancellations.add(transferProcessId);
-                } else if (e.getMessage().equals(TransferProcessManager.CANCELLATION_FAILED)) {
+                } else if (e.getMessage()
+                            .equals(TransferProcessManager.CANCELLATION_FAILED.formatted(transferProcessId))) {
                     failedCancellations.add(transferProcessId);
                 }
             }
         });
 
         boolean anyImpossibleOrFailed = !(futureNotFoundImpossibleCancellations.isEmpty()
-                && taskDoneImpossibleCancellations.isEmpty() && failedCancellations.isEmpty());
+                && failedCancellations.isEmpty());
 
         if (anyImpossibleOrFailed) {
             meterService.incrementException();
@@ -181,21 +181,15 @@ public class JobOrchestrator<T extends DataRequest, P extends TransferProcess> {
                 message += "Cancellation impossible because no Future(s) were found for PID(s) " + String.join(", ",
                         futureNotFoundImpossibleCancellations);
             }
-            if (!taskDoneImpossibleCancellations.isEmpty()) {
-                if (!message.isBlank()) {
-                    message += "\n";
-                }
-                message += "Cancellation impossible because task(s) already done for PID(s) " + String.join(", ",
-                        taskDoneImpossibleCancellations);
-            }
             if (!failedCancellations.isEmpty()) {
                 if (!message.isBlank()) {
-                    message += "\n";
+                    message += " and ";
                 }
                 message += "Cancellation failed for PID(s) " + String.join(", ", failedCancellations);
             }
 
-            markJobInError(job, new JobException(message), "Error while cancelling transfer processes");
+            markJobInError(job, new JobException(message), "Error cancelling job");
+            return;
         }
 
         meterService.incrementJobCancelled();
@@ -325,7 +319,8 @@ public class JobOrchestrator<T extends DataRequest, P extends TransferProcess> {
                 transferId -> jobStore.addTransferProcess(job.getJobIdString(), transferId),
                 this::transferProcessCompleted, jobData);
 
-        if (response.getStatus() != ResponseStatus.OK) {
+        if (response.getStatus() != ResponseStatus.OK
+                && response.getStatus() != ResponseStatus.NOT_STARTED_JOB_CANCELLED) {
             throw new JobException(response.getStatus().toString());
         }
 
