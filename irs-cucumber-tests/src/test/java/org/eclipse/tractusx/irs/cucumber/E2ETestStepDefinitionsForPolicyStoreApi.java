@@ -30,6 +30,8 @@ import static org.eclipse.tractusx.irs.cucumber.E2ETestHelperForPolicyStoreApi.f
 import static org.eclipse.tractusx.irs.cucumber.E2ETestHelperForPolicyStoreApi.fetchPoliciesForBusinessPartnerNumbers;
 import static org.eclipse.tractusx.irs.cucumber.E2ETestHelperForPolicyStoreApi.getExpectedBpnToPolicyIdsMapping;
 import static org.eclipse.tractusx.irs.cucumber.E2ETestHelperForPolicyStoreApi.getPolicyTemplate;
+import static org.eclipse.tractusx.irs.cucumber.E2ETestHelperForPolicyStoreApi.getPolicyTemplateWithEmptyDefinition;
+import static org.eclipse.tractusx.irs.cucumber.E2ETestHelperForPolicyStoreApi.getPolicyTemplateWithoutDefinition;
 import static org.eclipse.tractusx.irs.cucumber.E2ETestHelperForPolicyStoreApi.registerPolicyForBpn;
 import static org.eclipse.tractusx.irs.cucumber.E2ETestHelperForPolicyStoreApi.updatePolicies;
 
@@ -237,6 +239,27 @@ public class E2ETestStepDefinitionsForPolicyStoreApi {
         final String policyJson = getPolicyTemplate().formatted(policyId);
         this.createPoliciesResponse = registerPolicyForBpn(this.authenticationPropertiesBuilder, policyJson, bpn,
                 validUntil);
+    }
+
+    @When("a policy with policyId {string} WITHOUT definition is registered for BPN {string} and validUntil {string}")
+    public void iRegisterAPolicyWithoutDefinition(final String policyId, final String bpn, final String validUntil)
+            throws IOException {
+        final String policyJson = getPolicyTemplateWithoutDefinition().formatted(policyId);
+        this.createPoliciesResponse = registerPolicyForBpn(this.authenticationPropertiesBuilder, policyJson, bpn,
+                validUntil);
+    }
+
+    @When("a policy with policyId {string} WITH EMPTY definition is registered for BPN {string} and validUntil {string}")
+    public void iRegisterAPolicyWithEmptyDefinition(final String policyId, final String bpn, final String validUntil)
+            throws IOException {
+        final String policyJson = getPolicyTemplateWithEmptyDefinition().formatted(policyId);
+        this.createPoliciesResponse = registerPolicyForBpn(this.authenticationPropertiesBuilder, policyJson, bpn,
+                validUntil);
+    }
+
+    @When("a policy WITHOUT payload is registered for BPN {string} and validUntil {string}")
+    public void iRegisterAPolicyWithoutPayload(final String bpn, final String validUntil) {
+        this.createPoliciesResponse = registerPolicyForBpn(this.authenticationPropertiesBuilder, null, bpn, validUntil);
     }
 
     @Given("I want to register a policy")
