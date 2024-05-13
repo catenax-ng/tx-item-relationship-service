@@ -68,24 +68,10 @@ class PolicyIdListValidatorTest {
 
     @Test
     void withListContainingInvalidPolicyId() {
-        List<String> invalidList = Arrays.asList(UUID.randomUUID().toString(), "_INVALID_POLICY_ID_");
+        List<String> invalidList = Arrays.asList(UUID.randomUUID().toString(), "###INVALID_POLICY_ID###");
         assertThat(validator.isValid(invalidList, contextMock)).isFalse();
         verify(contextMock).buildConstraintViolationWithTemplate(messageCaptor.capture());
         assertThat(messageCaptor.getValue()).contains("policyId").contains(" index 1 ").contains("invalid");
     }
 
-    //    @ParameterizedTest
-    //    @ValueSource(strings = { "BPN",
-    //                             "BPNL",
-    //                             "BPNACB",
-    //                             "BPNA1234567890AB",
-    //                             "BPNS1234567890AB",
-    //                             "DELETE * FROM Table",
-    //                             "ERRRES"
-    //    })
-    //    void withInvalidBPN(final String invalidBPN) {
-    //        assertThat(validator.isValid(Collections.singletonList(invalidBPN), contextMock)).isFalse();
-    //        verify(contextMock).buildConstraintViolationWithTemplate(messageCaptor.capture());
-    //        assertThat(messageCaptor.getValue()).contains("BPN").contains(" index 0 ").contains("invalid");
-    //    }
 }

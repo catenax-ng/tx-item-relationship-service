@@ -25,10 +25,8 @@ import java.util.Collections;
 import java.util.List;
 
 import jakarta.validation.ConstraintViolationException;
-import org.eclipse.tractusx.irs.edc.client.policy.Constraint;
+import org.eclipse.tractusx.irs.edc.client.policy.ConstraintConstants;
 import org.eclipse.tractusx.irs.edc.client.policy.Constraints;
-import org.eclipse.tractusx.irs.edc.client.policy.Operator;
-import org.eclipse.tractusx.irs.edc.client.policy.OperatorType;
 import org.eclipse.tractusx.irs.edc.client.policy.Permission;
 import org.eclipse.tractusx.irs.edc.client.policy.Policy;
 import org.eclipse.tractusx.irs.edc.client.policy.PolicyType;
@@ -38,10 +36,11 @@ class PolicyValidatorTest {
 
     @Test
     void invalidPolicyId() {
-        final Policy policy = Policy.builder().policyId("_invalid_policy_id_").permissions(createPermissions()).build();
+        final Policy policy = Policy.builder().policyId("?invalid_policy_id#").permissions(createPermissions()).build();
         assertThatThrownBy(() -> PolicyValidator.validate(policy)).isInstanceOf(ConstraintViolationException.class)
                                                                   .hasMessageContaining("policyId")
-                                                                  .hasMessageContaining("must be a valid UUID");
+                                                                  .hasMessageContaining(
+                                                                          "must only contain safe URL path variable characters");
     }
 
     private List<Permission> createPermissions() {
@@ -50,10 +49,8 @@ class PolicyValidatorTest {
     }
 
     private Constraints createConstraints() {
-        return new Constraints(Collections.emptyList(),
-                List.of(new Constraint("Membership", new Operator(OperatorType.EQ), "active"),
-                        new Constraint("FrameworkAgreement.traceability", new Operator(OperatorType.EQ), "active"),
-                        new Constraint("PURPOSE", new Operator(OperatorType.EQ), "ID 3.1 Trace")));
+        return new Constraints(Collections.emptyList(), List.of(ConstraintConstants.ACTIVE_MEMBERSHIP,
+                ConstraintConstants.FRAMEWORK_AGREEMENT_TRACEABILITY_ACTIVE, ConstraintConstants.PURPOSE_ID_3_1_TRACE));
     }
 
 }

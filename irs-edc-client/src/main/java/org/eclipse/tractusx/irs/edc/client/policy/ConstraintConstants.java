@@ -17,31 +17,24 @@
  *
  * SPDX-License-Identifier: Apache-2.0
  ********************************************************************************/
-package org.eclipse.tractusx.irs.policystore.validators;
-
-import java.util.regex.Pattern;
-
-import jakarta.validation.ConstraintValidator;
-import jakarta.validation.ConstraintValidatorContext;
+package org.eclipse.tractusx.irs.edc.client.policy;
 
 /**
- * Validator for list of business partner numbers (BPN).
+ * Constants for {@link Constraint}s
  */
-public class PolicyIdValidator implements ConstraintValidator<ValidPolicyId, String> {
+public final class ConstraintConstants {
 
-    private static final Pattern PATTERN_SAFE_PATH_VARIABLE_CHARACTERS = Pattern.compile("[a-zA-Z0-9\\-_~.:]+");
+    public static final Constraint ACTIVE_MEMBERSHIP = new Constraint("Membership", new Operator(OperatorType.EQ),
+            "active");
 
-    @Override
-    public boolean isValid(final String value, final ConstraintValidatorContext context) {
+    public static final Constraint FRAMEWORK_AGREEMENT_TRACEABILITY_ACTIVE = new Constraint(
+            "FrameworkAgreement.traceability", new Operator(OperatorType.EQ), "active");
 
-        // allow  null and empty here (in order to allow flexible combination with @NotNull)
-        final boolean isNull = value == null;
+    public static final Constraint PURPOSE_ID_3_1_TRACE = new Constraint("PURPOSE", new Operator(OperatorType.EQ),
+            "ID 3.1 Trace");
 
-        return isNull || isValid(value);
-    }
-
-    public static boolean isValid(final String policyId) {
-        return PATTERN_SAFE_PATH_VARIABLE_CHARACTERS.matcher(policyId).matches();
+    private ConstraintConstants() {
+        // helper class
     }
 
 }

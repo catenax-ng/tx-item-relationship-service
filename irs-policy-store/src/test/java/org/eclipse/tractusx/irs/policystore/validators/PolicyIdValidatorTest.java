@@ -67,12 +67,19 @@ class PolicyIdValidatorTest {
     }
 
     private static Stream<String> generateUUIDs() {
-        return Stream.generate(() -> faker.internet().uuid()).limit(10);
+        return Stream.concat(uuidStream().limit(5), generateUUIDsWithUrnPrefix().limit(5));
+    }
+
+    private static Stream<String> generateUUIDsWithUrnPrefix() {
+        return uuidStream().map(uuid -> "urn:uuid:" + uuid);
+    }
+
+    private static Stream<String> uuidStream() {
+        return Stream.generate(() -> faker.internet().uuid());
     }
 
     @ParameterizedTest
-    @ValueSource(strings = { "a_",
-                             "*",
+    @ValueSource(strings = { "*",
                              "(",
                              ")",
                              "<",
@@ -81,11 +88,10 @@ class PolicyIdValidatorTest {
                              "]",
                              "{",
                              "}",
-                             "p3",
-                             "123",
-                             "abc",
-                             "abc123",
-                             "abc-def-4444"
+                             "a/policyId",
+                             "a\\policyId",
+                             "my?policyId",
+                             "my#policyId"
     })
     void withInvalidPolicyId(final String invalidPolicyId) {
         assertThat(validator.isValid(invalidPolicyId, contextMock)).isFalse();
