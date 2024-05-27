@@ -20,7 +20,7 @@ import argparse
 import uuid
 from json import dump
 from os import listdir
-from os import mkdir
+from os import makedirs
 from os.path import exists
 from shutil import rmtree
 from typing import Any
@@ -298,7 +298,9 @@ def generate_test_code_file(declarations: list[str], method_calls: list[str], de
     with some supplementary code needed for integration testing."""
 
     first_headline = "#" * 3 + (" Insert below code into "
-                                "IrsWireMockIntegrationTest.prepareBigTestDataSetAndReturnFirstGlobalAssetId()\n")
+                                "IrsWireMockIntegrationTest.prepareBigTestDataSetAndReturnFirstGlobalAssetId()\n" +
+                                "#" * 3 + " If you want to use the code, copy the directory of generated files to\n" +
+                                "#"*3 + " irs-api/src/test/resources/__files/integrationtesting\n\n")
 
     second_headline = "#" * 3 + \
                       " If needed, insert below code into any test methods that use the data set\n"
@@ -312,16 +314,16 @@ def generate_test_code_file(declarations: list[str], method_calls: list[str], de
         f.write(file_content)
 
 
-def generate_test_data_set(template: SemanticModelTemplate, num_relationship_items: int, recursion_depth: int,
-                           max_recursion_depth: int, uuid: str, file_suffix_counter_dict: FileSuffixCounterDict,
-                           declarations: list[str], method_calls: list[str],
-                           test_data_directory_name: str) -> tuple[list[str], list[str]]:
+def generate_test_data(template: SemanticModelTemplate, num_relationship_items: int, recursion_depth: int,
+                       max_recursion_depth: int, uuid: str, file_suffix_counter_dict: FileSuffixCounterDict,
+                       declarations: list[str], method_calls: list[str],
+                       directory_name: str) -> tuple[list[str], list[str]]:
     current_suffix_counter = file_suffix_counter_dict.get_suffix_counter(
         recursion_depth)
 
     # recursion depth + 1 is performed purely for semantic purposes here - items should start at 1 instead of 0
-    batch_file_name = f"{test_data_directory_name}/batch_{recursion_depth + 1}_{current_suffix_counter}.json"
-    bom_file_name = (f"{test_data_directory_name}/singleLevel{template.get_template_name(make_camel_case=True)}"
+    batch_file_name = f"{directory_name}/batch_{recursion_depth + 1}_{current_suffix_counter}.json"
+    bom_file_name = (f"{directory_name}/singleLevel{template.get_template_name(make_camel_case=True)}"
                      f"_{recursion_depth + 1}_{current_suffix_counter}.json")
 
     stop_recursion = recursion_depth > max_recursion_depth
@@ -342,21 +344,21 @@ def generate_test_data_set(template: SemanticModelTemplate, num_relationship_ite
     if not stop_recursion:
         relationship_items = main_item[template.get_relationships_array_key_name(
         )]
-        update_declarations_and_calls_lists_and_recurse(template, num_relationship_items, recursion_depth,
-                                                        max_recursion_depth, uuid, file_suffix_counter_dict,
-                                                        declarations, method_calls, test_data_directory_name,
-                                                        batch_file_name, bom_file_name, batch, relationship_items)
+        update_lists_and_recurse(template, num_relationship_items, recursion_depth,
+                                 max_recursion_depth, uuid, file_suffix_counter_dict,
+                                 declarations, method_calls, directory_name,
+                                 batch_file_name, bom_file_name, batch, relationship_items)
 
     return declarations, method_calls
 
 
-def update_declarations_and_calls_lists_and_recurse(template: SemanticModelTemplate, num_relationship_items: int,
-                                                    recursion_depth: int, max_recursion_depth: int, uuid: str,
-                                                    file_suffix_counter_dict: FileSuffixCounterDict,
-                                                    declarations: list[str], method_calls: list[str],
-                                                    test_data_directory_name: str, batch_file_name: str,
-                                                    bom_file_name: str, batch: dict[str, Any],
-                                                    relationship_items: list[dict[str, Any]]):
+def update_lists_and_recurse(template: SemanticModelTemplate, num_relationship_items: int,
+                             recursion_depth: int, max_recursion_depth: int, uuid: str,
+                             file_suffix_counter_dict: FileSuffixCounterDict,
+                             declarations: list[str], method_calls: list[str],
+                             test_data_directory_name: str, batch_file_name: str,
+                             bom_file_name: str, batch: dict[str, Any],
+                             relationship_items: list[dict[str, Any]]):
     current_suffix_counter = file_suffix_counter_dict.get_suffix_counter(
         recursion_depth)
 
@@ -365,17 +367,17 @@ def update_declarations_and_calls_lists_and_recurse(template: SemanticModelTempl
     method_calls.append(
         f"successfulRegistryAndDataRequest(globalAssetId{recursion_depth + 1}{current_suffix_counter}, "
         f'\"{batch["partTypeInformation"]["nameAtManufacturer"]}\", TEST_BPN,\n'
-        f"\"integrationtesting/{batch_file_name}\","
-        f"\"integrationtesting/{bom_file_name}\");"
+        f"\"integrationtesting/{batch_file_name.removeprefix('./')}\","
+        f"\"integrationtesting/{bom_file_name.removeprefix('./')}\");"
     )
 
     file_suffix_counter_dict.initialize_new_suffix_counter(recursion_depth + 1)
 
     for item in relationship_items:
-        generate_test_data_set(template, num_relationship_items, recursion_depth + 1, max_recursion_depth,
-                               item[template.get_relationship_item_id_key_name(
-                               )], file_suffix_counter_dict, declarations,
-                               method_calls, test_data_directory_name)
+        generate_test_data(template, num_relationship_items, recursion_depth + 1, max_recursion_depth,
+                           item[template.get_relationship_item_id_key_name(
+                           )], file_suffix_counter_dict, declarations,
+                           method_calls, test_data_directory_name)
         file_suffix_counter_dict.increment_suffix_counter(recursion_depth + 1)
 
 
@@ -386,7 +388,6 @@ def determine_action_for_directory(model_name: str, directory_name: str, replace
     if not exists(directory_name):
         print(
             f"Creating new target directory with name \"{directory_name}\"")
-        mkdir(directory_name)
     else:
         if len(listdir(directory_name)) > 0:
             print(f"\nTarget directory \"{directory_name}\" already present in working directory and not empty.",
@@ -401,7 +402,7 @@ def determine_action_for_directory(model_name: str, directory_name: str, replace
                 print(f"Replacing it.")
                 rmtree(directory_name)
 
-            mkdir(directory_name)
+    makedirs(directory_name)
 
     return directory_name
 
@@ -415,7 +416,7 @@ def cmdline_args_test_data_generation(semantic_model_name: str, num_relationship
     directory_name = determine_action_for_directory(
         full_model_name, target_directory, replace_target_if_necessary)
 
-    variable_declarations, method_calls = generate_test_data_set(
+    variable_declarations, method_calls = generate_test_data(
         template=template,
         num_relationship_items=num_relationship_items,
         recursion_depth=0,
@@ -424,7 +425,7 @@ def cmdline_args_test_data_generation(semantic_model_name: str, num_relationship
         file_suffix_counter_dict=FileSuffixCounterDict(),
         declarations=[],
         method_calls=[],
-        test_data_directory_name=directory_name)
+        directory_name=directory_name)
 
     generate_test_code_file(variable_declarations, method_calls,
                             max_recursion_depth, f"{directory_name}/test_code.txt")
