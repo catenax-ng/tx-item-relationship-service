@@ -152,8 +152,8 @@ public class JobOrchestrator<T extends DataRequest, P extends TransferProcess> {
     public void cancelJob(final MultiTransferJob job) {
         final Collection<String> transferProcessIds = job.getTransferProcessIds();
 
-        final ArrayList<String> futureNotFoundImpossibleCancellations = new ArrayList<>();
-        final ArrayList<String> failedCancellations = new ArrayList<>();
+        final List<String> futureNotFoundImpossibleCancellations = new ArrayList<>();
+        final List<String> failedCancellations = new ArrayList<>();
 
         transferProcessIds.forEach(transferProcessId -> {
             try {
@@ -170,29 +170,34 @@ public class JobOrchestrator<T extends DataRequest, P extends TransferProcess> {
             }
         });
 
-        boolean anyImpossibleOrFailed = !(futureNotFoundImpossibleCancellations.isEmpty()
+        final boolean anyImpossibleOrFailed = !(futureNotFoundImpossibleCancellations.isEmpty()
                 && failedCancellations.isEmpty());
 
         if (anyImpossibleOrFailed) {
-            meterService.incrementException();
-            String message = "";
-
-            if (!futureNotFoundImpossibleCancellations.isEmpty()) {
-                message += "Cancellation impossible because no Future(s) were found for PID(s) " + String.join(", ",
-                        futureNotFoundImpossibleCancellations);
-            }
-            if (!failedCancellations.isEmpty()) {
-                if (!message.isBlank()) {
-                    message += " and ";
-                }
-                message += "Cancellation failed for PID(s) " + String.join(", ", failedCancellations);
-            }
-
-            markJobInError(job, new JobException(message), "Error cancelling job");
+            reactIfAnyProcessNotCancelled(job, futureNotFoundImpossibleCancellations, failedCancellations);
             return;
         }
 
         meterService.incrementJobCancelled();
+    }
+
+    private void reactIfAnyProcessNotCancelled(final MultiTransferJob job,
+            final List<String> futureNotFoundImpossibleCancellations, final List<String> failedCancellations) {
+        meterService.incrementException();
+        final StringBuilder stringBuilder = new StringBuilder();
+
+        if (!futureNotFoundImpossibleCancellations.isEmpty()) {
+            stringBuilder.append("Cancellation impossible because no Future(s) were found for PID(s) ")
+                         .append(String.join(", ", futureNotFoundImpossibleCancellations));
+        }
+        if (!failedCancellations.isEmpty()) {
+            if (!stringBuilder.toString().isEmpty()) {
+                stringBuilder.append(" and ");
+            }
+            stringBuilder.append("Cancellation failed for PID(s) ").append(String.join(", ", failedCancellations));
+        }
+
+        markJobInError(job, new JobException(stringBuilder.toString()), "Error cancelling job");
     }
 
     /**

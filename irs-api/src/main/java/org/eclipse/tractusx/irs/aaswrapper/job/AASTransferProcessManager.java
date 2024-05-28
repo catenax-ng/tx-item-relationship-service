@@ -26,9 +26,9 @@ package org.eclipse.tractusx.irs.aaswrapper.job;
 import static org.eclipse.tractusx.irs.configuration.JobConfiguration.JOB_BLOB_PERSISTENCE;
 
 import java.nio.charset.StandardCharsets;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 import java.util.function.Consumer;
@@ -61,7 +61,7 @@ public class AASTransferProcessManager implements TransferProcessManager<ItemDat
     private final AbstractDelegate abstractDelegate;
 
     @Getter
-    private final Map<String, Future<?>> futures = new HashMap<>();
+    private final Map<String, Future<?>> futures = new ConcurrentHashMap<>();
 
     public AASTransferProcessManager(final AbstractDelegate abstractDelegate, final ExecutorService executor,
             @Qualifier(JOB_BLOB_PERSISTENCE) final BlobPersistence blobStore) {

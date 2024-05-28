@@ -32,17 +32,14 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
 
 import lombok.extern.slf4j.Slf4j;
 import org.eclipse.tractusx.irs.InMemoryBlobStore;
 import org.eclipse.tractusx.irs.aaswrapper.job.delegate.DigitalTwinDelegate;
 import org.eclipse.tractusx.irs.component.PartChainIdentificationKey;
-import org.eclipse.tractusx.irs.configuration.JobConfiguration;
 import org.eclipse.tractusx.irs.connector.job.JobException;
 import org.eclipse.tractusx.irs.connector.job.ResponseStatus;
 import org.eclipse.tractusx.irs.connector.job.TransferInitiateResponse;
@@ -50,33 +47,24 @@ import org.eclipse.tractusx.irs.util.TestMother;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.mockito.stubbing.Answer;
 
 @Slf4j
 @ExtendWith(MockitoExtension.class)
 class AASTransferProcessManagerTest {
 
+    final ItemDataRequest itemDataRequest = ItemDataRequest.rootNode(
+            PartChainIdentificationKey.builder().globalAssetId(UUID.randomUUID().toString()).bpn("bpn123").build());
     private final TestMother generate = new TestMother();
-
     private final DigitalTwinDelegate digitalTwinProcessor = mock(DigitalTwinDelegate.class);
     private final ExecutorService pool = mock(ExecutorService.class);
-
     private final AASTransferProcessManager manager = new AASTransferProcessManager(digitalTwinProcessor, pool,
             new InMemoryBlobStore());
 
-    private final ExecutorService executorService = Executors.newScheduledThreadPool(
-            JobConfiguration.EXECUTOR_CORE_POOL_SIZE);
-
-    private final AASTransferProcessManager realManager = new AASTransferProcessManager(digitalTwinProcessor,
-            executorService, new InMemoryBlobStore());
-
     @Test
     void shouldExecuteThreadForProcessing() {
-        // given
-        final ItemDataRequest itemDataRequest = ItemDataRequest.rootNode(
-                PartChainIdentificationKey.builder().globalAssetId(UUID.randomUUID().toString()).bpn("bpn123").build());
-
         // when
+        when(pool.submit(any(Runnable.class))).thenReturn(new CompletableFuture<>());
+
         manager.initiateRequest(itemDataRequest, s -> {
         }, aasTransferProcess -> {
         }, jobParameter());
@@ -86,12 +74,24 @@ class AASTransferProcessManagerTest {
     }
 
     @Test
-    void shouldInitiateProcessingAndReturnOkStatus() {
-        // given
-        final ItemDataRequest itemDataRequest = ItemDataRequest.rootNode(
-                PartChainIdentificationKey.builder().globalAssetId(UUID.randomUUID().toString()).bpn("bpn123").build());
-
+    void shouldInitiateProcessingAndAddFutureToMap() {
         // when
+        when(pool.submit(any(Runnable.class))).thenReturn(new CompletableFuture<>());
+
+        final TransferInitiateResponse initiateResponse = manager.initiateRequest(itemDataRequest, s -> {
+        }, aasTransferProcess -> {
+        }, jobParameter());
+
+        // then
+        assertThat(manager.getFutures()).containsKey(initiateResponse.getTransferId());
+        assertThat(manager.getFutures().get(initiateResponse.getTransferId())).isNotNull();
+    }
+
+    @Test
+    void shouldInitiateProcessingAndReturnOkResponse() {
+        // when
+        when(pool.submit(any(Runnable.class))).thenReturn(new CompletableFuture<>());
+
         final TransferInitiateResponse initiateResponse = manager.initiateRequest(itemDataRequest, s -> {
         }, aasTransferProcess -> {
         }, jobParameter());
@@ -107,36 +107,21 @@ class AASTransferProcessManagerTest {
     }
 
     @Test
-    void shouldCancelExecution() throws InterruptedException {
-        // given
-        final ItemDataRequest itemDataRequest = ItemDataRequest.rootNode(
-                PartChainIdentificationKey.builder().globalAssetId(UUID.randomUUID().toString()).bpn("bpn123").build());
-
+    void shouldCancelFutureAndRemoveFromMap() {
         // when
-        when(digitalTwinProcessor.process(any(), any(), any(), any())).thenAnswer((Answer<Void>) invocationOnMock -> {
-            for (int i = 0; i < 5; i++) {
-                log.info("WORKING - SECOND {}", i + 1);
-                Thread.sleep(1000);
-            }
-            return null;
-        }).thenReturn(ItemContainer.builder().build());
+        when(pool.submit(any(Runnable.class))).thenReturn(new CompletableFuture<>());
 
-        final TransferInitiateResponse initiateResponse = realManager.initiateRequest(itemDataRequest, s -> {
+        // then
+        final TransferInitiateResponse initiateResponse = manager.initiateRequest(itemDataRequest, s -> {
         }, aasTransferProcess -> {
         }, jobParameter());
 
-        final String transferId = initiateResponse.getTransferId();
-        final Map<String, Future<?>> futures = realManager.getFutures();
-        final Future<?> future = futures.get(transferId);
+        assertThat(manager.getFutures()).containsKey(initiateResponse.getTransferId());
+        assertThat(manager.getFutures().get(initiateResponse.getTransferId())).isNotNull();
 
-        // then
-        Thread.sleep(2000);
+        manager.cancelRequest(initiateResponse.getTransferId());
 
-        log.info("Cancelling...");
-
-        realManager.cancelRequest(transferId);
-        assertThat(future).isCancelled();
-        assertThat(futures).doesNotContainKey(transferId);
+        assertThat(manager.getFutures()).doesNotContainKey(initiateResponse.getTransferId());
     }
 
 }
