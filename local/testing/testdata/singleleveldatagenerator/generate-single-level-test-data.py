@@ -292,23 +292,28 @@ def generate_batch(uuid: str) -> dict[str, Any]:
     return SemanticModelTemplate("batch-3.0.0", batch_3_0_0_info).generate_main_item(0, uuid)
 
 
-def generate_test_code_file(declarations: list[str], method_calls: list[str], depth: int,
+def generate_test_code_file(generated_method_name: str, declarations: list[str], method_calls: list[str], depth: int,
                             test_code_file_name: str) -> None:
     """Write a list of Java variable declarations and a list of Java method calls to file with specified name, along
     with some supplementary code needed for integration testing."""
 
-    first_headline = "#" * 3 + (" Insert below code into "
-                                "IrsWireMockIntegrationTest.prepareBigTestDataSetAndReturnFirstGlobalAssetId()\n" +
+    first_headline = "#" * 3 + (" Below code can be inserted into IrsWireMockIntegrationTest\n" +
                                 "#" * 3 + " If you want to use the code, copy the directory of generated files to\n" +
-                                "#"*3 + " irs-api/src/test/resources/__files/integrationtesting\n\n")
+                                "#" * 3 + " irs-api/src/test/resources/__files/integrationtesting\n\n")
+
+    java_method_signature = f"private String prepare{generated_method_name}TestDataSet()" + "{\n    "
+
+    java_return_statement = "\n\n    return globalAssetId10;\n}\n\n"
 
     second_headline = "#" * 3 + \
                       " If needed, insert below code into any test methods that use the data set\n"
 
-    job_request_call = f"request = WiremockSupport.jobRequest(globalAssetId10, TEST_BPN, {depth});"
+    java_job_request_call = (f"final JobRequest request = WiremockSupport.jobRequest(globalAssetId10, TEST_BPN," +
+                             f" {depth});")
 
-    file_content = (first_headline + "\n".join(declarations) + "\n\n" + "\n".join(method_calls) +
-                    "\n\nreturn globalAssetId10;\n\n" + second_headline + job_request_call)
+    file_content = (first_headline + java_method_signature + "\n    ".join(declarations) + "\n\n    " + "\n    ".join(
+        method_calls) +
+                    java_return_statement + second_headline + java_job_request_call)
 
     with open(test_code_file_name, "w") as f:
         f.write(file_content)
@@ -367,8 +372,8 @@ def update_lists_and_recurse(template: SemanticModelTemplate, num_relationship_i
     method_calls.append(
         f"successfulRegistryAndDataRequest(globalAssetId{recursion_depth + 1}{current_suffix_counter}, "
         f'\"{batch["partTypeInformation"]["nameAtManufacturer"]}\", TEST_BPN,\n'
-        f"\"integrationtesting/{batch_file_name.removeprefix('./')}\","
-        f"\"integrationtesting/{bom_file_name.removeprefix('./')}\");"
+        f"    \"integrationtesting/{batch_file_name.removeprefix('./')}\","
+        f"\n    \"integrationtesting/{bom_file_name.removeprefix('./')}\");"
     )
 
     file_suffix_counter_dict.initialize_new_suffix_counter(recursion_depth + 1)
@@ -412,7 +417,9 @@ def cmdline_args_test_data_generation(semantic_model_name: str, num_relationship
     template = SemanticModelTemplate(semantic_model_name,
                                      SINGLE_LEVEL_SEMANTIC_MODELS_TEMPLATES_SPECIFICATIONS[semantic_model_name])
 
-    full_model_name = f"singleLevel{template.get_template_name(make_camel_case=True)}"
+    model_name = template.get_template_name(make_camel_case=True)
+    full_model_name = f"singleLevel{model_name}"
+    generated_java_method_name = model_name.replace('-', '').replace('.', '')
     directory_name = determine_action_for_directory(
         full_model_name, target_directory, replace_target_if_necessary)
 
@@ -427,7 +434,7 @@ def cmdline_args_test_data_generation(semantic_model_name: str, num_relationship
         method_calls=[],
         directory_name=directory_name)
 
-    generate_test_code_file(variable_declarations, method_calls,
+    generate_test_code_file(generated_java_method_name, variable_declarations, method_calls,
                             max_recursion_depth, f"{directory_name}/test_code.txt")
 
     print(
