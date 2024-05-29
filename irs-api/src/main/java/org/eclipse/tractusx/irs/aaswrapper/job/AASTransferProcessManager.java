@@ -78,7 +78,7 @@ public class AASTransferProcessManager implements TransferProcessManager<ItemDat
         preExecutionHandler.accept(processId);
 
         if (Thread.currentThread().isInterrupted()) {
-            log.info("Returning from initiateRequest due to interrupt");
+            log.debug("Returning from initiateRequest due to interrupt");
 
             return new TransferInitiateResponse(processId, ResponseStatus.NOT_STARTED_JOB_CANCELLED);
         }
